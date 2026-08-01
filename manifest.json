@@ -1,0 +1,28 @@
+{
+  "$comment": "Index of available templates. Pare reads this to populate its template picker; each entry's `path` is the folder to download.",
+  "version": 1,
+  "templates": [
+    {
+      "id": "saas-product-site",
+      "path": "saas-product-site",
+      "name": "SaaS product site",
+      "category": "Marketing",
+      "description": "A complete marketing site for a software product — features, pricing, changelog, blog and about.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/features",
+        "/pricing",
+        "/changelog",
+        "/blog",
+        "/blog/[slug]",
+        "/about",
+        "/contact"
+      ],
+      "tags": ["marketing", "saas", "blog", "pricing", "forms"],
+      "thumbnail": null
+    }
+  ]
+}

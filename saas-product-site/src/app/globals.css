@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens.
+   Every colour, radius and font used across the site resolves to one
+   of these. Change a value here and it updates everywhere.
+   --------------------------------------------------------------- */
+@theme {
+  /* Brand */
+  --color-accent: #4f46e5;
+  --color-accent-hover: #4338ca;
+  --color-accent-soft: #eef2ff;
+  --color-accent-ring: #c7d2fe;
+
+  /* Surfaces */
+  --color-canvas: #ffffff;
+  --color-surface: #fafafa;
+  --color-inverse: #0b0b12;
+
+  /* Ink */
+  --color-ink: #14141c;
+  --color-ink-muted: #55555f;
+  --color-ink-subtle: #85858f;
+  --color-ink-inverse: #f6f6f8;
+
+  /* Lines */
+  --color-line: #e7e7ea;
+  --color-line-strong: #d6d6db;
+
+  /* Type */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Faint grid used behind the hero. Fades out toward the bottom. */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, var(--color-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-line) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 0%,
+    #000 40%,
+    transparent 100%
+  );
+}
