@@ -23,6 +23,28 @@
       ],
       "tags": ["marketing", "saas", "blog", "pricing", "forms"],
       "thumbnail": null
+    },
+    {
+      "id": "mobile-app-landing",
+      "path": "mobile-app-landing",
+      "name": "Mobile app landing",
+      "category": "Marketing",
+      "description": "A marketing site for a mobile app — features, pricing, downloads, a searchable help centre, a press kit and legal pages.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "dark",
+      "routes": [
+        "/",
+        "/features",
+        "/pricing",
+        "/download",
+        "/support",
+        "/support/[slug]",
+        "/press",
+        "/legal/[doc]"
+      ],
+      "tags": ["marketing", "mobile", "app", "pricing", "support", "legal"],
+      "thumbnail": null
     }
   ]
 }

@@ -23,9 +23,10 @@ Each template is self-contained — its own dependencies, its own README.
 
 ## The templates
 
-| Template | Type | Stack | Status |
-| --- | --- | --- | --- |
-| [saas-product-site](saas-product-site) | Marketing | Next.js | ✅ Ready |
+| Template | Type | Stack | Theme | Status |
+| --- | --- | --- | --- | --- |
+| [saas-product-site](saas-product-site) | Marketing | Next.js | Light | ✅ Ready |
+| [mobile-app-landing](mobile-app-landing) | Marketing | Next.js | Dark | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
