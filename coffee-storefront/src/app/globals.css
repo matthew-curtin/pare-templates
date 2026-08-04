@@ -1,0 +1,101 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens.
+   Every colour, font and radius used across the shop resolves to one
+   of these. Change a value here and it updates everywhere — setting
+   --color-accent alone re-skins the whole storefront.
+   --------------------------------------------------------------- */
+@theme {
+  /* Brand. A deep, saturated green: the colour of unroasted coffee,
+     and dark enough to carry white text on a button. */
+  --color-accent: #12703f;
+  --color-accent-hover: #0d5730;
+  --color-accent-soft: #e7f4ec;
+
+  /* Surfaces. High contrast on purpose — white canvas, near-black
+     ink, and one barely-tinted grey for panels. */
+  --color-canvas: #ffffff;
+  --color-surface: #f5f7f5;
+  --color-inverse: #101210;
+
+  /* Ink */
+  --color-ink: #101210;
+  --color-ink-muted: #4e544f;
+  --color-ink-subtle: #7b827d;
+  --color-ink-inverse: #f5f7f5;
+
+  /* Lines */
+  --color-line: #e3e6e3;
+  --color-line-strong: #cdd2ce;
+
+  /* Type. Space Grotesk sets headings and prices — it has real
+     character at large sizes and stays legible small. Instrument Sans
+     carries body and UI. Both come through next/font, which
+     self-hosts them at build time, so the finished shop requests
+     nothing from Google. */
+  --font-display: var(--font-space-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------
+   Shop details
+   --------------------------------------------------------------- */
+
+/* Small tracked-out uppercase label — origin, process, section
+   headings. The one repeated typographic device in the shop. */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Numerals that line up in a column. Prices in a cart that jump
+   around because the digits are proportional look broken, and this is
+   one CSS property. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A visible focus ring that works on both the white canvas and the
+   near-black footer. Keyboard users are a real audience for a
+   checkout flow. */
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Product image zoom on card hover. Set here rather than inline so
+   every card gets the same easing. */
+.product-media img {
+  transition: transform 600ms cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.group:hover .product-media img {
+  transform: scale(1.04);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .product-media img,
+  .group:hover .product-media img {
+    transition: none;
+    transform: none;
+  }
+}

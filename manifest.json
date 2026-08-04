@@ -72,6 +72,35 @@
         "typography"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "coffee-storefront",
+      "path": "coffee-storefront",
+      "name": "Coffee storefront",
+      "category": "Commerce",
+      "description": "A shop with a working basket — products with size and grind variants, filtering, a delivery threshold, subscriptions and an interactive brew timer.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/shop",
+        "/shop/[slug]",
+        "/cart",
+        "/subscribe",
+        "/brewing",
+        "/brewing/[slug]",
+        "/about"
+      ],
+      "tags": [
+        "commerce",
+        "shop",
+        "ecommerce",
+        "cart",
+        "products",
+        "subscriptions"
+      ],
+      "thumbnail": null
     }
   ]
 }

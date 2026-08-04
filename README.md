@@ -28,6 +28,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [saas-product-site](saas-product-site) | Marketing | Next.js | Light | ✅ Ready |
 | [mobile-app-landing](mobile-app-landing) | Marketing | Next.js | Dark | ✅ Ready |
 | [editorial-magazine](editorial-magazine) | Publishing | Next.js | Warm | ✅ Ready |
+| [coffee-storefront](coffee-storefront) | Commerce | Next.js | Light | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
