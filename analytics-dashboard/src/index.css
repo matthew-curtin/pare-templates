@@ -1,0 +1,136 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens.
+   Every colour, font and radius used across the app resolves to one
+   of these.
+
+   The chrome is deliberately neutral — greys and near-black. In a
+   dashboard the DATA is what should carry colour, so the interface
+   around it stays quiet and the chart palette below does the talking.
+   --------------------------------------------------------------- */
+@theme {
+  /* Brand / interactive. Deliberately the same blue as chart series 1,
+     so a link and the primary series read as one system. */
+  --color-accent: #2a78d6;
+  --color-accent-hover: #1c5cab;
+  --color-accent-soft: #eaf2fd;
+
+  /* Surfaces */
+  --color-canvas: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-sunk: #eff1f5;
+  --color-inverse: #14161a;
+
+  /* Ink */
+  --color-ink: #14161a;
+  --color-ink-muted: #565d68;
+  --color-ink-subtle: #858c97;
+  --color-ink-inverse: #f6f7f9;
+
+  /* Lines */
+  --color-line: #e4e7ec;
+  --color-line-strong: #cfd4dc;
+
+  /* ---------------------------------------------------------------
+     Chart palette.
+
+     Validated, not eyeballed. Run from the dataviz skill:
+       validate_palette.js "#2a78d6,#eb6834,#1baf7a" \
+         --mode light --surface "#ffffff"
+     → lightness band PASS · chroma floor PASS · CVD separation PASS
+       (worst adjacent ΔE 9.2 deutan, target ≥ 8) · normal-vision
+       floor PASS (27.6, floor 15) · contrast WARN on series 3.
+
+     That WARN is why every stacked segment carries a direct label and
+     every chart has a table view: series 3 sits at 2.82:1 against
+     white, so colour is never the only way to read it.
+
+     The ORDER is the colourblind-safety mechanism, not a preference.
+     Assign slots in order and never cycle — an entity keeps its hue
+     when a filter removes its neighbours.
+     --------------------------------------------------------------- */
+  --color-series-1: #2a78d6;
+  --color-series-2: #eb6834;
+  --color-series-3: #1baf7a;
+
+  /* De-emphasis: the "previous period" line, and the unhighlighted
+     rest of an emphasis chart. */
+  --color-series-muted: #b6bcc6;
+
+  /* Ordinal ramp for the funnel — one hue, light→dark, monotone.
+     Validated with --ordinal: lightness monotone PASS · adjacent ΔL
+     PASS · light-end contrast PASS (2.11:1) · single hue PASS (3°).
+     Does not start lighter than this step, or the first stage
+     disappears into the surface. */
+  --color-step-1: #86b6ef;
+  --color-step-2: #5598e7;
+  --color-step-3: #2a78d6;
+  --color-step-4: #1c5cab;
+  --color-step-5: #104281;
+
+  /* Sequential ramp for the retention heatmap. Continuous magnitude,
+     so unlike the ordinal ramp the lightest step IS allowed to recede
+     toward the surface — it means "near zero". */
+  --color-heat-0: #f2f5f9;
+  --color-heat-1: #cde2fb;
+  --color-heat-2: #9ec5f4;
+  --color-heat-3: #6da7ec;
+  --color-heat-4: #3987e5;
+  --color-heat-5: #256abf;
+  --color-heat-6: #184f95;
+
+  /* Chart chrome. Recessive on purpose — hairlines one step off the
+     surface, never dashed. */
+  --color-grid: #e8ebf0;
+  --color-axis: #cfd4dc;
+
+  /* Status. Reserved for good/warning/critical and never reused as a
+     series colour, so a status hue can never impersonate an entity.
+     Always shipped with a label, never colour alone. */
+  --color-good: #0ca30c;
+  --color-good-text: #006300;
+  --color-warning: #fab219;
+  --color-critical: #d03b3b;
+
+  /* Type. One sans for everything, including the big numbers — a
+     display face on a hero figure reads as decoration in a tool. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html {
+  background: var(--color-canvas);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Columns of numbers must line up; large standalone figures must not.
+   `tabular-nums` gives every digit the width of a zero, which makes a
+   hero number look loose — so it is opt-in, per column, never global. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* A visible focus ring that survives on both the white cards and the
+   near-black sidebar. */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

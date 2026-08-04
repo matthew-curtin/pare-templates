@@ -63,10 +63,18 @@ because that reads as a deliberate opt-in it shouldn't override. Adding
 `--webpack` yourself is harmless but redundant, and it means running the
 template outside Pare behaves differently from every other one.
 
-**Every template needs a `typecheck` script:**
+**Every template needs a `typecheck` script.** On a Next template:
 
 ```json
 "typecheck": "tsc --noEmit"
+```
+
+On a **Vite** template the scaffold uses project references, and
+`tsconfig.app.json` already sets `noEmit`, so the build-mode form is
+the one that works:
+
+```json
+"typecheck": "tsc -b"
 ```
 
 After Pare applies a change it runs the project's own typecheck and
@@ -112,6 +120,31 @@ exercises Pare's Smart theme, which samples the page and dresses the app
 chrome to match.
 
 ---
+
+## 4b. Charts are validated, not eyeballed
+
+Any template with charts picks its palette by **running the check**,
+not by deciding the colours look different enough. Roughly one man in
+twelve cannot tell some pairs apart, and it is not a judgement anyone
+can make by eye.
+
+The rules that have earned their place so far:
+
+- **Assign categorical hues in a fixed order and never cycle them**, so
+  an entity keeps its colour when a filter removes its neighbours.
+- **One colour for nominal categories** (products, sources, teams).
+  Shading them by size encodes the bar's length twice. A value ramp is
+  only for genuinely ordered things — funnel stages, tiers, age bands.
+- **One y-axis.** Two measures on two scales invent a correlation the
+  data does not contain. Use two charts.
+- **Every chart gets a table view**, and a tooltip is never the only
+  way to read a value.
+- **Axis ticks must be round numbers.** Picking a "nice" maximum is not
+  enough — 75,000 split five ways gives 18,750. Choose the interval
+  count that divides the maximum cleanly.
+
+`analytics-dashboard` is the worked example; its `src/index.css`
+records the exact validation commands and their results.
 
 ## 5. Build interface, not screenshots
 

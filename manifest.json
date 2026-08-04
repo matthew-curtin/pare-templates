@@ -101,6 +101,33 @@
         "subscriptions"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "analytics-dashboard",
+      "path": "analytics-dashboard",
+      "name": "Analytics dashboard",
+      "category": "Application",
+      "description": "A product-analytics app — KPI tiles, a time series with comparison, a retention heatmap, a funnel, and a sortable event catalogue. Every chart is hand-drawn SVG with a table view.",
+      "framework": "vite",
+      "stack": ["Vite 8", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/audience",
+        "/funnels",
+        "/events",
+        "/events/[id]",
+        "/settings"
+      ],
+      "tags": [
+        "application",
+        "dashboard",
+        "analytics",
+        "charts",
+        "tables",
+        "admin"
+      ],
+      "thumbnail": null
     }
   ]
 }
