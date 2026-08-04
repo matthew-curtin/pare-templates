@@ -29,6 +29,17 @@ npx create-next-app@latest <name> --typescript --tailwind --eslint \
 Then delete what it leaves behind: `public/*.svg`, `AGENTS.md`,
 `CLAUDE.md`, and the default `page.tsx`.
 
+Deleting `AGENTS.md` and `CLAUDE.md` is **not enough on Next 16.3+** —
+it rewrites both into the project root every time the dev server
+starts, so they come back and get committed. Turn the generator off:
+
+```ts
+// next.config.ts
+const nextConfig: NextConfig = {
+  agentRules: false,
+};
+```
+
 One thing not to bother with: Next collects anonymous telemetry by
 default, and shipping a `.env` with `NEXT_TELEMETRY_DISABLED=1` does
 **not** switch it off — Next reads the file too late for the CLI, which

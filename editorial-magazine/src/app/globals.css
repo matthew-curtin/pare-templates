@@ -1,0 +1,141 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Design tokens.
+   Every colour, font and radius used across the site resolves to one
+   of these. Change a value here and it updates everywhere — setting
+   --color-accent alone re-skins the whole magazine.
+   --------------------------------------------------------------- */
+@theme {
+  /* Brand. A deep brick red, the way a print masthead is often the
+     only spot colour on the page. */
+  --color-accent: #a8371f;
+  --color-accent-hover: #8a2b16;
+  --color-accent-soft: #f7e8e3;
+
+  /* Surfaces. The canvas is warm paper, not white — white is reserved
+     for cards sitting ON the paper, which is what gives the layout its
+     sense of things being laid down rather than printed into. */
+  --color-canvas: #fcf8f2;
+  --color-surface: #ffffff;
+  --color-sunk: #f2ebe0;
+  --color-inverse: #17130f;
+
+  /* Ink. Warm near-black rather than pure black, so it sits on cream
+     without the blue cast that #000 picks up next to a warm ground. */
+  --color-ink: #17130f;
+  --color-ink-muted: #5a5048;
+  --color-ink-subtle: #8b8078;
+  --color-ink-inverse: #fcf8f2;
+
+  /* Lines */
+  --color-line: #e6dccd;
+  --color-line-strong: #d3c6b3;
+
+  /* Type. Fraunces sets headlines and the masthead; Newsreader carries
+     body prose. Both are served through next/font, which self-hosts
+     them at build time — the finished site requests nothing from
+     Google. */
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+  --font-serif: var(--font-newsreader), Georgia, "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------
+   Paper grain. A single SVG turbulence tile at very low opacity —
+   enough to keep large cream areas from reading as flat digital fill,
+   cheap enough that it costs nothing. Sits behind everything and
+   never intercepts a click.
+   --------------------------------------------------------------- */
+.paper-grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------------------------------------------------------------
+   Editorial details
+   --------------------------------------------------------------- */
+
+/* The small tracked-out uppercase label that runs above a headline or
+   marks a section. Serif rather than sans on purpose — it is what a
+   printed magazine does, and it keeps the page to two typefaces. */
+.eyebrow {
+  font-family: var(--font-serif);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* Drop cap on the opening paragraph of a story. Sized in `em` so it
+   scales with whatever the paragraph is set at, and given a small
+   negative top margin because Fraunces sits high in its box. */
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.6em;
+  line-height: 0.82;
+  font-weight: 600;
+  margin: 0.06em 0.08em 0 0;
+  color: var(--color-accent);
+}
+
+/* The dotted rule used between stories in a list. A background image
+   rather than a border so the dots stay evenly spaced at any width. */
+.rule-dotted {
+  height: 1px;
+  background-image: radial-gradient(
+    circle,
+    var(--color-line-strong) 1px,
+    transparent 1px
+  );
+  background-size: 6px 1px;
+  background-repeat: repeat-x;
+}
+
+/* Lifts the print-edition cover off the page. Warm shadow rather than
+   neutral grey, so it belongs to the same light as the paper. */
+.cover-shadow {
+  box-shadow:
+    0 1px 1px rgba(60, 40, 20, 0.06),
+    0 8px 18px -6px rgba(60, 40, 20, 0.18),
+    0 28px 50px -20px rgba(60, 40, 20, 0.28);
+}
+
+/* Underline that grows from the left on hover. Used on headlines in
+   story lists, where a permanent underline would make the page noisy. */
+.link-rule {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 220ms ease;
+}
+.link-rule:hover {
+  background-size: 100% 1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .link-rule {
+    transition: none;
+  }
+}

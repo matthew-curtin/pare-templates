@@ -45,6 +45,33 @@
       ],
       "tags": ["marketing", "mobile", "app", "pricing", "support", "legal"],
       "thumbnail": null
+    },
+    {
+      "id": "editorial-magazine",
+      "path": "editorial-magazine",
+      "name": "Editorial magazine",
+      "category": "Publishing",
+      "description": "A quarterly magazine — long-form stories with real body copy, departments, a filterable archive, contributors and subscriptions.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/story/[slug]",
+        "/section/[slug]",
+        "/archive",
+        "/contributors",
+        "/about",
+        "/subscribe"
+      ],
+      "tags": [
+        "publishing",
+        "magazine",
+        "editorial",
+        "articles",
+        "typography"
+      ],
+      "thumbnail": null
     }
   ]
 }
