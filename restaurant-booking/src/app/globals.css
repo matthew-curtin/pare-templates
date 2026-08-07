@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/*
+ * Every colour, font and radius in the site resolves here. Change a
+ * token and the whole site follows — never write a hex value inside a
+ * component.
+ *
+ * The mood is the dining room after dark: a warm, smoky near-black
+ * with embers in it. The base is deliberately brown rather than blue —
+ * the fleet already has a cool dark site, and a wood-fired restaurant
+ * that reads cold is the wrong room.
+ */
+@theme {
+  /* Surfaces. Warm near-black, layered so a card reads as raised. */
+  --color-canvas: #14100d;
+  --color-surface: #1d1815;
+  --color-raised: #272019;
+
+  /* Ember. The fire, and the only saturated thing on the page. */
+  --color-accent: #d9663a;
+  --color-accent-hover: #e87c52;
+  --color-accent-soft: #2b1a12;
+  --color-accent-ring: #4a2c1d;
+  /* Ink to sit ON the ember — it is far too light to carry white. */
+  --color-on-accent: #170a04;
+
+  /* A cool herb green, for the things that are not fire: sourcing
+     notes, dietary marks, the "available" state in the booking grid. */
+  --color-herb: #93a781;
+  --color-herb-soft: #1b2118;
+
+  /* Ink. Bone rather than white — pure white on warm black glares. */
+  --color-ink: #f3ece2;
+  --color-ink-muted: #b5a897;
+  --color-ink-subtle: #82755f;
+
+  /* Lines */
+  --color-line: #2c241d;
+  --color-line-strong: #40352a;
+
+  --font-display: var(--font-instrument-serif), Georgia, "Times New Roman",
+    serif;
+  --font-sans: var(--font-karla), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * One focus style for the whole site. The booking flow is genuinely
+ * usable by keyboard, so this has to be visible on every surface.
+ */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * Figures that sit in columns — prices, times, covers — must not shift
+ * width as they change.
+ */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * The dotted leader between a dish and its price, the way a printed
+ * menu sets it. Drawn rather than typed so it stretches to whatever
+ * space is left.
+ */
+.leader {
+  flex: 1 1 auto;
+  margin: 0 0.6rem;
+  border-bottom: 1px dotted var(--color-line-strong);
+  transform: translateY(-0.25rem);
+}
+
+/*
+ * A soft pool of firelight behind the hero. Two warm gradients, faded
+ * out well before any edge so they never meet a hard boundary.
+ */
+.bg-firelight {
+  background-image:
+    radial-gradient(
+      42rem 26rem at 12% -10%,
+      rgba(217, 102, 58, 0.18),
+      transparent 60%
+    ),
+    radial-gradient(
+      38rem 24rem at 88% 4%,
+      rgba(147, 167, 129, 0.1),
+      transparent 62%
+    );
+}
+
+/*
+ * The header navigation scrolls sideways on a narrow screen. Without a
+ * fade, the last link is simply chopped through the middle of a word by
+ * the booking button, which reads as a broken layout rather than as an
+ * invitation to scroll.
+ */
+.nav-fade {
+  mask-image: linear-gradient(to right, #000 calc(100% - 1.75rem), transparent);
+}
+
+@media (min-width: 640px) {
+  .nav-fade {
+    mask-image: none;
+  }
+}
+
+/* A hairline of warmth along the top edge of a raised surface. */
+.edge-light {
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Photographs sit on a dark page; a slight warm lift stops them
+   looking like holes cut in the paper. */
+.photo-warm {
+  filter: saturate(1.04) contrast(1.02);
+}

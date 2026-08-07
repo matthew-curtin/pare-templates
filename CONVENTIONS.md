@@ -177,6 +177,37 @@ covers, team portraits, editorial imagery, product shots.
   required.
 - Prefer generated avatars (initials) over stock headshots for
   testimonials — a real face attached to an invented quote sits badly.
+- Re-encoding to save weight can make a file **bigger**. Stock images
+  arrive already compressed, so asking `sips` for quality 68 when the
+  source was nearer 50 re-encodes upward. Fetch a smaller width first;
+  only then compress, and measure both ways.
+
+**Look at every photograph, and write the words against the picture.**
+
+Choose the image first and caption it second. Written the other way
+round, the caption describes what you hoped to find — and it will be
+wrong often enough to matter. In `restaurant-booking`, alt text drafted
+before sourcing claimed a fire glowing at the end of a room that has no
+fire in the frame, and a "roast chicken, skin blistered from the coals"
+turned out to be a pale poached bird with no char on it at all.
+
+The corollary, and the one that takes nerve: **when no photograph
+matches the copy, change the copy.** That template's menu says red
+mullet rather than plaice because the good picture showed whole round
+fish over coals and plaice is a flatfish. Editing one word of invented
+content is free. Captioning the photograph "plaice" would have been a
+small lie sitting on the page forever.
+
+Two more things to check in the frame itself, because neither shows up
+in a search result:
+
+- **Legible signage.** A photo of a covered terrace was rejected from
+  `restaurant-booking` for a large `PLECIDER MILL` sign across the back
+  of it. §7 forbids real company names; a photograph is the easiest way
+  for one to get in.
+- **Whether it contradicts the surrounding claim.** `editorial-magazine`
+  once illustrated a story arguing a joint needs no screws with a
+  close-up of a metal screw.
 
 ---
 
@@ -222,6 +253,31 @@ item, a long title that has to truncate, and a person with nothing on.
 `project-tracker` deliberately holds one column over its limit, one
 column empty under a filter, several unassigned issues and one person
 with nothing in flight, for exactly this reason.
+
+Sometimes the honest way to reach a state is to put it in the content
+rather than tune the numbers until it appears. `restaurant-booking`
+carries two closures — a private hire and a night the fire is being
+relined — because otherwise no date in the booking calendar is ever
+fully unavailable, and its "nothing free" state would never be seen by
+anyone, including whoever wrote it.
+
+### Derived data has to preserve the orderings a user can compare
+
+When the data is computed rather than listed, the relationships between
+its answers are part of the design, and users check them by changing one
+input and watching.
+
+`restaurant-booking` computes which tables are free from a hash of the
+date, the service and the time, compared against a threshold that falls
+as the party grows. The first version hashed the party size **too** —
+which re-rolled every slot independently for each size, so a table for
+six came up free at times a table for two could not. Every individual
+answer was defensible; the set of them was nonsense, and one click
+between "2" and "6" showed it.
+
+So decide what must hold as each input moves — bigger party never has
+more choice, a later date never has less, a busier night never has more
+— and make it structurally true rather than probably true.
 
 ---
 

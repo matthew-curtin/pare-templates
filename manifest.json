@@ -156,6 +156,33 @@
         "admin"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "restaurant-booking",
+      "path": "restaurant-booking",
+      "name": "Restaurant with booking",
+      "category": "Booking",
+      "description": "A wood-fired restaurant with a working reservation flow — live availability, party size, two sittings, validation and a confirmation. Menus, private dining and an enquiry form.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "dark",
+      "routes": [
+        "/",
+        "/menu",
+        "/book",
+        "/private-dining",
+        "/about",
+        "/visit"
+      ],
+      "tags": [
+        "booking",
+        "restaurant",
+        "reservations",
+        "menu",
+        "hospitality",
+        "forms"
+      ],
+      "thumbnail": null
     }
   ]
 }
