@@ -183,6 +183,27 @@
         "forms"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "docs-site",
+      "path": "docs-site",
+      "name": "Documentation site",
+      "category": "Documentation",
+      "description": "Developer documentation for an API — eleven pages written in markdown, an HTTP reference, client libraries and a changelog. Sidebar, contents list and ⌘K search all derive from the files.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": ["/", "/docs", "/docs/[...slug]", "/reference", "/sdks", "/changelog"],
+      "tags": [
+        "documentation",
+        "docs",
+        "markdown",
+        "api",
+        "reference",
+        "developer",
+        "search"
+      ],
+      "thumbnail": null
     }
   ]
 }

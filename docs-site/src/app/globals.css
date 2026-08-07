@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/* Every colour, font and radius in the template lives in this block.
+   Change --color-accent and the whole site re-skins. Never write a hex
+   value inside a component. */
+@theme {
+  /* Page. A cool near-white rather than pure white — documentation is
+     read at length, and a fractionally warm-free grey is easier on the
+     eye than #fff over a few thousand words. */
+  --color-canvas: #fdfdfe;
+  --color-surface: #f4f5f8;
+  --color-surface-hover: #eceef3;
+
+  --color-ink: #0e1016;
+  --color-ink-muted: #565b69;
+  --color-ink-subtle: #7c8394;
+  --color-ink-inverse: #f4f5f8;
+
+  --color-border: #e3e5ec;
+  --color-border-strong: #ccd0da;
+
+  --color-accent: #7028d8;
+  --color-accent-hover: #5a1fb0;
+  --color-accent-soft: #f3ecfd;
+  --color-accent-ring: #d9c4f8;
+
+  /* Code sits on a dark panel on a light page — the convention nearly
+     every real documentation site follows, because it separates "this is
+     prose" from "this is something you paste" without a border.
+     --color-code must match the Shiki theme's own background exactly
+     (tokyo-night, #1a1b26) so the language bar and copy button read as
+     part of the same surface. Change one, change the other. */
+  --color-code: #1a1b26;
+  --color-code-chrome: #21222f;
+  --color-code-ink: #a9b1d6;
+  --color-code-border: #2c2e3f;
+
+  /* Status, for callouts and HTTP method badges. */
+  --color-note: #2a78d6;
+  --color-note-soft: #eaf2fd;
+  --color-warn: #a6631a;
+  --color-warn-soft: #fdf2e3;
+  --color-danger: #c0392b;
+  --color-danger-soft: #fdeeec;
+  --color-good: #15803d;
+  --color-good-soft: #eaf6ee;
+
+  --font-sans: var(--font-public-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo,
+    monospace;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Documentation lives or dies on how a link behaves in a paragraph, so
+   the underline is offset and thin rather than the browser default. */
+.prose-link {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--color-accent-ring);
+}
+.prose-link:hover {
+  text-decoration-color: var(--color-accent);
+}
+
+/* A heading you can link to. The anchor is invisible until the heading
+   is hovered or the anchor itself is focused, so it never clutters the
+   page but is still reachable by keyboard. */
+.heading-anchor {
+  opacity: 0;
+  transition: opacity 120ms ease;
+}
+.group\/heading:hover .heading-anchor,
+.heading-anchor:focus-visible {
+  opacity: 1;
+}
+
+/* Anchored headings must clear the sticky header when jumped to. */
+[id] {
+  scroll-margin-top: 6rem;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Long API paths and signatures should wrap at a slash rather than push
+   the page sideways. */
+.break-path {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}

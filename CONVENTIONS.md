@@ -101,9 +101,57 @@ a one-line edit in an obvious place, and it means the same component can
 be reused across templates with different data behind it.
 
 Use plain typed TypeScript, not MDX or a markdown parser, unless the
-template is *about* long-form content (the documentation template is the
-place to test a markdown pipeline). Typed data needs no dependency, no
+template is *about* long-form content. Typed data needs no dependency, no
 build step, and the editor catches a missing field immediately.
+
+### Markdown for prose that varies, typed data for records that repeat
+
+`docs-site` is the worked example, and it carries both on purpose. Its
+documentation pages are markdown, because every page is a different shape
+and prose wants to be written rather than filled in. Its API reference is
+typed data, because ten endpoints with identical structure written as
+markdown would make that structure a convention nobody enforces — and the
+tenth endpoint would quietly end up laid out differently from the first.
+As typed data the shape *is* the type, a missing field is a red squiggle,
+and every record renders identically for free.
+
+Derive everything you can from the files. In that template the sidebar,
+the contents list, the previous/next links and the search index all come
+from the markdown itself, so adding a page is adding a file. Exactly one
+hand-maintained list remains — the order and labels of the groups — and a
+folder not named in it is **skipped rather than appended**, so a scratch
+directory cannot quietly appear in the navigation.
+
+### Render markdown by walking the token tree, never through an HTML string
+
+Ask the parser for tokens, not HTML, and map the token types you want onto
+React elements by hand. No `dangerouslySetInnerHTML`, anywhere.
+
+This is a stronger guarantee than parsing to HTML and sanitising
+afterwards: every element that can appear on the page is one your renderer
+explicitly names, so a token type with no case — including the `html`
+token a raw `<script>` in a markdown file produces — has no path to a live
+DOM element at all. It falls through to text, which React escapes, and
+shows up as visible characters on the page. The same goes for syntax
+highlighting: Shiki will return an HTML string, and `codeToHast` returns a
+tree instead.
+
+**Read what the parser's fields actually contain** before writing the
+renderer, rather than inferring it from the type names. Two findings from
+`marked` that are each invisible until they are wrong, and neither of
+which the types tell you:
+
+- **`.text` is not escaped, and entities are left exactly as authored.**
+  `&amp;` in a source file stays `&amp;`. Handed to a browser as HTML that
+  renders as `&`; handed to React it renders as five literal characters,
+  so leaves need decoding. Other parsers — and other *versions* — escape
+  this field instead, which needs the same fix for the opposite reason.
+- **Every list item wraps its content in a token of type `text`**, not
+  `paragraph`. A renderer that handles only `paragraph` silently drops to
+  raw source and shows literal `**` inside list items.
+
+Spend ten minutes dumping the token tree for a paragraph, a list, a table
+and a code block first. Both of the above pass typecheck, lint and build.
 
 ---
 
@@ -160,6 +208,13 @@ and edited in Pare. A screenshot is a dead end.
 
 Use photographs for the things photographs are actually for: article
 covers, team portraits, editorial imagery, product shots.
+
+**That includes the favicon.** Draw it as an SVG and let the framework
+pick it up — in Next that means `src/app/icon.svg`, which takes precedence
+over the scaffold's `favicon.ico`. Known debt: every template before
+`docs-site` still ships `create-next-app`'s default icon, byte for byte,
+which is a small thing that reads as unfinished the moment anyone opens
+two of them in adjacent tabs. Worth backfilling.
 
 ---
 
@@ -322,6 +377,57 @@ interesting bugs are not visible in a screenshot: `project-tracker`'s
 drag committed to the last pointer *move* rather than the pointer
 *release*, so a quick flick dropped the card a column short — correct
 in every slow test and wrong every time it mattered.
+
+### Grep every route for unrendered markup
+
+Fetch each page and search the HTML for the signatures of markup that did
+not render: a literal `**`, a literal backtick, a double-escaped entity.
+Strip `<pre>` blocks first, since all three are legitimate inside code.
+
+Work out the *bug's* signature rather than the symptom's. A correctly
+rendered apostrophe already serialises to `&#x27;`, so searching for that
+matches every healthy page; the defect is the **double** escape,
+`&amp;#x27;`. Get this wrong and the check passes either way.
+
+It found a real one in `docs-site`: parameter descriptions on the
+reference page rendered their `backticked` terms, and the libraries page
+printed the same kind of string raw, because the helper that did the work
+was local to the first page. Nothing errored — the second page just had
+stray punctuation in it, which reads as a typo in the content rather than
+a missing component.
+
+### Measure the layout; do not read it off the screenshot
+
+The preview pane composites its own way, and it will show you a header
+that stops short of the right edge, or a column that looks off-centre,
+when `getBoundingClientRect` says both are exactly right. It has now been
+wrong twice in one template. When something looks misaligned, ask the DOM
+for the numbers before changing any CSS — otherwise you fix a bug that
+does not exist and introduce one that does.
+
+The reverse also happens: a click can look like it did nothing because
+React had not committed yet. Read state in a *separate* call from the one
+that triggered it, or await a tick first.
+
+### If the environment cannot drive it, extract the part that can be wrong
+
+The pane renders with the document hidden, which means `scroll` events,
+`requestAnimationFrame` and `IntersectionObserver` **do not fire at all** —
+verified, not assumed. No scroll-driven feature can be tested end to end
+there, whatever you implement.
+
+So separate the decision from the machinery that triggers it. In
+`docs-site` the contents list asks `pickActiveHeading(positions, marker)`,
+a pure function in its own zero-import module, and that function can be
+checked against a list of numbers in a plain node script — including the
+two cases the obvious implementation gets wrong (two short sections
+visible together, and one long section with no heading on screen at all).
+The wiring around it stays untested, but the wiring is not the part that
+is going to be wrong.
+
+The same reasoning applies to any logic sitting behind an input you cannot
+generate: parsing, ordering, formatting, threshold decisions. Pull it out
+into something you can call directly.
 
 ---
 
