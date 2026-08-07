@@ -137,8 +137,13 @@ The rules that have earned their place so far:
   only for genuinely ordered things — funnel stages, tiers, age bands.
 - **One y-axis.** Two measures on two scales invent a correlation the
   data does not contain. Use two charts.
-- **Every chart gets a table view**, and a tooltip is never the only
-  way to read a value.
+- **Every value must be readable as text**, and a tooltip is never the
+  only way to read one. A table view is how you achieve that when the
+  chart is the only place the value exists — which is the usual case,
+  and why `analytics-dashboard` has a toggle on every card. It is not
+  an end in itself: `project-tracker`'s roadmap writes each bar's name,
+  stage and note on the page already, so a table twin of it would
+  restate what is visible and earn nothing.
 - **Axis ticks must be round numbers.** Picking a "nice" maximum is not
   enough — 75,000 split five ways gives 18,750. Choose the interval
   count that divides the maximum cleanly.
@@ -188,6 +193,38 @@ landed sensibly.
 
 ---
 
+## 7b. Tune the invented numbers so the design can be judged
+
+Inventing the data plausibly is not enough — it has to be tuned so
+that every state a design has is **visible, and in the right
+proportion**. A state that is meant to be exceptional has to be
+exceptional in the data.
+
+The worked example is `project-tracker`. Its first set of team
+capacities left all six people over capacity, at 116% load. Every
+number was defensible on its own and the page was useless: the amber
+"over capacity" treatment was on every card, so it read as the normal
+state rather than as a warning, and the whole thing looked like broken
+data rather than a busy team. Adjusting the capacities so exactly one
+person is over made the feature legible in one glance.
+
+So, when the data is finished, look at each state the UI can show and
+ask which of these it is:
+
+- **Never reached** — the empty state, the over-limit warning, the
+  error. Dead code as far as anyone can tell. Arrange for at least one.
+- **Always reached** — the warning that fires on every row. It stops
+  reading as a warning.
+- **Reached about as often as it should be.** This is the target.
+
+The same applies to a full column and an empty one, an unassigned
+item, a long title that has to truncate, and a person with nothing on.
+`project-tracker` deliberately holds one column over its limit, one
+column empty under a filter, several unassigned issues and one person
+with nothing in flight, for exactly this reason.
+
+---
+
 ## 8. Before committing a template
 
 ```bash
@@ -207,6 +244,28 @@ template's bar chart compiled, typechecked and rendered nothing, because
 a percentage height inside a flex column has no parent height to resolve
 against and silently collapses to zero. **Compute pixel heights for
 anything chart-shaped, and always look at the page.**
+
+Then check every route at 375px wide and confirm
+`document.documentElement.scrollWidth` equals `clientWidth`. A page
+that scrolls sideways on a phone is the most common defect in this
+repo and the easiest to miss on a laptop. Two causes account for
+nearly all of it:
+
+- **A flex or grid child will not shrink below its content.** A wide
+  table inside an `overflow-x-auto` wrapper still pushes the page out
+  unless that wrapper has `min-w-0` — the horizontal twin of the
+  `min-h-0` rule that vertical scrollers need. Both `project-tracker`'s
+  backlog table and its team cards needed it.
+- **`sr-only` positions absolutely.** With no positioned ancestor, a
+  visually-hidden label inside a horizontally scrolled container
+  resolves against the page instead and lands hundreds of pixels off
+  to the right. Give its parent `relative`.
+
+And drive the interactions rather than assuming them, because the
+interesting bugs are not visible in a screenshot: `project-tracker`'s
+drag committed to the last pointer *move* rather than the pointer
+*release*, so a quick flick dropped the card a column short — correct
+in every slow test and wrong every time it mattered.
 
 ---
 

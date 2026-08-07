@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/*
+ * Every colour, font and radius in the app resolves here. Change a
+ * token and the whole app follows — never write a hex value inside a
+ * component.
+ *
+ * The mood is a quiet, cool workshop: near-black graphite with a
+ * single teal signal. Teal is deliberate rather than decorative — it
+ * leaves the entire warm half of the wheel free for priority and
+ * status, so an "urgent" red can never be mistaken for the brand.
+ */
+@theme {
+  /* Surfaces. Layered, not flat — canvas < surface < raised < hover,
+     so a card reads as sitting on a column sitting on the page. */
+  --color-canvas: #0d1014;
+  --color-surface: #141920;
+  --color-raised: #1b2028;
+  --color-raised-hover: #232935;
+
+  /* The one signal colour. */
+  --color-accent: #35d0ba;
+  --color-accent-hover: #5ee0cd;
+  --color-accent-soft: #0f2a27;
+  --color-accent-ring: #1d4a44;
+  /* Ink for text sitting ON the accent — the accent is far too light
+     to carry white. */
+  --color-on-accent: #04231e;
+
+  /* Ink */
+  --color-ink: #e8edf5;
+  --color-ink-muted: #98a3b3;
+  --color-ink-subtle: #626e7f;
+
+  /* Lines */
+  --color-line: #1f2630;
+  --color-line-strong: #303948;
+
+  /*
+   * Priority. An ordered scale, so it earns a ramp — but the ramp is
+   * never the only cue: every priority also shows its name, because
+   * roughly one man in twelve cannot separate some of these pairs.
+   */
+  --color-urgent: #f87171;
+  --color-urgent-soft: #2a1618;
+  --color-high: #fbbf24;
+  --color-high-soft: #2b2110;
+  --color-medium: #60a5fa;
+  --color-medium-soft: #12203a;
+  --color-low: #7c8798;
+  --color-low-soft: #1a1f27;
+
+  /*
+   * Roadmap status. Genuinely ordered (planned → building → shipped),
+   * so it takes one hue at increasing strength rather than three
+   * unrelated colours. Lightness climbs monotonically.
+   */
+  --color-stage-1: #1f4a45;
+  --color-stage-2: #2a8d80;
+  --color-stage-3: #35d0ba;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  /* Issue keys, points and counts are read as columns of figures, so
+     they get a real mono face rather than the UI face. */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+}
+
+/*
+ * Figures that sit in columns — points, counts, dates — must not
+ * shift width as they change, or a live board jitters.
+ */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * One focus style for the whole app. Keyboard users move cards
+ * between columns, so this has to be genuinely visible on every
+ * surface, not a faint outline.
+ */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * A card while it is being dragged. Lifted, tilted a degree, and
+ * carrying a shadow deep enough to read against the near-black
+ * column beneath it.
+ */
+.card-dragging {
+  box-shadow:
+    0 18px 30px -8px rgba(0, 0, 0, 0.7),
+    0 0 0 1px var(--color-accent-ring);
+  transform: rotate(1.2deg) scale(1.02);
+}
+
+/* The gap a dragged card will drop into. */
+.drop-slot {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--color-accent-soft),
+    var(--color-accent-soft) 6px,
+    transparent 6px,
+    transparent 12px
+  );
+}
+
+/*
+ * Board columns scroll independently. The default macOS overlay
+ * scrollbar is invisible against near-black, so give it a track.
+ */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}

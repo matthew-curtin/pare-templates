@@ -30,6 +30,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [editorial-magazine](editorial-magazine) | Publishing | Next.js | Warm | ✅ Ready |
 | [coffee-storefront](coffee-storefront) | Commerce | Next.js | Light | ✅ Ready |
 | [analytics-dashboard](analytics-dashboard) | Application | Vite | Light | ✅ Ready |
+| [project-tracker](project-tracker) | Application | Vite | Dark | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
