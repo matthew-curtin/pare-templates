@@ -1,0 +1,116 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Almanac — a board for public and charitable sector vacancies.
+
+   The look is a printed gazette: a dark masthead band, ruled rows, small
+   caps labels, figures in a column. Structure carries the identity here
+   rather than background colour, because a listings board is mostly rules
+   and type.
+
+   The palette is deliberately small. It has three hues and no more:
+
+     accent   navy, for links, buttons and the "new" flag
+     urgent   red, for a vacancy closing today or tomorrow
+     (grey)   for one that has closed
+
+   Everything else a listing can be — fixed-term, part-time, job share,
+   voluntary, hybrid — is a fact rather than a state, so it is a plain
+   chip in ink. Colouring facts is how a board ends up with nine hues and
+   no hierarchy.
+
+   Validated, not chosen:
+
+     node scripts/check-colours.mjs
+
+   Last run: 39 checks, all passing. The tightest one in each section —
+   accent vs ink-subtle 12.5 under tritanopia, ink-subtle on sunk
+   4.80:1, a field border on sunk 3.03:1, a row rule 4.8 ΔE against the
+   canvas.
+
+   Two things moved because of it. ink-subtle started three steps
+   lighter and failed on two of the four grounds it is drawn on, which
+   is the ordinary way a light palette goes wrong: it was judged on
+   white and used on grey. And the greys split in two — see the note
+   next to them.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --font-sans: var(--font-libre-franklin), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+
+  /* Ground. A newsprint grey-blue rather than white, so a white listing
+     card sits on it as an object instead of dissolving into it. */
+  --color-canvas: #eceef3;
+  --color-surface: #ffffff;
+  --color-sunk: #e3e7ee;
+  --color-hover: #f5f7fa;
+  --color-band: #131b2b;
+  --color-band-soft: #26314a;
+
+  --color-ink: #101623;
+  --color-ink-muted: #4b5464;
+  --color-ink-subtle: #5c6473;
+  --color-ink-inverse: #eceef3;
+
+  /* Two greys that look like one job and are not. A rule between two
+     listings is decoration — WCAG 1.4.11 is about identifying controls
+     and their state, and a divider identifies nothing, so holding it to
+     3:1 would only produce a page of heavy grey bars. The boundary of a
+     text field is the opposite: it IS the control, so it owes the full
+     ratio. Most palettes use one grey for both and are wrong about the
+     second. */
+  --color-line: #d6dae3;
+  --color-line-strong: #b7bfcd;
+  --color-field: #7c8494;
+
+  --color-accent: #17509b;
+  --color-accent-hover: #103b74;
+  --color-accent-soft: #e7eef8;
+  --color-accent-ring: #b3cae7;
+  --color-on-accent: #ffffff;
+
+  --color-urgent: #b62d20;
+  --color-urgent-soft: #fbeceb;
+
+  --radius-card: 0.375rem;
+}
+
+/* Figures that sit in a column — salaries, closing dates, reference
+   numbers, counts. Without this the digits are proportional and nothing
+   lines up down the page. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Small caps labels, the gazette's main device. */
+.label {
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Pasted job descriptions contain long unbroken strings — reference
+   codes, grades, the occasional URL. Let them break rather than push a
+   column open. */
+.prose-wrap {
+  overflow-wrap: anywhere;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-accent-ring);
+}

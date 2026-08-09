@@ -232,6 +232,35 @@
         "admin"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "almanac",
+      "path": "almanac",
+      "name": "Public sector jobs board",
+      "category": "Listings",
+      "description": "A hand-checked vacancies board — link-based filters, search and sorting, employer pages, an alert builder that shows what it would have caught, and a listing composer with a live preview. Every job states what it actually pays, pro rata included.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/jobs/[slug]",
+        "/employers",
+        "/employers/[slug]",
+        "/alerts",
+        "/post",
+        "/about"
+      ],
+      "tags": [
+        "listings",
+        "jobs",
+        "board",
+        "directory",
+        "filters",
+        "search",
+        "forms"
+      ],
+      "thumbnail": null
     }
   ]
 }

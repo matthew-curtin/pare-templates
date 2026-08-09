@@ -220,6 +220,17 @@ which is the same colour to about one man in twelve. Letting the dot
 carry the hue and the ink carry the words satisfies both constraints at
 once. Four palettes failed before that one passed.
 
+The same reasoning splits greys that look like one job and are not.
+`almanac` carries two: a rule between listings is **decoration**, and
+1.4.11 does not reach it — it is about identifying controls and their
+state, and a divider identifies nothing, so holding it to 3:1 would only
+produce a page of heavy grey bars. The boundary of a text field is the
+opposite: it *is* the control, so it owes the full ratio. Most palettes
+use one grey for both and are wrong about the second. What the
+decorative rule owes instead is being visible at all, which is a
+perceptual claim rather than a WCAG one — ΔE 3, the just-noticeable
+difference, since a rule under that is a layout with no rows in it.
+
 The same template also keeps exactly one thing coloured for lateness.
 Time merely running is the normal state of most of an inbox, so it is
 plain muted text; only past the deadline is red. A treatment on every
@@ -395,6 +406,31 @@ So decide what must hold as each input moves — bigger party never has
 more choice, a later date never has less, a busier night never has more
 — and make it structurally true rather than probably true.
 
+### The column the reader scans must be the column the sort used
+
+A list that displays one number and orders by another looks broken even
+when it is right, and there is no way for the reader to discover which
+half to trust. `almanac` produced this twice in one afternoon, from
+opposite directions, and both were only visible by looking at the page.
+
+Its "highest paid" sort keys on what a job actually pays, which for a
+part-time post is not the figure on the advert. Showing the advertised
+band in the headline — defensible, since it is what the employer
+published — made the column read £27,600, then £38,626, then £24,404.
+Every row was in the right place and the page was unusable. Swapping
+them fixed it and lost nothing: the advertised figure is still there,
+one line down, attributed to the employer, which is where a misleading
+number belongs.
+
+The other direction was a paid promotion lifted to the top of a board
+whose sort control said "Closing soonest", above a vacancy closing that
+afternoon. Featured listings now get a labelled strip above the board
+and appear again in their proper place below. **A list must obey its own
+sort** however well the promotion pays — and the pinning came out of the
+comparator entirely, which also made it simpler.
+
+Both of these pass every check that does not involve reading the page.
+
 ---
 
 ## 8. Before committing a template
@@ -439,6 +475,14 @@ drag committed to the last pointer *move* rather than the pointer
 *release*, so a quick flick dropped the card a column short — correct
 in every slow test and wrong every time it mattered.
 
+**Put `noValidate` on any form whose errors you have designed.** The
+browser validates `type="email"` and friends before a submit handler
+ever runs, so a form that styles its own error messages will mostly show
+a native bubble instead — one that looks nothing like the page and
+cannot be positioned. It also makes the handler's own branches
+unreachable, so they go untested and then wrong. `almanac`'s two forms
+both opt out and own their messages.
+
 ### Grep every route for unrendered markup
 
 Fetch each page and search the HTML for the signatures of markup that did
@@ -456,6 +500,15 @@ printed the same kind of string raw, because the helper that did the work
 was local to the first page. Nothing errored — the second page just had
 stray punctuation in it, which reads as a typo in the content rather than
 a missing component.
+
+**Strip `<script>` as well as `<pre>`, and strip the tags too.** Next's
+RSC flight payload is embedded in a script tag on every page and is full
+of the literal string `"$undefined"`, so an undefined-check over raw HTML
+flags all 43 routes and tells you nothing. Same class of mistake as
+searching for the symptom instead of the bug: a check that fires
+everywhere has not found anything. Reduce each page to its visible text
+first — drop `<pre>`, drop `<script>`, then drop the remaining tags —
+and search that.
 
 ### Measure the layout; do not read it off the screenshot
 
@@ -494,6 +547,19 @@ The tell for this class of mistake is a fix that keeps growing — a
 timer, then an observer, then a fallback — while the symptom never
 moves.
 
+**The same trap has a green-tinted twin: a check that can pass on an
+empty document.** Measuring all fourteen `almanac` routes at 375px by
+fetching each one and `document.write`-ing it into an off-screen iframe
+reported no overflow anywhere, in about a second, and was worthless —
+`document.write` never produced a real document, and an empty page never
+overflows. Setting `iframe.src` instead loads it properly.
+
+Whenever a layout check comes back clean, make it prove the page was
+there: assert something that could only be true if the CSS applied — a
+computed background, a known colour, an element that only exists in the
+real markup. `headerBg: "none"` is what the false pass looked like;
+`rgb(19, 27, 43)` is what the real one looked like.
+
 ### If the environment cannot drive it, extract the part that can be wrong
 
 The pane renders with the document hidden, which means `scroll` events,
@@ -513,6 +579,13 @@ is going to be wrong.
 The same reasoning applies to any logic sitting behind an input you cannot
 generate: parsing, ordering, formatting, threshold decisions. Pull it out
 into something you can call directly.
+
+Node strips types out of a `.ts` file on its own, so these scripts import
+the *real* module rather than a copy that drifts — with an explicit `.ts`
+in the specifier, which node needs and TypeScript accepts. On a Next
+template add `"type": "module"` to `package.json` as well, or every run
+prints a `MODULE_TYPELESS_PACKAGE_JSON` warning above the results; the
+Vite scaffold sets it already. It does not affect the build.
 
 ---
 
