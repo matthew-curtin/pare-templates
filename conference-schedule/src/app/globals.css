@@ -1,0 +1,396 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: a conference is a grid of time, and the only real question
+   is what you are going to miss. So the schedule is not a list of cards
+   with times written on them — it is an actual grid, drawn to scale,
+   where a ninety-minute session is literally three times the height of
+   a thirty-minute one and two things you want are literally side by
+   side. The design's whole job is to make collision visible.
+
+   The device: a full-bleed wallchart. A sticky hour rail down the left,
+   sticky room headers across the top, and no page column anywhere —
+   the grid runs to both edges of the window the way a timetable runs to
+   both edges of the paper it is printed on.
+
+   Not done: soft shadows and rounded corners, which is how almanac
+   separates one thing from another. Here every boundary is a drawn
+   line, every corner is square, and nothing floats. A wallchart is
+   printed, not stacked — and a grid of a hundred blocks with a shadow
+   on each is mud.
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     Bone rather than white. The grid is mostly empty space, and a pure
+     white ground behind a hundred white blocks gives you no grid at
+     all — the canvas has to sit far enough back that an empty slot
+     reads as empty rather than as an unlabelled session. */
+  --color-canvas: oklch(0.949 0.014 96);
+  --color-surface: oklch(0.995 0.004 96);
+  --color-sunk: oklch(0.896 0.016 96);
+  --color-ink-inverse: oklch(0.968 0.012 96);
+
+  /* ── Ink ───────────────────────────────────────────────────────────
+     Warm near-black. Pure #000 on a bone ground picks up a blue cast.
+
+     The two lighter inks are darker than they look like they need to
+     be, and that is the checker's doing rather than taste: for a
+     neutral, OKLCH lightness cubes to relative luminance, so the pale
+     grey that reads as "quiet" on a bone ground is nowhere near 4.5:1.
+     `sunk` sets the bar, since it is the darkest thing text lands on. */
+  --color-ink: oklch(0.196 0.012 92);
+  --color-ink-muted: oklch(0.420 0.012 92);
+  --color-ink-subtle: oklch(0.488 0.012 92);
+
+  /* ── Lines ─────────────────────────────────────────────────────────
+     Two greys doing two jobs, per §4b. The hour rules across the grid
+     are decoration — they identify no control, so they owe visibility
+     (ΔE 3) rather than 3:1, and holding them to 3:1 would produce a
+     page of heavy bars with the schedule lost behind it. A field or
+     button boundary IS the control and owes the full ratio. */
+  --color-line: oklch(0.862 0.014 96);
+  --color-line-strong: oklch(0.618 0.014 96);
+
+  /* ── The four rooms ────────────────────────────────────────────────
+     Distinct in LIGHTNESS as well as hue, deliberately. Hue rotation
+     alone gives four colours that collapse to two under deuteranopia;
+     lightness discrimination survives every dichromacy, so spacing the
+     L values is what actually makes four tracks tellable apart. The
+     checker measures it rather than trusting the reasoning.
+
+     Each room is one token. The tint behind a session block is derived
+     from it with color-mix, so re-hueing a room is a one-line edit and
+     the block, the spine and the dot all follow.
+
+     The CEILING on all four is set by the spine: a 4px bar identifying
+     a room is colour carrying meaning on its own, so it owes 3:1
+     against the near-white block it edges — which caps every room at
+     roughly L 0.62, and is why the amber here is an ochre rather than a
+     yellow. The FLOOR is the spacing. Between them there is about 0.22
+     of lightness for four rooms, so they sit at 0.09 intervals with
+     nothing to spare.
+
+     Which hue lands on which room is decided by the CHECKER rather than
+     by the theme. Red and ochre are the pair that collapses under
+     protanopia — measured at ΔE 7 when they sat next to each other on
+     the ladder — so they take the two ENDS of it and the two hues that
+     survive dichromacy sit between them. The rooms then happen to read
+     correctly anyway: the Foundry is iron-red, the Drawing Office is
+     blueprint blue, the Yard is outdoor teal, the Boiler House ochre.
+     If a future edit re-hues one, run the checker before trusting it. */
+  --color-room-a: oklch(0.330 0.164 28); /* Foundry */
+  --color-room-b: oklch(0.600 0.112 88); /* Boiler House */
+  --color-room-c: oklch(0.420 0.148 264); /* Drawing Office */
+  --color-room-d: oklch(0.510 0.104 178); /* Yard */
+
+  --color-room-a-soft: color-mix(in oklch, var(--color-room-a) 11%, var(--color-surface));
+  --color-room-b-soft: color-mix(in oklch, var(--color-room-b) 11%, var(--color-surface));
+  --color-room-c-soft: color-mix(in oklch, var(--color-room-c) 13%, var(--color-surface));
+  --color-room-d-soft: color-mix(in oklch, var(--color-room-d) 12%, var(--color-surface));
+
+  /* ── Signal ────────────────────────────────────────────────────────
+     One acid green, and it means exactly one thing: this is happening
+     now. It is also the primary action colour — a conference site asks
+     you to commit to a time, so the button and the clock share a hue on
+     purpose. Ink sits on it; it is far too light to carry white. */
+  --color-live: oklch(0.842 0.196 122);
+  /* The rule and the dot, which carry "now" with no words beside them,
+     so 1.4.11 applies and this is the darkest of the three greens. It
+     landed at exactly 3.00 on the first pass, which is a pass that one
+     rounding would turn into a failure — hence 0.59 rather than 0.62. */
+  --color-live-deep: oklch(0.590 0.152 122);
+  --color-on-live: oklch(0.196 0.012 92);
+
+  /* Conflict. The other thing the grid exists to tell you. */
+  --color-clash: oklch(0.532 0.208 26);
+  --color-clash-soft: color-mix(in oklch, var(--color-clash) 10%, var(--color-surface));
+
+  /* ── Type scale ────────────────────────────────────────────────────
+     Fluid, so the signage is a curve rather than four breakpoints.
+     §4c: pick a position — this one is genuinely large. */
+  --text-signage: clamp(3rem, 1rem + 9.5vw, 9.5rem);
+  --text-display: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
+  --text-lede: clamp(1.0625rem, 0.98rem + 0.5vw, 1.375rem);
+
+  /* ── Motion ────────────────────────────────────────────────────────
+     Tokens, so a duration is a decision rather than whatever Tailwind
+     defaults to. Fast and hard-edged, matching the drawn-line look —
+     nothing here eases lazily into place. */
+  --dur-fast: 110ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.24, 1);
+  --ease-out: cubic-bezier(0.33, 1, 0.68, 1);
+
+  /* ── Grid geometry ─────────────────────────────────────────────────
+     One number decides the vertical scale of the whole wallchart. The
+     session blocks compute their height from start and end minutes
+     against it, so making the day taller is editing this line. */
+  --rail-width: 4rem;
+  --hour-height: 8.5rem;
+}
+
+/* Square by decision, not omission — see the art direction above. */
+@theme {
+  --radius-none: 0px;
+}
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────
+   One family, four widths. Archivo carries a real `wdth` axis, and this
+   template uses it instead of a second typeface: signage is set wide
+   because a wallchart headline is a painted sign, and the small labels
+   are set narrow so they fit a 150px column without shrinking to
+   nothing. The axis is doing hierarchy work that a font pairing would
+   otherwise do, which is the whole argument for a variable font. */
+.sign {
+  font-variation-settings: "wdth" 118;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 0.88;
+  text-wrap: balance;
+}
+
+.wide {
+  font-variation-settings: "wdth" 112;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.narrow {
+  font-variation-settings: "wdth" 84;
+  letter-spacing: 0.005em;
+}
+
+/* Prose gets `pretty` rather than `balance`: balance re-flows the whole
+   block to even the lines, which on a paragraph is worse than the
+   orphan it fixes. `pretty` only takes the last line's widow. */
+.prose-block {
+  text-wrap: pretty;
+  max-width: 62ch;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────
+   Ink, not the accent. The accent means "now", and a focus ring in the
+   same colour would put a false clock on whatever you tabbed to. */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* ── The grid ─────────────────────────────────────────────────────────
+   A session block sizes itself from two custom properties the server
+   sets per block: how many minutes from the top of the day it starts,
+   and how many minutes it runs. Everything else is arithmetic against
+   --hour-height, so the grid stays honest — a 90-minute session cannot
+   accidentally be drawn the same height as a 30-minute one. */
+.slot {
+  position: absolute;
+  inset-inline: 0;
+  top: calc(var(--from) / 60 * var(--hour-height));
+  height: calc(var(--mins) / 60 * var(--hour-height));
+}
+
+/* Container queries, and a real job for them: a session block's width
+   is set by how many rooms are showing, and its height by how long the
+   session runs. Neither is a viewport question — filtering to two rooms
+   makes every block wider at the same viewport width. So the block asks
+   its own box, not the window. */
+.block-shell {
+  container-type: size;
+  container-name: block;
+}
+
+.block-detail,
+.block-wide-only {
+  display: none;
+}
+
+/* Tall enough for a name under the title. A thirty-minute block is 68px
+   and is not. */
+@container block (min-height: 5.5rem) {
+  .block-detail {
+    display: block;
+  }
+}
+
+/* Wide enough for the kind-and-duration caption. With all four rooms
+   showing, a column is about 150px and this would be the third thing
+   competing for it; filter to two and there is room. */
+@container block (min-width: 13rem) and (min-height: 7rem) {
+  .block-wide-only {
+    display: block;
+  }
+}
+
+/* ── :has() ───────────────────────────────────────────────────────────
+   Two states that are genuinely properties of a subtree rather than of
+   an element, which is exactly the case :has() exists for and which no
+   amount of prop-threading expresses well.
+
+   1. A plan day that contains a clash marks its own heading, so the
+      warning is on the day rather than only on the two sessions.
+   2. A room column that has nothing left after filtering dims itself,
+      so an empty column reads as "nothing here" instead of as a gap. */
+.plan-day:has([data-clash="true"]) .plan-day-heading {
+  color: var(--color-clash);
+}
+
+.plan-day:has([data-clash="true"]) .plan-day-rule {
+  background: var(--color-clash);
+}
+
+.room-column:not(:has(.slot)) .room-empty {
+  opacity: 1;
+}
+
+.room-empty {
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────
+   Every animation in this file is attached to something changing
+   meaning. There are no entrance animations on sections.
+
+   1. Switching day is a View Transition: the hour rail and the room
+      headers keep their identity while the blocks under them cross-fade,
+      so it reads as the same wallchart turning to the next page rather
+      than as a new page arriving. Implemented with
+      document.startViewTransition in schedule-controls.tsx.
+   2. Adding a session to your plan animates from nothing via
+      @starting-style, because a row appearing instantly in a list you
+      are not looking at is a change you miss.
+   3. The now-marker's dot pulses on the live day only. */
+
+::view-transition-old(grid),
+::view-transition-new(grid) {
+  animation-duration: var(--dur-base);
+  animation-timing-function: var(--ease-out);
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+.plan-row {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-snap);
+}
+
+@starting-style {
+  .plan-row {
+    opacity: 0;
+    transform: translateY(-0.5rem);
+  }
+}
+
+/* A registered custom property, so the pulse interpolates. An unregistered
+   one is a string as far as the animation engine is concerned and would
+   jump between keyframes instead of easing. */
+@property --pulse-size {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.now-dot {
+  box-shadow: 0 0 0 var(--pulse-size) color-mix(in oklch, var(--color-live-deep) 40%, transparent);
+  animation: now-pulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes now-pulse {
+  from {
+    --pulse-size: 0px;
+  }
+  to {
+    --pulse-size: 14px;
+  }
+}
+
+/* Scroll-driven: the rail fills as you move down the page, so a
+   nine-hour day has some sense of position on an axis that otherwise
+   never moves. No scroll listener, no rAF, and it runs off the main
+   thread — which is the reason to prefer it, not a bonus.
+
+   `root`, not `nearest`. The grid sits inside an `overflow-x-auto`
+   wrapper so it can scroll sideways on a phone, and `nearest` binds to
+   that wrapper — a scroller whose BLOCK-axis progress is permanently
+   zero. The animation then sits forever on its first keyframe, which is
+   `scale: 1 0`, which is invisible. It looks precisely like the feature
+   never having been built, and nothing anywhere reports an error. */
+.rail-progress {
+  transform-origin: top;
+  scale: 1 0;
+  animation: rail-fill linear both;
+  animation-timeline: scroll(root block);
+}
+
+@keyframes rail-fill {
+  to {
+    scale: 1 1;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────
+   Degrades to the FINAL state, never a half-applied one: the rail shows
+   full, the plan row shows at rest, the pulse stops at rest. §4c. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .rail-progress {
+    animation: none;
+    scale: 1 1;
+  }
+
+  .now-dot {
+    animation: none;
+    --pulse-size: 6px;
+  }
+
+  .plan-row {
+    opacity: 1;
+    transform: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

@@ -35,9 +35,37 @@ Each template is self-contained — its own dependencies, its own README.
 | [docs-site](docs-site) | Documentation | Next.js | Light | ✅ Ready |
 | [support-inbox](support-inbox) | Application | Vite | Light | ✅ Ready |
 | [almanac](almanac) | Listings | Next.js | Light | ✅ Ready |
+| [conference-schedule](conference-schedule) | Events | Next.js | Light | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
+
+### Page architecture register
+
+No two templates may share a page architecture, so each one claims an
+entry here and a new template has to take an unused one. The reason is
+in [CONVENTIONS.md §4c](CONVENTIONS.md): architecture is what you see
+before you read a word, and it is the part of a design that can be
+checked by looking rather than argued about.
+
+The first six were all the same thing, which is what prompted the rule.
+
+| Template | Architecture |
+| --- | --- |
+| saas-product-site | Sticky bar over a centred column ⚠️ |
+| mobile-app-landing | Sticky bar over a centred column ⚠️ |
+| editorial-magazine | Sticky bar over a centred column ⚠️ |
+| coffee-storefront | Sticky bar over a centred column ⚠️ |
+| restaurant-booking | Sticky bar over a centred column ⚠️ |
+| almanac | Sticky bar, centred column, filter aside ⚠️ |
+| docs-site | Fixed nav rail, reading column, contents rail |
+| analytics-dashboard | App shell — top nav over a tiled grid |
+| project-tracker | App shell — horizontally scrolled board |
+| support-inbox | App shell — list beside detail |
+| conference-schedule | Full-bleed time grid, sticky axes, no page column |
+
+⚠️ marks the six that predate the rule and share one architecture
+between them. They are grandfathered, not endorsed.
 
 ## Why two stacks
 

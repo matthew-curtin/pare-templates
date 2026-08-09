@@ -246,6 +246,138 @@ a tool the reader does not have — and run the checker before writing
 the numbers into a comment, not after. It is very easy to write a
 confident "last run" line describing a result you have not got yet.
 
+---
+
+## 4c. Design with a position, not a default
+
+Everything above this line is about being *correct*. This section is
+about being *good*, which is a different problem and needs its own
+rules, because nothing in a build log ever fails for want of it.
+
+The first ten templates were measured before this section was written.
+Across 314 source files: no `@keyframes`, no `animate-`, no
+`animation-timeline`, no view transitions, no `:has()`, no
+`text-wrap`, no `color-mix()`, no `oklch()`, no variable-font axes.
+What there was: `transition-` in 84 files and `duration-` in five — so
+the entire motion design of ten templates was Tailwind's default 150ms
+colour fade on hover. Six of the seven public-facing ones were a sticky
+bar over a centred `max-w-6xl` column. Two variables were doing all the
+work of distinguishing them: palette and font.
+
+That is a skin, not a design. Fixing it is not a matter of polish,
+because polish is what produces it.
+
+### Modern and forward-looking are different relationships to time
+
+**Modern** means adopting the current consensus answer. **Forward-looking**
+means taking a position on a question the consensus has not settled. You
+cannot reach the second by refining the first — `almanac` was restyled
+from a 2005 consensus to a 2022 consensus and the result was better and
+still consensus.
+
+So the operational form of the rule is: **ship what will be ordinary,
+before it is ordinary.** Unlike taste, that is checkable.
+
+### Ambition is spent in the DOM, never in a canvas
+
+The award galleries are dominated by WebGL, and we do not follow them
+there. §5 already says a screenshot is a dead end because Pare cannot
+click into it — **a `<canvas>` is a screenshot that moves.** There is no
+element to select, no line to edit, no attribute to change. A WebGL hero
+would be the least editable thing in the repo and would break the one
+demo the app exists to perform.
+
+This is not a compromise, because the actual frontier is in CSS.
+Scroll-driven animation, view transitions, container queries, `:has()`,
+OKLCH and `color-mix()`, `text-wrap`, variable-font axes, `@property` —
+all shipped, all still rare in production, all weightless, all degrading
+to nothing on an old browser, and all running off the main thread, so
+they cannot jank the way a scroll listener does. Every one of them is
+also a plain declaration in a stylesheet, which is to say editable.
+
+### Write the art direction down
+
+Every template opens its `globals.css` with three sentences:
+
+- **The one idea**, stated so it could be argued with. Not a mood — a
+  claim about the subject. "A conference is a grid of time, and the only
+  real question is what you will miss."
+- **The structural device only this template has.**
+- **The one thing deliberately not done.**
+
+The test, and it is a hard one: **if swapping the palette and the
+typeface would turn this template into a different one in the repo, it
+does not have art direction yet.** That was true of all ten.
+
+### No two templates share a page architecture
+
+`README.md` carries the register of which architecture each template
+uses, and a new template must claim one that is unused. A sticky bar
+over a centred column is spent — six times over.
+
+This is the highest-leverage rule in the section, because architecture
+is what a person sees before reading a single word, and it is the one
+aspect of design that can be checked by looking rather than judged.
+
+### Motion is part of the design, and it means something
+
+Every template owes at least one piece of **directed motion that teaches
+something**: a filter narrowing a list, a card opening into its page, a
+step advancing, a value changing. A state change that carries
+information should not be instant.
+
+- **CSS-first.** `animation-timeline`, `@starting-style`, View
+  Transitions. No animation library unless the template is about
+  animation. This is what keeps motion editable and unjankable.
+- **Nothing moves that does not communicate.** Blanket entrance
+  animations on every section are the 2018 mistake and already read as
+  dated. Decoration that moves is worse than decoration that does not.
+- **`prefers-reduced-motion` is mandatory**, and must degrade to the
+  *final* state, never a half-applied one.
+- **Motion gets tokens.** `--dur-*` and `--ease-*` in `@theme`, so a
+  duration is a design decision like a colour instead of whatever
+  Tailwind defaults to.
+
+### Spend the modern-CSS budget
+
+Each template must genuinely use at least **four** of: fluid type via
+`clamp()`, `text-wrap: balance` / `pretty`, container queries, `:has()`,
+OKLCH with `color-mix()`, a variable-font axis, view transitions,
+scroll-driven animation, `@property`.
+
+Each has to be doing a real job. The floor exists to force the
+exploration, not to collect features — a container query that could have
+been a media query has not earned anything.
+
+### Typography takes a position
+
+The old ceiling was `text-7xl` and most heroes sat at `4xl`, which is
+the one size that reads as nobody having decided. Go genuinely large and
+fluid, or go deliberately small, but choose — and set it with `clamp()`
+so it is a curve rather than four breakpoints.
+
+Retire the reflexive `tracking-`: it appeared 157 times across the first
+ten templates, and letterspaced small caps as a label is the most dated
+device we owned. `almanac` had it removed by hand after the fact.
+
+### This adds an axis; it does not trade the other one away
+
+None of the above licenses a beautiful template with invented data that
+does not hold together, a palette nobody validated, or a list that does
+not obey its own sort. The content discipline is what makes this repo
+unusual and it is not currency to be spent on looks. A template that
+fails §7b is not rescued by §4c.
+
+### Commit the validator
+
+`scripts/check-craft.mjs` at the repo root checks what can be checked —
+the modern-CSS floor, the presence of real motion, reduced-motion
+coverage, an architecture not claimed twice, and an art-direction
+statement that exists. Same reasoning as §4b: a rule nobody can
+re-measure is a paragraph, not a property.
+
+---
+
 ## 5. Build interface, not screenshots
 
 Product mockups, charts, dashboards and logos are drawn in **HTML, CSS

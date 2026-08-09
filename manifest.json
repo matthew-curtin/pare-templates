@@ -261,6 +261,36 @@
         "forms"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "conference-schedule",
+      "path": "conference-schedule",
+      "name": "Conference schedule",
+      "category": "Events",
+      "description": "A three-day conference wallchart drawn to scale — four rooms, live sessions against a pinned clock, link-based filters, a personal plan that calls out double-bookings, and a session page that says what going to it costs you.",
+      "framework": "next",
+      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/schedule",
+        "/sessions/[slug]",
+        "/speakers",
+        "/speakers/[slug]",
+        "/plan",
+        "/venue",
+        "/tickets"
+      ],
+      "tags": [
+        "events",
+        "conference",
+        "schedule",
+        "timetable",
+        "agenda",
+        "filters",
+        "forms"
+      ],
+      "thumbnail": null
     }
   ]
 }
