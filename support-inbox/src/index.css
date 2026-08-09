@@ -1,0 +1,158 @@
+@import "tailwindcss";
+
+/*
+ * Every colour, font and radius in the app resolves here. Change a
+ * token and the whole app follows — never write a hex value inside a
+ * component.
+ *
+ * The mood is a warm, papery office rather than a console: a greige
+ * page, white panels, and one mulberry signal.
+ *
+ * Mulberry is a working decision, not a taste one. A support inbox is
+ * mostly a wall of state — overdue, waiting, resolved, snoozed — and
+ * those states need the warm half of the wheel for red and amber and
+ * the cool half for blue and green. Sitting the brand at magenta
+ * leaves both alone. The nearest pair is the accent against the
+ * overdue red, which is the one thing here that had to be measured
+ * rather than judged; the validation is recorded at the bottom of this
+ * file.
+ */
+@theme {
+  /* Surfaces. The page is a shade darker than the panels on it, so a
+     list reads as a sheet rather than as the page itself. */
+  --color-canvas: #f6f4f5;
+  --color-surface: #ffffff;
+  --color-sunk: #efeaed;
+  --color-hover: #f7f3f5;
+
+  /* The one signal colour. */
+  --color-accent: #a51e5d;
+  --color-accent-hover: #85164a;
+  --color-accent-soft: #fbe9f1;
+  --color-accent-ring: #e8bfd2;
+  --color-on-accent: #ffffff;
+
+  /* Ink. Near-black carrying a trace of plum, so text on the greige
+     page looks like ink on paper rather than pure black on grey. */
+  --color-ink: #1a1418;
+  --color-ink-muted: #5e555c;
+  --color-ink-subtle: #736a71;
+  --color-ink-inverse: #f8f6f7;
+
+  /* Lines */
+  --color-line: #e6e0e4;
+  --color-line-strong: #cfc7cd;
+
+  /*
+   * Conversation status. Four unordered states, so they get four
+   * unrelated hues rather than a ramp — nothing about "waiting" is
+   * more or less than "snoozed".
+   *
+   * These are DOT colours, not text colours. A status pill is its soft
+   * tint, a solid dot in the hue, and the state's name in ordinary
+   * ink. That split is a finding rather than a preference: the amber
+   * that separates from red under deuteranopia is far too light to
+   * read as text, and the amber that reads as text is the same colour
+   * as red to about one man in twelve. Letting the dot carry the hue
+   * and the ink carry the words satisfies both, and it is why the
+   * check below asks for 3:1 on these and 4.5:1 on the words.
+   */
+  --color-open: #1d63c9;
+  --color-open-soft: #e9f0fc;
+  --color-waiting: #c07f00;
+  --color-waiting-soft: #fdf6e9;
+  --color-snoozed: #6b7280;
+  --color-snoozed-soft: #eff1f4;
+  --color-resolved: #0f9d63;
+  --color-resolved-soft: #e3f6ed;
+
+  /*
+   * Answering time against the promise made to that customer's plan.
+   *
+   * Only ONE step of this is a colour. Time remaining is ordinary
+   * muted text, because a conversation that is merely ticking is the
+   * normal state and colouring it would put a warning on most of the
+   * list — the failure CONVENTIONS §7b describes, where a treatment
+   * that fires on every row stops reading as a warning at all. Past
+   * the promise is red, and it is the one place in the app where a
+   * colour appears with nothing beside it: a rule down the left edge
+   * of the row. Nothing else draws an edge rule, so that red competes
+   * with an empty margin rather than with the pills.
+   */
+  --color-overdue: #cd281b;
+  --color-overdue-soft: #fdeeed;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, sans-serif;
+  /* Ticket references, counts and clocks are read as columns of
+     figures, so they get a real mono face rather than the UI face. */
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas,
+    monospace;
+}
+
+/*
+ * Figures that sit in columns — clocks, counts, references — must not
+ * shift width as they change, or a list that updates jitters.
+ */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * One focus style for the whole app. The inbox is genuinely operable
+ * from the keyboard, so this has to be visible on every surface rather
+ * than a hairline that disappears on white.
+ */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/*
+ * The conversation list and the thread both scroll inside the layout
+ * rather than moving the page. A default macOS scrollbar sits on top
+ * of the content there and looks like a defect, so both get a slim one
+ * that matches the lines around it.
+ */
+.scroll-thin {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-line-strong) transparent;
+}
+
+/*
+ * Long customer messages arrive as pasted logs and unbroken URLs.
+ * Without this a single 80-character token pushes the whole thread
+ * column wider than its parent, which is the horizontal-overflow bug
+ * from CONVENTIONS §8 arriving through the content rather than the
+ * layout.
+ */
+.prose-wrap {
+  overflow-wrap: anywhere;
+}
+
+/*
+ * Colour validation — CONVENTIONS §4b.
+ *
+ * Run from the template root:
+ *   node scripts/check-colours.mjs
+ *
+ * It reads these tokens back out of this file, simulates protanopia,
+ * deuteranopia and tritanopia over every pair that can be on screen at
+ * once, and reports the CIEDE2000 distance between them — then checks
+ * every colour for contrast against the surface it is actually drawn
+ * on, at 3:1 where it is a shape and 4.5:1 where it is words.
+ *
+ * It is committed rather than described because a palette nobody can
+ * re-measure is a claim rather than a property. It also earns its keep:
+ * the first four values written here failed it, including an amber and
+ * a red that are 2.8 apart under deuteranopia — the same colour, to
+ * roughly one man in twelve, on a page whose entire job is telling you
+ * which conversations need you.
+ *
+ * Last run — all 15 pairs at or above 8, all contrast at or above its
+ * threshold. Tightest three, which are what to watch if these values
+ * are ever retuned:
+ *   waiting vs overdue          10.4 (deuteranopia)
+ *   waiting dot on its own tint  3.11:1
+ *   ink-subtle on canvas         4.76:1
+ */

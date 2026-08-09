@@ -33,6 +33,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [project-tracker](project-tracker) | Application | Vite | Dark | ✅ Ready |
 | [restaurant-booking](restaurant-booking) | Booking | Next.js | Dark | ✅ Ready |
 | [docs-site](docs-site) | Documentation | Next.js | Light | ✅ Ready |
+| [support-inbox](support-inbox) | Application | Vite | Light | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.

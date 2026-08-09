@@ -199,6 +199,42 @@ The rules that have earned their place so far:
 `analytics-dashboard` is the worked example; its `src/index.css`
 records the exact validation commands and their results.
 
+### The bar depends on whether the colour is carrying the meaning alone
+
+A single threshold for every colour is either too strict for the
+labelled ones or too slack for the unlabelled one. Price what the
+colour is being asked to do:
+
+- **Alone** — a bar, a rule, a dot with no words: it must be
+  unmistakable, and 3:1 against both surfaces it touches (WCAG 1.4.11).
+- **Beside its own name**: colour is the second cue, and the words are
+  doing the work. It still needs separation from its neighbours, but it
+  does not also have to be legible as text.
+
+`support-inbox` is the worked example, and the split fell out of the
+check rather than out of taste. Its four status pills are a soft tint,
+a solid dot in the state's hue, and the name in ordinary ink — because
+the amber that separates from red under deuteranopia is far too light
+to read as text, and the amber that reads as text is **2.8** from red,
+which is the same colour to about one man in twelve. Letting the dot
+carry the hue and the ink carry the words satisfies both constraints at
+once. Four palettes failed before that one passed.
+
+The same template also keeps exactly one thing coloured for lateness.
+Time merely running is the normal state of most of an inbox, so it is
+plain muted text; only past the deadline is red. A treatment on every
+row is not a warning — §7b again, arriving from the palette side.
+
+### Commit the validator, do not just describe it
+
+A palette nobody can re-measure is a claim rather than a property.
+`support-inbox/scripts/check-colours.mjs` reads the tokens back out of
+`src/index.css` and fails when they drift, so the reasoning in the
+comments stays true to the values underneath it. Prefer that to citing
+a tool the reader does not have — and run the checker before writing
+the numbers into a comment, not after. It is very easy to write a
+confident "last run" line describing a result you have not got yet.
+
 ## 5. Build interface, not screenshots
 
 Product mockups, charts, dashboards and logos are drawn in **HTML, CSS
@@ -316,6 +352,31 @@ relined — because otherwise no date in the booking calendar is ever
 fully unavailable, and its "nothing free" state would never be seen by
 anyone, including whoever wrote it.
 
+### Pin the clock, and the timezone with it
+
+Any template whose content is a story in time needs a fixed "now" in
+`site.ts` that everything renders against. Without one, a template read
+six months after it was written shows an inbox where everything
+breached days ago, or a booking calendar with no future in it — a
+different design from the one anyone intended.
+
+Pinning the instant is only half of it. `support-inbox` pins the
+display **timezone** too, because its conversations are a fixed story:
+a firmware update lands overnight, someone writes in first thing, a
+colleague adds a note mid-morning. Rendered in the reader's timezone
+that story survives in London and falls apart everywhere else — the
+same message reads 02:00 in California and 18:00 in Tokyo, so the
+working day the content describes never happens. A real product wants
+the opposite, which is worth saying in a comment next to the constant.
+
+Two riders. Assert it with the machine's `TZ` set to something else
+(`TZ=Asia/Tokyo node scripts/check-sla.mjs`), or the test agrees with
+the bug on your laptop. And **"today" is a calendar question, not an
+elapsed one**: snoozing until tomorrow morning at 14:20 lands 19 hours
+out, and a `delta < 24h` test called that "today at 09:20" — a sentence
+about a moment five hours in the past. Compare day keys in the display
+timezone.
+
 ### Derived data has to preserve the orderings a user can compare
 
 When the data is computed rather than listed, the relationships between
@@ -408,6 +469,30 @@ does not exist and introduce one that does.
 The reverse also happens: a click can look like it did nothing because
 React had not committed yet. Read state in a *separate* call from the one
 that triggered it, or await a tick first.
+
+### Check the measuring context before believing the measurement
+
+The rule above says to trust the DOM over the screenshot. The trap on
+the other side is trusting a number taken from a context that is not
+laid out at all — and that number arrives looking perfectly precise.
+
+A thread in `support-inbox` would not open scrolled to its newest
+message, and the effect reported the element as **26,458px tall** with
+nothing overflowing it: exactly what a stylesheet arriving late would
+look like. A confident explanation of Vite's dev-mode CSS injection got
+written into a code comment on the strength of that one number. The
+real cause was that the pane's `window.innerWidth` was **0**, so no
+`lg:` rule matched and the whole document laid out unconstrained.
+Reloading into a real viewport showed the original two-line effect had
+been right the entire time.
+
+So before drawing a conclusion from a layout number, ask the document
+whether it is in a fit state to answer — `innerWidth`, `innerHeight`,
+and whether a breakpoint you expect is actually applying. A zero there
+means throw the measurement away, not that you have found something.
+The tell for this class of mistake is a fix that keeps growing — a
+timer, then an observer, then a fallback — while the symptom never
+moves.
 
 ### If the environment cannot drive it, extract the part that can be wrong
 

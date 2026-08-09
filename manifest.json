@@ -204,6 +204,34 @@
         "search"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "support-inbox",
+      "path": "support-inbox",
+      "name": "Customer support inbox",
+      "category": "Application",
+      "description": "A shared helpdesk — a conversation list beside the thread, with replies, internal notes, saved replies, assigning, snoozing and bulk actions. Each plan carries a promised reply time, and exactly one conversation is late.",
+      "framework": "vite",
+      "stack": ["Vite 8", "React 19", "TypeScript", "Tailwind 4"],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/c/[id]",
+        "/contacts",
+        "/contacts/[id]",
+        "/macros",
+        "/settings"
+      ],
+      "tags": [
+        "application",
+        "inbox",
+        "support",
+        "helpdesk",
+        "crm",
+        "messaging",
+        "admin"
+      ],
+      "thumbnail": null
     }
   ]
 }

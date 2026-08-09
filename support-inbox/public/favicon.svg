@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#a51e5d" />
+  <!-- Two speech bubbles, overlapping — a conversation rather than a
+       message. The one behind is the customer's; the one in front is
+       the reply, which is the whole job. -->
+  <path
+    d="M7 8.5h13a2.5 2.5 0 0 1 2.5 2.5v6a2.5 2.5 0 0 1-2.5 2.5h-6.7L10 23v-3.5H7A2.5 2.5 0 0 1 4.5 17v-6A2.5 2.5 0 0 1 7 8.5Z"
+    fill="#ffffff"
+    fill-opacity="0.45"
+  />
+  <path
+    d="M15 13h10a2.5 2.5 0 0 1 2.5 2.5v5A2.5 2.5 0 0 1 25 23h-2.6v3.2L19 23h-4a2.5 2.5 0 0 1-2.5-2.5v-5A2.5 2.5 0 0 1 15 13Z"
+    fill="#ffffff"
+  />
+</svg>
