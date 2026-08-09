@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Almanac">
-  <rect width="32" height="32" rx="6" fill="#131b2b" />
-  <rect x="6" y="6.5" width="20" height="3" rx="1.5" fill="#7c8494" />
-  <g fill="#7c8494">
-    <rect x="6" y="13.5" width="5.5" height="5.5" rx="1" />
-    <rect x="13.25" y="13.5" width="5.5" height="5.5" rx="1" />
-    <rect x="6" y="21" width="5.5" height="5.5" rx="1" />
-    <rect x="13.25" y="21" width="5.5" height="5.5" rx="1" />
-    <rect x="20.5" y="21" width="5.5" height="5.5" rx="1" />
+  <rect width="32" height="32" rx="8" fill="#18181b" />
+  <rect x="7" y="7.5" width="18" height="2.5" rx="1.25" fill="#ffffff" fill-opacity="0.4" />
+  <g fill="#ffffff" fill-opacity="0.4">
+    <rect x="7" y="14" width="5" height="5" rx="1.5" />
+    <rect x="13.5" y="14" width="5" height="5" rx="1.5" />
+    <rect x="7" y="21" width="5" height="5" rx="1.5" />
+    <rect x="13.5" y="21" width="5" height="5" rx="1.5" />
+    <rect x="20" y="21" width="5" height="5" rx="1.5" />
   </g>
-  <rect x="20.5" y="13.5" width="5.5" height="5.5" rx="1" fill="#ffffff" />
+  <rect x="20" y="14" width="5" height="5" rx="1.5" fill="#ffffff" />
 </svg>

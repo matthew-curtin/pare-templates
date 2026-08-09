@@ -13,14 +13,14 @@ export type Sector =
   | "Culture & heritage"
   | "Housing"
   | "Environment"
-  | "Charity";
+  | "Nonprofit";
 
 export type Contract =
-  | "Permanent"
-  | "Fixed term"
+  | "Regular"
+  | "Term"
   | "Interim"
-  | "Casual"
-  | "Voluntary";
+  | "On call"
+  | "Volunteer";
 
 /** Where the work happens, in the sense a candidate cares about. */
 export type Pattern = "On site" | "Hybrid" | "Remote";
@@ -29,12 +29,12 @@ export type Pattern = "On site" | "Hybrid" | "Remote";
  * How much of a week the job is.
  *
  * `hoursPerWeek` is what makes a part-time salary comparable: public
- * sector vacancies advertise the full-time band and add "pro rata",
- * so the number on the page is not the number anyone is paid.
+ * sector postings quote the full-time range and add "prorated", so the
+ * number in the posting is not the number anyone is paid.
  *
- * `Casual` deliberately carries no hours. A role that is "as required"
- * has no annual figure, and inventing one to make it sortable would be
- * the board lying about the only thing it exists to tell you.
+ * `Casual` deliberately carries no hours. A job that is "as needed" has
+ * no annual figure, and inventing one to make it sortable would be the
+ * board lying about the only thing it exists to tell you.
  */
 export type Hours =
   | { kind: "Full time" }
@@ -59,15 +59,16 @@ export type Pay =
   | { kind: "unstated"; note: string };
 
 export type EmployerKind =
-  | "Council"
-  | "NHS trust"
+  | "County government"
+  | "Health system"
   | "University"
-  | "College"
+  | "Community college"
   | "Museum"
-  | "Housing association"
-  | "Charity"
-  | "Combined authority"
-  | "Academy trust";
+  | "Housing authority"
+  | "Nonprofit"
+  | "Regional authority"
+  | "School district"
+  | "Land trust";
 
 export interface Employer {
   id: string;

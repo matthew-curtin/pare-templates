@@ -1,16 +1,16 @@
 /**
  * The small parts.
  *
- * A `Chip` is a fact — permanent, hybrid, 22.2 hours a week. Facts are
- * never coloured: there are five contract types and three working
- * patterns, and giving each one a hue produces eight colours that mean
- * nothing and drown the two that do.
+ * A `Chip` is a fact — regular, hybrid, 24 hours a week. Facts are never
+ * coloured: there are five contract types and three working patterns,
+ * and giving each one a hue produces eight colours that mean nothing and
+ * drown the two that do.
  *
  * A `Flag` is the exception, and there are only two of them.
  */
 export function Chip({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-sm border border-line bg-hover px-2 py-1 text-xs text-ink-muted">
+    <span className="inline-flex items-center rounded-full bg-sunk px-2.5 py-1 text-xs font-medium text-ink-muted">
       {children}
     </span>
   );
@@ -25,11 +25,17 @@ export function Flag({
 }) {
   const styles =
     tone === "featured"
-      ? "bg-accent text-on-accent"
+      ? "bg-primary text-on-primary"
       : tone === "new"
         ? "bg-accent-soft text-accent"
         : "bg-sunk text-ink-subtle";
-  return <span className={`label rounded-sm px-2 py-1 ${styles}`}>{children}</span>;
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${styles}`}
+    >
+      {children}
+    </span>
+  );
 }
 
 /**
@@ -39,7 +45,7 @@ export function Flag({
  * The words carry the meaning on their own — "Closes today" says it
  * without any help — and the red is a second cue on top, which is the
  * right way round. Read the other way, a red date that just says
- * "2 Oct" is a colour nobody can act on.
+ * "Oct 2" is a colour nobody can act on.
  */
 export function ClosingStamp({
   text,
@@ -69,18 +75,32 @@ export function SectionHeading({
   as?: "h1" | "h2" | "h3";
 }) {
   return (
-    <Tag className="font-serif text-xl font-semibold tracking-tight text-ink">
-      {children}
-    </Tag>
+    <Tag className="text-xl font-bold tracking-tight text-ink">{children}</Tag>
   );
 }
 
-/** A rule with a small-caps word sitting on it. The gazette's divider. */
+/**
+ * A section label.
+ *
+ * This used to be a hairline rule with a word in letterspaced capitals
+ * sitting on it, repeated down every page. One of those is a nice
+ * device; nine of them is a form. It is now just a heading, and the
+ * space around it does the separating.
+ */
 export function RuleLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="label text-ink-subtle">{children}</span>
-      <span className="h-px flex-1 bg-line" />
-    </div>
+    <h2 className="text-sm font-semibold tracking-tight text-ink">
+      {children}
+    </h2>
+  );
+}
+
+/** The bullet used in every list of duties and requirements. */
+export function Bullet() {
+  return (
+    <span
+      aria-hidden="true"
+      className="mt-[0.5625rem] h-1.5 w-1.5 shrink-0 rounded-full bg-line-strong"
+    />
   );
 }

@@ -20,12 +20,10 @@ export default function AlertsPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6">
-      <header className="border-b border-line-strong pb-5">
-        <h1 className="font-serif text-3xl font-semibold tracking-tight">
-          Email alerts
-        </h1>
-        <p className="mt-2 leading-relaxed text-ink-muted">
+    <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
+      <header className="max-w-2xl">
+        <h1 className="text-4xl font-extrabold tracking-tight">Email alerts</h1>
+        <p className="mt-4 text-lg leading-relaxed text-ink-muted">
           Describe what you are looking for and we will send it as it is
           posted. The count updates as you change the alert, so you can
           see whether you have made it too narrow before you find out the
@@ -33,7 +31,7 @@ export default function AlertsPage() {
         </p>
       </header>
 
-      <div className="mt-8">
+      <div className="mt-10">
         <AlertBuilder rows={rows} />
       </div>
     </div>

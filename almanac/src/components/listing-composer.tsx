@@ -27,7 +27,7 @@ type HoursKind = Hours["kind"];
  *
  * The preview is the real `VacancyCard` with real `payLabel` and
  * `closingState` behind it, not a lookalike — so switching Hours to
- * part time makes the pro-rata footnote appear with the correct
+ * part time makes the prorated footnote appear with the correct
  * figures in it, and setting a closing date next week turns the date
  * red. A preview built from a second, similar component is a preview
  * that is quietly wrong about the thing you are checking.
@@ -38,22 +38,22 @@ type HoursKind = Hours["kind"];
  */
 export function ListingComposer() {
   const [title, setTitle] = useState("Community Engagement Officer");
-  const [org, setOrg] = useState("Wrenfield Borough Council");
-  const [kind, setKind] = useState("Council");
-  const [place, setPlace] = useState("Wrenfield");
+  const [org, setOrg] = useState("Wrenfield County");
+  const [kind, setKind] = useState("County government");
+  const [place, setPlace] = useState("Wrenfield, OH");
   const [sector, setSector] = useState<Sector>("Local government");
-  const [contract, setContract] = useState<Contract>("Permanent");
+  const [contract, setContract] = useState<Contract>("Regular");
   const [term, setTerm] = useState("12 months");
   const [pattern, setPattern] = useState<Pattern>("Hybrid");
   const [hoursKind, setHoursKind] = useState<HoursKind>("Full time");
-  const [hoursPerWeek, setHoursPerWeek] = useState(22.2);
+  const [hoursPerWeek, setHoursPerWeek] = useState(24);
   const [payKind, setPayKind] = useState<PayKind>("range");
-  const [payMin, setPayMin] = useState(33000);
-  const [payMax, setPayMax] = useState(36500);
-  const [rate, setRate] = useState(14.5);
+  const [payMin, setPayMin] = useState(66000);
+  const [payMax, setPayMax] = useState(74000);
+  const [rate, setRate] = useState(24.5);
   const [closes, setCloses] = useState("2026-10-16");
   const [summary, setSummary] = useState(
-    "Work with residents' groups across the borough on the neighbourhood plan, running consultations that people actually attend.",
+    "Work with neighborhood groups across the county on the comprehensive plan, running public meetings that people actually attend.",
   );
   const [errors, setErrors] = useState<string[]>([]);
   const [submitted, setSubmitted] = useState(false);
@@ -93,15 +93,15 @@ export function ListingComposer() {
   const closing = closingState(closes, nowMs, ZONE, thresholds.closingWithin);
 
   const card: CardData = {
-    title: title.trim() || "Untitled vacancy",
-    employerName: org.trim() || "Your organisation",
+    title: title.trim() || "Untitled job",
+    employerName: org.trim() || "Your organization",
     employerKind: kind,
     place: place.trim() || "Somewhere",
     summary:
       summary.trim() ||
       "A sentence or two about the job, which is what people read before they decide to read the rest.",
     chips: [
-      contract + (contract === "Fixed term" || contract === "Interim" ? `, ${term}` : ""),
+      contract + (contract === "Term" || contract === "Interim" ? `, ${term}` : ""),
       pattern,
       hoursLabel(hours),
     ],
@@ -123,7 +123,7 @@ export function ListingComposer() {
     event.preventDefault();
     const found: string[] = [];
     if (title.trim().length < 4) found.push("The job needs a title.");
-    if (org.trim().length < 2) found.push("Name the organisation.");
+    if (org.trim().length < 2) found.push("Name the organization.");
     if (summary.trim().length < 30) {
       found.push("The summary is too short to tell anyone anything.");
     }
@@ -133,7 +133,7 @@ export function ListingComposer() {
       );
     }
     if (payKind === "range" && payMax <= payMin) {
-      found.push("The top of the band has to be above the bottom of it.");
+      found.push("The top of the range has to be above the bottom of it.");
     }
     setErrors(found);
     setSubmitted(found.length === 0);
@@ -189,7 +189,7 @@ export function ListingComposer() {
         </div>
 
         <div className="space-y-3">
-          <RuleLabel>The organisation</RuleLabel>
+          <RuleLabel>The organization</RuleLabel>
           <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Name">
               <input
@@ -240,7 +240,7 @@ export function ListingComposer() {
                 ))}
               </select>
             </Field>
-            {(contract === "Fixed term" || contract === "Interim") && (
+            {(contract === "Term" || contract === "Interim") && (
               <Field label="How long">
                 <input
                   value={term}
@@ -280,8 +280,8 @@ export function ListingComposer() {
         <div className="space-y-3">
           <RuleLabel>Pay</RuleLabel>
           <p className="text-xs leading-relaxed text-ink-subtle">
-            There is no option here for leaving this blank. Quote the
-            full-time band for a part-time post as you normally would —
+            There is no option here for leaving this blank. Post the
+            full-time range for a part-time job as you normally would —
             we work out and publish what it actually pays.
           </p>
           <Field label="Quoted as">
@@ -290,7 +290,7 @@ export function ListingComposer() {
               onChange={(event) => setPayKind(event.target.value as PayKind)}
               className={input}
             >
-              <option value="range">A band</option>
+              <option value="range">A range</option>
               <option value="exact">A single figure</option>
               <option value="hourly">An hourly rate</option>
               <option value="daily">A day rate</option>
@@ -335,7 +335,7 @@ export function ListingComposer() {
         </div>
 
         {errors.length > 0 && (
-          <div className="rounded-card border border-urgent bg-urgent-soft p-4">
+          <div className="rounded-card bg-urgent-soft p-5 ring-1 ring-urgent/25">
             <p className="font-semibold text-urgent">
               {errors.length === 1
                 ? "One thing to fix"
@@ -352,7 +352,7 @@ export function ListingComposer() {
         )}
 
         {submitted && errors.length === 0 && (
-          <div className="rounded-card border border-accent-ring bg-accent-soft p-4">
+          <div className="rounded-card bg-surface p-5 shadow-card ring-1 ring-accent-ring">
             <p className="font-semibold text-ink">
               That would go to Ruth to read.
             </p>
@@ -366,7 +366,7 @@ export function ListingComposer() {
 
         <button
           type="submit"
-          className="focus-ring rounded-sm bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+          className="focus-ring rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
         >
           Check and continue
         </button>
@@ -389,7 +389,7 @@ export function ListingComposer() {
 }
 
 const input =
-  "focus-ring w-full rounded-sm border border-field bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-subtle";
+  "focus-ring w-full rounded-lg border border-line-strong bg-surface px-3.5 py-2.5 text-sm text-ink shadow-card transition-colors placeholder:text-ink-subtle hover:border-field";
 
 function Field({
   label,
@@ -400,7 +400,9 @@ function Field({
 }) {
   return (
     <label className="block">
-      <span className="label mb-1.5 block text-ink-subtle">{label}</span>
+      <span className="mb-1.5 block text-xs font-medium text-ink-subtle">
+        {label}
+      </span>
       {children}
     </label>
   );

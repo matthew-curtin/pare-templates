@@ -84,7 +84,7 @@ function instantOf(key: string): Date {
 }
 
 export function longDate(key: string, zone: string): string {
-  return instantOf(key).toLocaleDateString("en-GB", {
+  return instantOf(key).toLocaleDateString("en-US", {
     timeZone: zone,
     weekday: "long",
     day: "numeric",
@@ -94,7 +94,7 @@ export function longDate(key: string, zone: string): string {
 }
 
 export function shortDate(key: string, zone: string): string {
-  return instantOf(key).toLocaleDateString("en-GB", {
+  return instantOf(key).toLocaleDateString("en-US", {
     timeZone: zone,
     day: "numeric",
     month: "short",

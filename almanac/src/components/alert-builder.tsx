@@ -56,12 +56,10 @@ export function AlertBuilder({ rows }: { rows: AlertRow[] }) {
     [rows, filters],
   );
 
-  function toggle(
-    value: string,
-    list: string[],
-    set: (next: string[]) => void,
-  ) {
-    set(list.includes(value) ? list.filter((one) => one !== value) : [...list, value]);
+  function toggle(value: string, list: string[], set: (next: string[]) => void) {
+    set(
+      list.includes(value) ? list.filter((one) => one !== value) : [...list, value],
+    );
     setSaved(null);
   }
 
@@ -84,24 +82,26 @@ export function AlertBuilder({ rows }: { rows: AlertRow[] }) {
 
   if (saved) {
     return (
-      <div className="rounded-card border border-accent-ring bg-accent-soft p-6">
-        <h2 className="font-serif text-xl font-semibold text-ink">
+      <div className="rounded-card bg-surface p-7 shadow-card ring-1 ring-accent-ring">
+        <h2 className="text-xl font-bold tracking-tight text-ink">
           That would be a {frequency} alert to {saved}
         </h2>
-        <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+        <p className="mt-2.5 leading-relaxed text-ink-muted">
           Except that it would not, because this is a template and nothing
           here talks to a server. In a real one you would now get an email
           asking you to confirm.
         </p>
-        <p className="mt-4 text-sm text-ink-muted">
+        <p className="mt-4 text-ink-muted">
           It would have caught{" "}
-          <strong className="tabular text-ink">{matches.length}</strong> of
-          the {rows.length} vacancies currently on the board.
+          <strong className="tabular font-bold text-ink">
+            {matches.length}
+          </strong>{" "}
+          of the {rows.length} jobs currently on the board.
         </p>
         <button
           type="button"
           onClick={() => setSaved(null)}
-          className="focus-ring mt-5 rounded-sm border border-line-strong bg-surface px-3 py-2 text-sm font-semibold text-ink hover:border-field"
+          className="focus-ring mt-6 rounded-lg bg-sunk px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-line"
         >
           Change it
         </button>
@@ -113,11 +113,11 @@ export function AlertBuilder({ rows }: { rows: AlertRow[] }) {
     /* noValidate on purpose. The browser's own bubble pre-empts this
        form's validation and looks nothing like the rest of the page, so
        the inline message below the field is the one people see. */
-    <form onSubmit={submit} noValidate className="space-y-8">
+    <form onSubmit={submit} noValidate className="space-y-9">
       <div className="space-y-3">
         <RuleLabel>Sectors</RuleLabel>
         <p className="text-xs text-ink-subtle">
-          Leave everything unticked for all of them.
+          Leave everything off for all of them.
         </p>
         <div className="flex flex-wrap gap-2">
           {sectors.map((sector) => (
@@ -183,7 +183,10 @@ export function AlertBuilder({ rows }: { rows: AlertRow[] }) {
       <MatchPreview matches={matches} total={rows.length} />
 
       <div className="space-y-2">
-        <label htmlFor="alert-email" className="label block text-ink-subtle">
+        <label
+          htmlFor="alert-email"
+          className="block text-sm font-semibold tracking-tight text-ink"
+        >
           Where to send it
         </label>
         <div className="flex flex-col gap-2 sm:flex-row">
@@ -198,13 +201,13 @@ export function AlertBuilder({ rows }: { rows: AlertRow[] }) {
             placeholder="you@example.org"
             aria-invalid={error ? "true" : undefined}
             aria-describedby={error ? "alert-email-error" : undefined}
-            className={`focus-ring min-w-0 flex-1 rounded-sm border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-ink-subtle ${
-              error ? "border-urgent" : "border-field"
+            className={`focus-ring min-w-0 flex-1 rounded-lg border bg-surface px-3.5 py-3 text-sm text-ink shadow-card transition-colors placeholder:text-ink-subtle ${
+              error ? "border-urgent" : "border-line-strong hover:border-field"
             }`}
           />
           <button
             type="submit"
-            className="focus-ring rounded-sm bg-accent px-4 py-2.5 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+            className="focus-ring rounded-lg bg-primary px-5 py-3 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
           >
             Create the alert
           </button>
@@ -228,11 +231,11 @@ function MatchPreview({
 }) {
   if (matches.length === 0) {
     return (
-      <div className="rounded-card border border-line-strong bg-sunk p-5">
+      <div className="rounded-card bg-sunk p-6">
         <p className="font-semibold text-ink">
           Nothing on the board matches that today.
         </p>
-        <p className="mt-1 text-sm leading-relaxed text-ink-muted">
+        <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
           You can still create it — but an alert this narrow may be quiet
           for months, and it is worth knowing that now rather than
           wondering later whether it is working.
@@ -242,21 +245,24 @@ function MatchPreview({
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface p-5">
+    <div className="rounded-card bg-surface p-6 shadow-card">
       <p className="text-ink">
         This would have caught{" "}
-        <strong className="tabular">{matches.length}</strong> of the {total}{" "}
-        vacancies on the board today.
+        <strong className="tabular font-bold">{matches.length}</strong> of the{" "}
+        {total} jobs on the board today.
       </p>
-      <ul className="mt-4 space-y-2">
+      <ul className="mt-4 space-y-2.5">
         {matches.slice(0, 5).map((row) => (
           <li key={row.listing.id} className="flex flex-wrap justify-between gap-2">
             <Link
               href={`/jobs/${row.slug}`}
-              className="focus-ring min-w-0 text-sm text-accent hover:underline"
+              className="focus-ring min-w-0 text-sm font-medium text-accent hover:underline hover:underline-offset-2"
             >
               {row.title}
-              <span className="text-ink-subtle"> · {row.employerName}</span>
+              <span className="font-normal text-ink-subtle">
+                {" "}
+                · {row.employerName}
+              </span>
             </Link>
             <span className="tabular shrink-0 text-xs text-ink-subtle">
               {row.closingText}
@@ -265,7 +271,7 @@ function MatchPreview({
         ))}
       </ul>
       {matches.length > 5 && (
-        <p className="mt-3 text-xs text-ink-subtle">
+        <p className="mt-3.5 text-xs text-ink-subtle">
           and {matches.length - 5} more.
         </p>
       )}
@@ -287,10 +293,10 @@ function Toggle({
       type="button"
       aria-pressed={on}
       onClick={onClick}
-      className={`focus-ring rounded-sm border px-2.5 py-1.5 text-xs transition-colors ${
+      className={`focus-ring rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
         on
-          ? "border-accent bg-accent text-on-accent"
-          : "border-line bg-surface text-ink-muted hover:border-line-strong hover:text-ink"
+          ? "bg-primary text-on-primary"
+          : "bg-surface text-ink-muted shadow-card hover:bg-hover hover:text-ink"
       }`}
     >
       {children}

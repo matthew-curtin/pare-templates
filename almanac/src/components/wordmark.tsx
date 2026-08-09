@@ -9,30 +9,23 @@
 export function AlmanacMark({ className = "" }: { className?: string }) {
   return (
     <svg viewBox="0 0 32 32" aria-hidden="true" className={className}>
-      <rect width="32" height="32" rx="6" className="fill-ink-inverse/15" />
+      <rect width="32" height="32" rx="8" className="fill-primary" />
       <rect
-        x="6"
-        y="6.5"
-        width="20"
-        height="3"
-        rx="1.5"
-        className="fill-ink-inverse/45"
+        x="7"
+        y="7.5"
+        width="18"
+        height="2.5"
+        rx="1.25"
+        className="fill-on-primary/40"
       />
-      <g className="fill-ink-inverse/45">
-        <rect x="6" y="13.5" width="5.5" height="5.5" rx="1" />
-        <rect x="13.25" y="13.5" width="5.5" height="5.5" rx="1" />
-        <rect x="6" y="21" width="5.5" height="5.5" rx="1" />
-        <rect x="13.25" y="21" width="5.5" height="5.5" rx="1" />
-        <rect x="20.5" y="21" width="5.5" height="5.5" rx="1" />
+      <g className="fill-on-primary/40">
+        <rect x="7" y="14" width="5" height="5" rx="1.5" />
+        <rect x="13.5" y="14" width="5" height="5" rx="1.5" />
+        <rect x="7" y="21" width="5" height="5" rx="1.5" />
+        <rect x="13.5" y="21" width="5" height="5" rx="1.5" />
+        <rect x="20" y="21" width="5" height="5" rx="1.5" />
       </g>
-      <rect
-        x="20.5"
-        y="13.5"
-        width="5.5"
-        height="5.5"
-        rx="1"
-        className="fill-ink-inverse"
-      />
+      <rect x="20" y="14" width="5" height="5" rx="1.5" className="fill-on-primary" />
     </svg>
   );
 }
@@ -43,6 +36,11 @@ export function AlmanacMark({ className = "" }: { className?: string }) {
  * Every organisation here is invented, so it has no logo to show, and a
  * plausible-looking one would be a small lie on the page. Initials are
  * also what a real board falls back to more often than it admits.
+ *
+ * Softened from a hard black square to a rounded tile on a tinted
+ * ground: at this size, on a card with a soft shadow, a solid dark block
+ * is the heaviest thing in the row and the eye goes to it instead of to
+ * the job title.
  */
 export function Monogram({
   name,
@@ -61,15 +59,15 @@ export function Monogram({
 
   const box =
     size === "lg"
-      ? "h-14 w-14 text-lg"
+      ? "h-16 w-16 rounded-2xl text-xl"
       : size === "sm"
-        ? "h-8 w-8 text-[0.6875rem]"
-        : "h-11 w-11 text-sm";
+        ? "h-9 w-9 rounded-lg text-xs"
+        : "h-12 w-12 rounded-xl text-sm";
 
   return (
     <span
       aria-hidden="true"
-      className={`${box} grid shrink-0 place-items-center rounded-sm bg-band font-semibold tracking-wide text-ink-inverse`}
+      className={`${box} grid shrink-0 place-items-center bg-sunk font-bold tracking-tight text-ink-muted`}
     >
       {initials}
     </span>

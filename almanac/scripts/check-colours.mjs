@@ -182,11 +182,11 @@ function separation(hexA, hexB, kind) {
 /* ---------- what actually appears together ---------- */
 
 /**
- * A board row can carry a navy "new" flag, a red closing date and a grey
+ * A board row can carry a blue "new" flag, a red closing date and a grey
  * closed marker at the same time, and the accent also sits underneath
  * every title as a link. So all four are checked against each other.
  */
-const HUES = ["accent", "urgent", "ink-subtle", "band"];
+const HUES = ["accent", "urgent", "ink-subtle", "primary"];
 
 const KINDS = ["normal", "protanopia", "deuteranopia", "tritanopia"];
 const MIN_SEPARATION = 8;
@@ -252,11 +252,14 @@ const TEXT_ON = [
   ["urgent", "canvas"],
   ["urgent", "urgent-soft"],
   ["accent", "accent-soft"],
-  // The masthead and the footer are the band colour with paper on them.
-  ["ink-inverse", "band"],
-  ["ink-inverse", "band-soft"],
-  ["on-accent", "accent"],
-  ["on-accent", "accent-hover"],
+  // The footer is near-black with paper on it.
+  ["ink-inverse", "primary"],
+  ["ink-inverse", "primary-hover"],
+  // Buttons.
+  ["on-primary", "primary"],
+  ["on-primary", "primary-hover"],
+  ["on-primary", "accent"],
+  ["on-primary", "accent-hover"],
 ];
 for (const [fg, bg] of TEXT_ON) {
   check(

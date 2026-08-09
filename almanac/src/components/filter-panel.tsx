@@ -28,20 +28,22 @@ export function FilterPanel({
   const active = activeFilterCount(filters);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7">
       <form action="/" className="space-y-2">
         {/* Everything except q rides along, so searching does not throw
             away the filters you already set. */}
         {[...search.entries()]
           .filter(([key]) => key !== "q")
           .map(([key, value], index) => (
-            <input key={`${key}-${index}`} type="hidden" name={key} value={value} />
+            <input
+              key={`${key}-${index}`}
+              type="hidden"
+              name={key}
+              value={value}
+            />
           ))}
-        <label
-          htmlFor={`${idPrefix}-q`}
-          className="label block text-ink-subtle"
-        >
-          Search
+        <label htmlFor={`${idPrefix}-q`} className="sr-only">
+          Search jobs
         </label>
         <div className="flex gap-2">
           <input
@@ -49,12 +51,12 @@ export function FilterPanel({
             name="q"
             type="search"
             defaultValue={filters.q}
-            placeholder="ranger, housing, Halden…"
-            className="focus-ring min-w-0 flex-1 rounded-sm border border-field bg-surface px-3 py-2 text-sm text-ink placeholder:text-ink-subtle"
+            placeholder="Search jobs"
+            className="focus-ring min-w-0 flex-1 rounded-lg border border-line-strong bg-surface px-3 py-2.5 text-sm text-ink shadow-card transition-colors placeholder:text-ink-subtle hover:border-field"
           />
           <button
             type="submit"
-            className="focus-ring rounded-sm bg-accent px-3 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+            className="focus-ring rounded-lg bg-primary px-3.5 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
           >
             Go
           </button>
@@ -69,7 +71,7 @@ export function FilterPanel({
       />
 
       <FilterGroup
-        heading="Contract"
+        heading="Type"
         options={contracts}
         selected={filters.contracts}
         hrefFor={(value) => hrefToggle(search, "contract", value)}
@@ -99,10 +101,13 @@ export function FilterPanel({
           })}
         </div>
         <p className="text-xs leading-relaxed text-ink-subtle">
-          Measured against the top of the advertised band and against
-          actual pay, not the full-time figure. Vacancies with no salary
-          on them are excluded — see{" "}
-          <Link href="/about#questions" className="focus-ring underline">
+          Measured against the top of the posted range, and against actual
+          pay rather than the full-time figure. Jobs with no salary on
+          them are excluded —{" "}
+          <Link
+            href="/about#questions"
+            className="focus-ring text-accent underline underline-offset-2"
+          >
             why
           </Link>
           .
@@ -110,7 +115,7 @@ export function FilterPanel({
       </div>
 
       <div className="space-y-3">
-        <RuleLabel>Closed vacancies</RuleLabel>
+        <RuleLabel>Closed jobs</RuleLabel>
         <Pill
           href={hrefSet(search, "closed", filters.includeClosed ? null : "1")}
           active={filters.includeClosed}
@@ -123,7 +128,7 @@ export function FilterPanel({
         <p>
           <Link
             href="/"
-            className="focus-ring text-sm text-accent underline hover:text-accent-hover"
+            className="focus-ring text-sm font-medium text-accent underline underline-offset-2 hover:text-accent-hover"
           >
             Clear {active} filter{active === 1 ? "" : "s"}
           </Link>
@@ -175,10 +180,10 @@ function Pill({
     <Link
       href={href}
       aria-pressed={active}
-      className={`focus-ring inline-flex items-center rounded-sm border px-2.5 py-1.5 text-xs transition-colors ${
+      className={`focus-ring inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
         active
-          ? "border-accent bg-accent text-on-accent"
-          : "border-line bg-surface text-ink-muted hover:border-line-strong hover:text-ink"
+          ? "bg-primary text-on-primary"
+          : "bg-surface text-ink-muted shadow-card hover:bg-hover hover:text-ink"
       }`}
     >
       {children}

@@ -93,44 +93,44 @@ const part = (h) => ({ kind: "Part time", hoursPerWeek: h });
 /* ------------------------------------------------------------------ */
 console.log("\nPay — what the advert says against what it means\n");
 
-eq(fteOf(FULL, 37), 1, "full time is 1.0 FTE");
-eq(fteOf(part(22.2), 37), 0.6, "22.2 hours of 37 is 0.6 FTE");
-eq(fteOf(CASUAL, 37), null, "casual hours have no FTE");
+eq(fteOf(FULL, 40), 1, "full time is 1.0 FTE");
+eq(fteOf(part(24), 40), 0.6, "24 hours of 40 is 0.6 FTE");
+eq(fteOf(CASUAL, 40), null, "on-call hours have no FTE");
 
 eq(
-  annualise({ kind: "range", min: 58000, max: 63500 }, FULL, payBasis),
-  { min: 58000, max: 63500 },
-  "a full-time band is itself",
+  annualise({ kind: "range", min: 108000, max: 128000 }, FULL, payBasis),
+  { min: 108000, max: 128000 },
+  "a full-time range is itself",
 );
 
-// The one that matters. The advert says £25,900–£28,300; the job pays
-// £15,540–£16,980, and a board that filters on the first number is
+// The one that matters. The posting says $52,000–$57,000; the job pays
+// $31,200–$34,200, and a board that filters on the first number is
 // telling people about jobs they have explicitly ruled out.
 eq(
-  annualise({ kind: "range", min: 25900, max: 28300 }, part(22.2), payBasis),
-  { min: 15540, max: 16980 },
-  "a 0.6 post pays 0.6 of the band",
+  annualise({ kind: "range", min: 52000, max: 57000 }, part(24), payBasis),
+  { min: 31200, max: 34200 },
+  "a 0.6 job pays 0.6 of the range",
 );
 
 eq(
-  annualise({ kind: "exact", amount: 44200 }, FULL, payBasis),
-  { min: 44200, max: 44200 },
+  annualise({ kind: "exact", amount: 89000 }, FULL, payBasis),
+  { min: 89000, max: 89000 },
   "a single salary point is a range of one",
 );
 eq(
-  annualise({ kind: "daily", rate: 465 }, FULL, payBasis),
-  { min: 102300, max: 102300 },
+  annualise({ kind: "daily", rate: 720 }, FULL, payBasis),
+  { min: 158400, max: 158400 },
   "a day rate annualises at the stated chargeable days",
 );
 eq(
-  annualise({ kind: "hourly", rate: 13.85 }, part(20), payBasis),
-  { min: 14404, max: 14404 },
+  annualise({ kind: "hourly", rate: 21.5 }, part(20), payBasis),
+  { min: 22360, max: 22360 },
   "an hourly rate needs hours before it is a year",
 );
 eq(
-  annualise({ kind: "hourly", rate: 13.85 }, CASUAL, payBasis),
+  annualise({ kind: "hourly", rate: 21.5 }, CASUAL, payBasis),
   null,
-  "casual hourly work has no annual figure",
+  "on-call hourly work has no annual figure",
 );
 eq(
   annualise({ kind: "voluntary", note: "" }, part(4), payBasis),
@@ -147,50 +147,51 @@ eq(
 console.log("\nFloors — a filter asks the top, a sort asks the bottom\n");
 
 const band = { min: 40000, max: 80000 };
-ok(meetsFloor(band, 50000), "a 40–80k band clears a 50k floor");
+ok(meetsFloor(band, 50000), "a 40–80k range clears a 50k floor");
 ok(meetsFloor(band, 80000), "and clears a floor at its very top");
 ok(!meetsFloor(band, 90000), "but not one above it");
 ok(meetsFloor(null, 0), "no floor means everything passes");
 ok(!meetsFloor(null, 20000), "an uncomparable vacancy never clears a floor");
-eq(paySortKey(band), 40000, "the pay sort reads the bottom of the band");
+eq(paySortKey(band), 40000, "the pay sort reads the bottom of the range");
 ok(
   paySortKey(null) < paySortKey({ min: 0, max: 0 }),
   "uncomparable sorts below a paid job",
 );
 
 const partLabel = payLabel(
-  { kind: "range", min: 25900, max: 28300 },
-  part(22.2),
+  { kind: "range", min: 52000, max: 57000 },
+  part(24),
   payBasis,
 );
 // Whatever the reader scans has to be what the ordering used, so the
 // headline is the actual money and the advert drops to the footnote.
 eq(
   partLabel.headline,
-  "£15,540 – £16,980",
+  "$31,200 – $34,200",
   "a part-time headline is what the job actually pays",
 );
 ok(
-  partLabel.note?.includes("£25,900 – £28,300") &&
-    partLabel.note.includes("pro rata"),
-  "and the advertised band is still on the card, attributed",
+  partLabel.note?.includes("$52,000 – $57,000") &&
+    partLabel.note.includes("prorated"),
+  "and the posted range is still on the card, attributed",
   partLabel.note,
 );
 ok(
-  paySortKey(annualise({ kind: "range", min: 25900, max: 28300 }, part(22.2), payBasis)) ===
-    15540,
+  paySortKey(
+    annualise({ kind: "range", min: 52000, max: 57000 }, part(24), payBasis),
+  ) === 31200,
   "and the sort key agrees with the headline",
 );
 ok(
-  payLabel({ kind: "range", min: 58000, max: 63500 }, FULL, payBasis).note ===
-    undefined,
-  "a full-time band needs no footnote",
+  payLabel({ kind: "range", min: 108000, max: 128000 }, FULL, payBasis)
+    .note === undefined,
+  "a full-time range needs no footnote",
 );
 ok(
-  payLabel({ kind: "hourly", rate: 13.85 }, CASUAL, payBasis).uncomparable,
-  "casual pay is marked uncomparable",
+  payLabel({ kind: "hourly", rate: 21.5 }, CASUAL, payBasis).uncomparable,
+  "on-call pay is marked uncomparable",
 );
-eq(hoursLabel(part(22.2)), "Part time, 22.2 hours a week", "hours read plainly");
+eq(hoursLabel(part(24)), "Part time, 24 hours a week", "hours read plainly");
 
 /* ------------------------------------------------------------------ */
 console.log("\nDates — a closing date is a calendar day, not a countdown\n");
@@ -248,10 +249,10 @@ eq(
 
 eq(
   longDate("2026-09-18", ZONE),
-  "Friday, 18 September 2026",
+  "Friday, September 18, 2026",
   "long dates are in the workspace timezone",
 );
-eq(shortDate("2026-10-02", ZONE), "2 Oct 2026", "short dates too");
+eq(shortDate("2026-10-02", ZONE), "Oct 2, 2026", "short dates too");
 eq(postedLabel("2026-09-15", nowMs, ZONE), "Posted yesterday", "posted reads back");
 eq(postedLabel("2026-09-16", nowMs, ZONE), "Posted today", "including today");
 ok(isNew("2026-09-14", nowMs, ZONE, 3), "two days old is new");
@@ -277,10 +278,10 @@ const listings = vacancies.map((v) => {
 });
 
 const hay = listings.find((l) => l.id === "v10").haystack;
-ok(matchesQuery(hay, "woodland ranger"), "search finds the obvious phrase");
-ok(matchesQuery(hay, "ranger woodland"), "and does not care about word order");
+ok(matchesQuery(hay, "woodland crew"), "search finds the obvious phrase");
+ok(matchesQuery(hay, "crew woodland"), "and does not care about word order");
 ok(matchesQuery(hay, "COPPICE"), "and ignores case");
-ok(matchesQuery(hay, "coppice ranger"), "and matches across fields");
+ok(matchesQuery(hay, "coppice crew"), "and matches across fields");
 ok(!matchesQuery(hay, "woodland dentist"), "but every word has to be there");
 ok(matchesQuery(hay, "   "), "an empty search matches everything");
 
@@ -469,7 +470,7 @@ for (const floor of salaryFloors) {
 // plausibly try, or nobody — including whoever designed it — ever sees
 // it.
 eq(
-  filtered({ sectors: ["Culture & heritage"], floor: 40000 }).length,
+  filtered({ sectors: ["Culture & heritage"], floor: 55000 }).length,
   0,
   "a sensible pair of filters can return nothing",
 );
@@ -567,9 +568,9 @@ ok(
 ok(
   vacancies.every(
     (v) =>
-      v.contract !== "Fixed term" && v.contract !== "Interim" ? true : !!v.term,
+      v.contract !== "Term" && v.contract !== "Interim" ? true : !!v.term,
   ),
-  "every fixed-term and interim post says how long it runs",
+  "every term and interim job says how long it runs",
 );
 ok(
   employers.every((e) => e.about.length > 120),

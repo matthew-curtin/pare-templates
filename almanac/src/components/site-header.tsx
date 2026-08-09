@@ -3,36 +3,36 @@ import { site } from "@/content/site";
 import { AlmanacMark } from "./wordmark";
 
 /**
- * The masthead: a dark band across the top with the title in it, the
- * way a printed gazette carries its name. It is the only heavy element
- * on the page, which is what lets everything below it be quiet.
+ * A slim, light, sticky header.
+ *
+ * The first version was a full-bleed dark masthead with the title and a
+ * row of letterspaced capitals in it — a printed-gazette idea, and the
+ * single most dated thing on the page. A heavy band across the top of
+ * every screen spends a lot of attention on saying the site's own name,
+ * which the reader knows, and it makes everything below it feel like a
+ * document rather than a tool.
+ *
+ * This one stays out of the way: translucent, blurred, one hairline, and
+ * a single primary action at the right-hand end.
  */
 export function SiteHeader() {
   return (
-    <header className="bg-band text-ink-inverse">
-      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-5 sm:px-6 md:flex-row md:items-end md:justify-between">
-        <Link
-          href="/"
-          className="focus-ring group flex items-center gap-3 self-start"
-        >
-          <AlmanacMark className="h-9 w-9" />
-          <span className="flex flex-col">
-            <span className="font-serif text-2xl leading-none font-semibold tracking-tight group-hover:underline">
-              {site.name}
-            </span>
-            <span className="mt-1 text-xs text-ink-inverse/70">
-              {site.tagline}
-            </span>
+    <header className="sticky top-0 z-30 border-b border-line bg-surface/85 backdrop-blur-md">
+      <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4 sm:px-6">
+        <Link href="/" className="focus-ring group flex items-center gap-2.5">
+          <AlmanacMark className="h-7 w-7" />
+          <span className="text-[1.0625rem] font-bold tracking-tight text-ink">
+            {site.name}
           </span>
         </Link>
 
-        <nav aria-label="Main">
-          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+        <nav aria-label="Main" className="min-w-0 flex-1">
+          <ul className="flex items-center gap-1 overflow-x-auto">
             {site.nav.map((item) => (
-              <li key={item.href}>
+              <li key={item.href} className="shrink-0">
                 <Link
                   href={item.href}
-                  className="focus-ring label text-ink-inverse/80 transition-colors hover:text-ink-inverse"
+                  className="focus-ring block rounded-lg px-3 py-1.5 text-sm font-medium text-ink-muted transition-colors hover:bg-sunk hover:text-ink"
                 >
                   {item.label}
                 </Link>
@@ -40,6 +40,13 @@ export function SiteHeader() {
             ))}
           </ul>
         </nav>
+
+        <Link
+          href="/post"
+          className="focus-ring hidden shrink-0 rounded-lg bg-primary px-3.5 py-2 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover sm:block"
+        >
+          Post a job
+        </Link>
       </div>
     </header>
   );

@@ -3,7 +3,7 @@
 ## Photography
 
 None, and not by omission. A jobs board has nothing to photograph. The
-twelve organisations are invented, so they have no premises to show and
+twelve organizations are invented, so they have no premises to show and
 no logo to reproduce, and CONVENTIONS §6 rules out attaching a stock
 photograph to an invented thing — which here would mean twelve of them.
 
@@ -19,17 +19,19 @@ no icon font.
 
 ## Type
 
-Two faces, both self-hosted by `next/font` at build time, so there is no
-request to a font CDN at runtime and no flash of fallback text:
+**Plus Jakarta Sans**, one family for everything, self-hosted by
+`next/font` at build time so there is no request to a font CDN at
+runtime and no flash of fallback text.
 
-- **Source Serif 4** for headings and the masthead. A sturdy text serif
-  rather than a display face, which is what a gazette wants: the
-  headings here are job titles, and some of them run to eleven words.
-- **Libre Franklin** for everything else. A civic grotesque, and the
-  right register for a board whose readers work in local government.
+The first version paired a text serif with a grotesque, which is the
+obvious combination for anything calling itself a gazette and is also
+about a decade out of date for an interface. The headings here are job
+titles — some of them eleven words long — not article titles, and they
+want the same voice as the rest of the page, one size up and a little
+tighter.
 
 Figures use `font-variant-numeric: tabular-nums` through a `.tabular`
-class, because salaries, closing dates and reference numbers all sit in
+class, because salaries, closing dates and job numbers all sit in
 columns and proportional digits make a mess of them.
 
 ## Colour
@@ -37,25 +39,33 @@ columns and proportional digits make a mess of them.
 Original to this template, and **validated rather than chosen** —
 `node scripts/check-colours.mjs` reads the tokens back out of
 `src/app/globals.css`, simulates protanopia, deuteranopia and
-tritanopia, and measures every pair that can appear together, plus every
-piece of text against every surface it can land on. Thirty-nine checks.
+tritanopia, and measures every pair that can appear together plus every
+piece of text against every surface it can land on. Forty-one checks.
 
-The accent is a navy, `#17509b`. The palette has three hues in total and
-that is the point: navy for links and the new flag, red for a vacancy
-closing today, grey for one that has closed. Everything else a listing
-can be is a fact rather than a state, and facts are not coloured.
+The ground is a warm neutral, the cards are white, and the separation
+between them is a soft shadow rather than a drawn border — so a list of
+twenty postings carries twenty fewer edges than the bordered version
+and reads as considerably calmer at the same density.
 
-Two things moved because of the check rather than because of taste.
-`ink-subtle` started three steps lighter and failed on two of the four
-grounds it is drawn on — the ordinary way a light palette goes wrong,
-judged on white and used on grey. And the greys split in two: a rule
-between listings is decoration and holding it to 3:1 would turn the page
-into grey bars, while the boundary of a text field *is* the control and
-owes the full ratio. Most palettes use one grey for both and are wrong
+**The primary action colour is near-black rather than a brand hue.**
+That is the decision the rest of the palette hangs off. It leaves colour
+free to mean something — blue is a link, red is a deadline — and on a
+board whose entire job is telling you what needs you this week, a
+coloured button competing with a red closing date is a colour spent on
+nothing. There are three hues in total, and everything a posting can be
+that is a *fact* rather than a *state* is not coloured at all.
+
+Two values moved because of the check rather than because of taste, and
+both for the same reason: a warmer, lighter ground raises the bar for
+everything drawn on it, so the muted ink and the field border each had
+to come down a step. Lightening a background is never only a background
+change.
+
+The greys also split in two. A rule between postings is decoration —
+WCAG 1.4.11 is about identifying controls and their state, and a divider
+identifies nothing — while the boundary of a text field *is* the control
+and owes the full 3:1. Most palettes use one grey for both and are wrong
 about the second.
-
-The ground is a newsprint grey-blue rather than white, so a white
-listing card sits on it as an object instead of dissolving into it.
 
 ## Everything else
 

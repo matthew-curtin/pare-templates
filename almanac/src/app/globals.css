@@ -1,79 +1,83 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Almanac — a board for public and charitable sector vacancies.
+   Almanac — a board for public sector and nonprofit vacancies.
 
-   The look is a printed gazette: a dark masthead band, ruled rows, small
-   caps labels, figures in a column. Structure carries the identity here
-   rather than background colour, because a listings board is mostly rules
-   and type.
+   The look is quiet and spacious: a warm neutral ground, white cards that
+   sit on it with a soft shadow rather than a drawn box, generous padding,
+   and one accent used sparingly.
 
-   The palette is deliberately small. It has three hues and no more:
-
-     accent   navy, for links, buttons and the "new" flag
-     urgent   red, for a vacancy closing today or tomorrow
-     (grey)   for one that has closed
-
-   Everything else a listing can be — fixed-term, part-time, job share,
-   voluntary, hybrid — is a fact rather than a state, so it is a plain
-   chip in ink. Colouring facts is how a board ends up with nine hues and
-   no hierarchy.
+   Two things carry most of the character, and both are subtractive.
+   There are almost no hairlines — separation comes from the difference
+   between the ground and the card, so the page has far fewer drawn edges
+   than the amount of structure in it would suggest. And the primary
+   action colour is near-black rather than a brand hue, which leaves
+   colour free to mean something: blue is a link, red is a deadline. On a
+   board whose whole job is telling you what needs you this week, a
+   coloured button competing with a red date is a colour spent on nothing.
 
    Validated, not chosen:
 
      node scripts/check-colours.mjs
 
-   Last run: 39 checks, all passing. The tightest one in each section —
-   accent vs ink-subtle 12.5 under tritanopia, ink-subtle on sunk
-   4.80:1, a field border on sunk 3.03:1, a row rule 4.8 ΔE against the
-   canvas.
+   Last run: 41 checks, all passing. The tightest one in each section —
+   accent vs ink-subtle 17.4 under tritanopia, ink-subtle on sunk 4.89:1,
+   a field border on sunk 3.20:1, a hairline 3.1 ΔE against the canvas.
 
-   Two things moved because of it. ink-subtle started three steps
-   lighter and failed on two of the four grounds it is drawn on, which
-   is the ordinary way a light palette goes wrong: it was judged on
-   white and used on grey. And the greys split in two — see the note
-   next to them.
+   Both values that moved were forced by the check rather than chosen: a
+   warmer, lighter ground raises the bar for everything drawn on it, so
+   the muted ink and the field border each had to come down a step.
+   Lightening a background is never only a background change.
 --------------------------------------------------------------------------- */
 
 @theme {
-  --font-sans: var(--font-libre-franklin), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-source-serif), ui-serif, Georgia, serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
-  /* Ground. A newsprint grey-blue rather than white, so a white listing
-     card sits on it as an object instead of dissolving into it. */
-  --color-canvas: #eceef3;
+  /* Ground. Warm rather than blue-grey, and only a step off white — the
+     cards separate from it by shadow, so it does not need to be dark
+     enough to do that job on its own. */
+  --color-canvas: #f5f5f3;
   --color-surface: #ffffff;
-  --color-sunk: #e3e7ee;
-  --color-hover: #f5f7fa;
-  --color-band: #131b2b;
-  --color-band-soft: #26314a;
+  --color-sunk: #eeeeea;
+  --color-hover: #faf9f7;
 
-  --color-ink: #101623;
-  --color-ink-muted: #4b5464;
-  --color-ink-subtle: #5c6473;
-  --color-ink-inverse: #eceef3;
+  --color-ink: #16161a;
+  --color-ink-muted: #56565e;
+  --color-ink-subtle: #66666e;
+  --color-ink-inverse: #f5f5f3;
 
-  /* Two greys that look like one job and are not. A rule between two
+  /* Two greys that look like one job and are not. A rule between
      listings is decoration — WCAG 1.4.11 is about identifying controls
      and their state, and a divider identifies nothing, so holding it to
      3:1 would only produce a page of heavy grey bars. The boundary of a
      text field is the opposite: it IS the control, so it owes the full
      ratio. Most palettes use one grey for both and are wrong about the
      second. */
-  --color-line: #d6dae3;
-  --color-line-strong: #b7bfcd;
-  --color-field: #7c8494;
+  --color-line: #e8e7e3;
+  --color-line-strong: #d6d5cf;
+  --color-field: #85857d;
 
-  --color-accent: #17509b;
-  --color-accent-hover: #103b74;
-  --color-accent-soft: #e7eef8;
-  --color-accent-ring: #b3cae7;
-  --color-on-accent: #ffffff;
+  /* The primary action. Near-black, so a button never competes with a
+     closing date for the eye. */
+  --color-primary: #18181b;
+  --color-primary-hover: #33333a;
+  --color-on-primary: #ffffff;
 
-  --color-urgent: #b62d20;
-  --color-urgent-soft: #fbeceb;
+  /* Links, focus, and the small amount of brand there is. */
+  --color-accent: #2049c9;
+  --color-accent-hover: #16389e;
+  --color-accent-soft: #eceffb;
+  --color-accent-ring: #bcc8ef;
 
-  --radius-card: 0.375rem;
+  --color-urgent: #bf2d20;
+  --color-urgent-soft: #fceeec;
+
+  --radius-card: 0.875rem;
+
+  /* Shadows do the work hairlines used to. Two steps only: at rest, and
+     under the cursor. */
+  --shadow-card: 0 1px 2px rgb(20 20 24 / 0.04), 0 1px 3px rgb(20 20 24 / 0.05);
+  --shadow-lift: 0 2px 4px rgb(20 20 24 / 0.04), 0 8px 20px rgb(20 20 24 / 0.08);
 }
 
 /* Figures that sit in a column — salaries, closing dates, reference
@@ -83,19 +87,19 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* Small caps labels, the gazette's main device. */
+/* Section labels. Deliberately NOT letterspaced small caps: that device
+   in quantity is most of what makes an interface look like a government
+   portal from 2004. Small, medium weight, muted, sentence case. */
 .label {
-  font-size: 0.6875rem;
-  line-height: 1;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-weight: 600;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  font-weight: 500;
 }
 
 .focus-ring:focus-visible {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 0.5rem;
 }
 
 /* Pasted job descriptions contain long unbroken strings — reference
@@ -109,6 +113,7 @@ body {
   background: var(--color-canvas);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {

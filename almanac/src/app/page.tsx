@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FilterPanel } from "@/components/filter-panel";
-import { RuleLabel } from "@/components/chips";
 import { toCardData, VacancyCard } from "@/components/vacancy-card";
 import { payBasis, sortOptions } from "@/content/site";
 import {
@@ -25,59 +24,51 @@ export default async function BoardPage({
   const filters = parseFilters(search);
   const mode = parseSort(search);
   const items = selectItems(filters, mode);
-  const narrowed = activeFilterCount(filters) > 0;
+  const active = activeFilterCount(filters);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-      <div className="flex flex-col gap-2 border-b border-line-strong pb-5 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h1 className="font-serif text-3xl font-semibold tracking-tight">
-            Current vacancies
-          </h1>
-          <p className="mt-1 text-sm text-ink-muted">
-            {openItems.length} open, {boardItems.length - openItems.length}{" "}
-            recently closed. Every one checked by hand, and every one with a
-            salary on it — bar{" "}
-            <Link href="/about#policy" className="focus-ring underline">
-              two we are chasing
-            </Link>
-            .
-          </p>
-        </div>
-        <p className="tabular shrink-0 text-sm text-ink-subtle">
-          {narrowed
-            ? `${items.length} of ${boardItems.length} shown`
-            : `${items.length} shown`}
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
+      <header className="max-w-2xl">
+        <h1 className="text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
+          Every job here says what it pays.
+        </h1>
+        <p className="mt-4 text-lg leading-relaxed text-ink-muted">
+          {openItems.length} open positions in city and county government,
+          health, schools, housing, museums and nonprofits. Every one is
+          read by a person before it goes up, and every one says what it
+          pays.
         </p>
-      </div>
+      </header>
 
-      <div className="mt-6 flex flex-col gap-8 lg:flex-row">
+      <div className="mt-10 flex flex-col gap-10 lg:flex-row">
         {/* Two copies of the same panel: a disclosure on a phone, an
             always-open column on a wide screen. Duplicated markup buys
             a filter panel that needs no JavaScript to open. */}
-        <details className="rounded-card border border-line bg-surface p-4 lg:hidden">
-          <summary className="focus-ring label cursor-pointer list-none text-ink">
+        <details className="rounded-card bg-surface p-5 shadow-card lg:hidden">
+          <summary className="focus-ring cursor-pointer list-none text-sm font-semibold text-ink">
             Filter and search
-            {narrowed ? ` · ${activeFilterCount(filters)} active` : ""}
+            {active > 0 ? ` · ${active} active` : ""}
           </summary>
-          <div className="mt-5">
+          <div className="mt-6">
             <FilterPanel search={search} idPrefix="mobile" />
           </div>
         </details>
 
-        <aside className="hidden w-60 shrink-0 lg:block">
+        <aside className="hidden w-64 shrink-0 lg:block">
           <FilterPanel search={search} idPrefix="desktop" />
         </aside>
 
         <div className="min-w-0 flex-1">
           {isUnfiltered(filters) && mode === "closing" && (
-            <section className="mb-8">
-              <RuleLabel>Featured</RuleLabel>
-              <p className="mt-2 mb-4 text-xs text-ink-subtle">
-                Paid promotions. They are listed again below, in their
-                proper place — a promotion buys attention here, not a
-                better position in the board.
-              </p>
+            <section className="mb-10">
+              <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                <h2 className="text-sm font-semibold tracking-tight">
+                  Featured
+                </h2>
+                <p className="text-xs text-ink-subtle">
+                  Paid promotions, listed again below in their proper place.
+                </p>
+              </div>
               <div className="space-y-3">
                 {featuredItems.map((item) => (
                   <VacancyCard
@@ -89,25 +80,34 @@ export default async function BoardPage({
             </section>
           )}
 
-          <RuleLabel>Order</RuleLabel>
-          <div className="mt-4 mb-5 flex flex-wrap gap-2">
-            {sortOptions.map((option) => {
-              const on = mode === option.id;
-              return (
-                <Link
-                  key={option.id}
-                  href={hrefSet(search, "sort", option.id)}
-                  aria-current={on ? "true" : undefined}
-                  className={`focus-ring rounded-sm border px-2.5 py-1.5 text-xs transition-colors ${
-                    on
-                      ? "border-band bg-band text-ink-inverse"
-                      : "border-line bg-surface text-ink-muted hover:border-line-strong hover:text-ink"
-                  }`}
-                >
-                  {option.label}
-                </Link>
-              );
-            })}
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <p className="tabular text-sm text-ink-subtle">
+              {active > 0
+                ? `${items.length} of ${boardItems.length} jobs`
+                : `${items.length} jobs`}
+            </p>
+
+            {/* A segmented control rather than three separate buttons —
+                one object with a position in it, which is what a sort is. */}
+            <div className="flex items-center gap-1 rounded-full bg-sunk p-1">
+              {sortOptions.map((option) => {
+                const on = mode === option.id;
+                return (
+                  <Link
+                    key={option.id}
+                    href={hrefSet(search, "sort", option.id)}
+                    aria-current={on ? "true" : undefined}
+                    className={`focus-ring rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+                      on
+                        ? "bg-surface text-ink shadow-card"
+                        : "text-ink-muted hover:text-ink"
+                    }`}
+                  >
+                    {option.label}
+                  </Link>
+                );
+              })}
+            </div>
           </div>
 
           {items.length === 0 ? (
@@ -130,23 +130,23 @@ export default async function BoardPage({
 
 function EmptyBoard() {
   return (
-    <div className="rounded-card border border-dashed border-line-strong bg-surface p-8 text-center">
-      <p className="font-serif text-xl font-semibold">Nothing matches that</p>
-      <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
-        There are twenty-two vacancies on the board and none of them fit
-        every one of those filters at once. Widen one of them, or set up
-        an alert and we will tell you when something does.
+    <div className="rounded-card bg-surface px-8 py-14 text-center shadow-card">
+      <p className="text-xl font-bold tracking-tight">Nothing matches that</p>
+      <p className="mx-auto mt-3 max-w-md leading-relaxed text-ink-muted">
+        There are twenty-two jobs on the board and none of them fit every
+        one of those filters at once. Widen one, or set up an alert and
+        we will tell you when something does.
       </p>
-      <div className="mt-5 flex flex-wrap justify-center gap-2">
+      <div className="mt-7 flex flex-wrap justify-center gap-2">
         <Link
           href="/"
-          className="focus-ring rounded-sm bg-accent px-3 py-2 text-sm font-semibold text-on-accent hover:bg-accent-hover"
+          className="focus-ring rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
         >
           Clear the filters
         </Link>
         <Link
           href="/alerts"
-          className="focus-ring rounded-sm border border-line px-3 py-2 text-sm font-semibold text-ink hover:border-line-strong"
+          className="focus-ring rounded-lg bg-sunk px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-line"
         >
           Set up an alert
         </Link>

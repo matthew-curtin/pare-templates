@@ -10,21 +10,21 @@ import type { Hours, Pay } from "../content/types";
  *
  * The thing worth understanding before changing anything here:
  *
- *   The number on a public sector advert is usually not the number
+ *   The number on a public sector posting is usually not the number
  *   anyone is paid.
  *
- * Part-time roles are advertised at the full-time band with "pro rata"
- * after it, which has been quietly misleading people for decades. A
- * 0.6 post advertised at "£25,900 – £28,300 pro rata" pays £15,540 to
- * £16,980. So the board shows both, and — the part that matters —
- * filters and sorts on the actual money, never on the advertised band.
- * A jobs board that filters on the band tells someone with a £20,000
- * floor about a job paying £16,980.
+ * Part-time positions are posted at the full-time range with
+ * "prorated" after it, which has been quietly misleading people for
+ * decades. A 24-hour position posted at "$52,000 – $57,000 prorated"
+ * pays $31,200 to $34,200. So the board shows both, and — the part
+ * that matters — filters and sorts on the actual money, never on the
+ * posted range. A jobs board that filters on the range tells someone
+ * with a $40,000 floor about a job paying $31,200.
  *
- * And some vacancies genuinely cannot be compared. A voluntary role, a
- * casual role with no guaranteed hours, and a listing with no salary
- * on it have no annual figure, so `annualise` returns null for all
- * three rather than inventing one. Null is a real answer here.
+ * And some jobs genuinely cannot be compared. A volunteer position, an
+ * on-call position with no guaranteed hours, and a posting with no
+ * salary on it have no annual figure, so `annualise` returns null for
+ * all three rather than inventing one. Null is a real answer here.
  */
 
 export interface PayBasis {
@@ -130,15 +130,15 @@ export function paySortKey(annual: Annual | null): number {
 
 /* ---------- display ---------- */
 
-const money = new Intl.NumberFormat("en-GB", {
+const money = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "GBP",
+  currency: "USD",
   maximumFractionDigits: 0,
 });
 
-const pence = new Intl.NumberFormat("en-GB", {
+const cents = new Intl.NumberFormat("en-US", {
   style: "currency",
-  currency: "GBP",
+  currency: "USD",
   minimumFractionDigits: 2,
 });
 
@@ -155,26 +155,26 @@ function range(min: number, max: number): string {
 export interface PayLabel {
   /** What the job pays. The figure the board sorts and filters on. */
   headline: string;
-  /** What the employer advertised, or why the job cannot be compared. */
+  /** What the employer posted, or why the job cannot be compared. */
   note?: string;
   /** True when there is no annual figure to sort or filter on. */
   uncomparable: boolean;
 }
 
 /**
- * Both halves of the truth: what the job pays, and what the advert says.
+ * Both halves of the truth: what the job pays, and what the posting says.
  *
- * The headline is the ACTUAL money, and the advertised band drops to the
+ * The headline is the ACTUAL money, and the posted range drops to the
  * footnote. That is the second version. The first put the advertised
- * band in the headline — on the grounds that it is what the candidate
+ * range in the headline — on the grounds that it is what the candidate
  * will see on the employer's own site — and it made the "highest paid"
- * sort look broken: the column read £27,600, then £38,626 pro rata,
- * then £24,404 pro rata, because the numbers on display were not the
+ * sort look broken: the column read $51,000, then $84,000 prorated,
+ * then $44,000 prorated, because the numbers on display were not the
  * numbers being sorted. The rule that came out of it is worth keeping:
  *
  *   whatever the reader scans has to be what the ordering used.
  *
- * Nothing is hidden by the swap. The advertised figure is still on the
+ * Nothing is hidden by the swap. The posted figure is still on the
  * card, one line down, attributed to the employer — which is where a
  * misleading number belongs.
  */
@@ -190,7 +190,7 @@ export function payLabel(pay: Pay, hours: Hours, basis: PayBasis): PayLabel {
       return { headline: "Not stated", note: pay.note, uncomparable: true };
 
     case "hourly": {
-      const headline = `${pence.format(pay.rate)} an hour`;
+      const headline = `${cents.format(pay.rate)} an hour`;
       if (annual === null) {
         return {
           headline,
@@ -220,7 +220,7 @@ export function payLabel(pay: Pay, hours: Hours, basis: PayBasis): PayLabel {
       return {
         headline: formatMoney(partTime && annual ? annual.min : pay.amount),
         note: partTime
-          ? `Advertised as ${formatMoney(pay.amount)} pro rata.`
+          ? `Posted as ${formatMoney(pay.amount)} prorated.`
           : undefined,
         uncomparable: false,
       };
@@ -233,7 +233,7 @@ export function payLabel(pay: Pay, hours: Hours, basis: PayBasis): PayLabel {
             ? range(annual.min, annual.max)
             : range(pay.min, pay.max),
         note: partTime
-          ? `Advertised as ${range(pay.min, pay.max)} pro rata.`
+          ? `Posted as ${range(pay.min, pay.max)} prorated.`
           : undefined,
         uncomparable: false,
       };
