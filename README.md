@@ -40,6 +40,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [exposure](exposure) | Property | Next.js | Light | ✅ Ready |
 | [playout](playout) | Broadcast | Vite | Dark | ✅ Ready |
 | [kiln](kiln) | Studio | Next.js | Warm | ✅ Ready |
+| [spoke](spoke) | Manufacturing | Vite | Light | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
@@ -71,6 +72,7 @@ The first six were all the same thing, which is what prompted the rule.
 | exposure | Split view — a pinned drawing beside a scrolling document |
 | playout | Docked console — a persistent transport bar under a full-bleed log |
 | kiln | Packed container — full-bleed rows drawn to scale, with the leftover space left visible |
+| spoke | Indented tree — depth is the layout, with a sticky rollup gutter for the branch under the pointer |
 
 ⚠️ marks the six that predate the rule and share one architecture
 between them. They are grandfathered, not endorsed.

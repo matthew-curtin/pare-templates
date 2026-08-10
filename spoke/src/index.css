@@ -1,0 +1,405 @@
+@import "tailwindcss";
+@import "@fontsource-variable/recursive/mono.css";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: a bill of materials is filed as an accounting document and
+   it is really a sentence about constraint. Ask a workshop why it can
+   only build twelve and the answer has a name and a price on it, and
+   the price is almost never large. Spaakwerk publishes the whole tree
+   rather than a specification, so the two questions a customer actually
+   has — what is in it, and when can I have one — are answered by the
+   same arithmetic the shop floor runs on. Two of the results are ones
+   nobody guesses. The thirteenth bike is stopped by a brass nipple that
+   costs eleven cents, while the €182 hub gear would have allowed
+   nineteen; and delivery is not the sum of the lead times but the
+   longest single chain through them, so fifty-five of a Kade's
+   fifty-eight parts could arrive a fortnight late and change nothing at
+   all, while exactly one has no slack. The useful split is not cheap versus
+   expensive, it is recoverable versus not: a cheap part stops you today
+   and a phone call fixes it, a long-lead part stops you in six weeks
+   and nothing does.
+
+   The device: the tree IS the page. Depth is not a disclosure control
+   or a breadcrumb, it is the layout — every route is the same hierarchy
+   seen from a different side, so the parts list is the tree flattened
+   and a part's own page is the tree inverted. Nothing here is centred
+   in a column. A sticky gutter carries the rollup for whichever subtree
+   you are pointing at, because the numbers that matter are sums over a
+   branch rather than values on a row. And a shortage propagates UP the
+   tree in CSS alone: `:has()` marks any assembly containing a short
+   part, so the constraint is visible at the root without a line of
+   JavaScript walking anything.
+
+   Not done: scroll-driven animation, and the reason is specific rather
+   than general. The one quantity here worth hanging on a scrollport is
+   depth — and depth is already spent, twice, as indentation and as the
+   thing the gutter sums over. A third encoding of the same fact would
+   be decoration that moves, which §4c rates as worse than decoration
+   that does not. Also not done: shading the tree by cost. The
+   indentation carries structure and the figures carry size; tinting two
+   hundred rows for being expensive would put the one row that matters —
+   the eleven-cent part stopping everything — in competition with the
+   frame tubes for attention, which is the mistake §4b describes as
+   encoding the value twice.
+
+   Colour is scarce on purpose: two chromatic tokens against a green-grey
+   that is nearly neutral. `short` is the constraint colour and it means
+   one thing only — this is what is stopping you — so it is never spent
+   on emphasis. `inbound` is what has been ordered and is on its way,
+   which is the opposite kind of news and gets the opposite temperature.
+   Made and bought are a bigger distinction than either and carry NO
+   hue at all: they are told apart by a marker glyph and by whether the
+   row names a supplier, because one man in twelve would read a red/green
+   pair for it as one colour (§4b).
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  /* One family, two roles. Recursive's MONO axis runs 0 (proportional)
+     to 1 (monospaced) on a single set of outlines, so figures in a
+     column and the prose above them are literally the same typeface at
+     two settings rather than two families that have to be made to get
+     along. `.fig` below is the whole of the mechanism. */
+  --font-sans: "Recursive Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Recursive Variable", ui-monospace, SFMono-Regular, monospace;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     A drawing office rather than a machine shop: paper, not steel. The
+     ground carries a green-grey cast at chroma 0.008–0.014, which is
+     under the threshold at which anybody would call it green and above
+     the one at which it reads as the same grey every other tool uses.
+     `sunk` is the recessed surface — the tree's indent gutter and the
+     tracks behind bars are cut INTO the sheet rather than laid on it. */
+  --color-ground: oklch(0.942 0.008 168);
+  --color-sheet: oklch(0.996 0.004 168);
+  --color-sunk: oklch(0.888 0.013 168);
+  --color-line: oklch(0.874 0.012 168);
+  --color-line-strong: oklch(0.596 0.016 168);
+
+  /* ── Ink ───────────────────────────────────────────────────────────
+     Three weights, all carrying the same cast as the paper so nothing
+     reads as a foreign grey dropped on top. `ink-subtle` is the floor:
+     anything quieter than this stops being readable at the 13px the
+     tree's figures sit at. */
+  --color-ink: oklch(0.258 0.016 172);
+  --color-ink-muted: oklch(0.452 0.016 172);
+  --color-ink-subtle: oklch(0.478 0.014 172);
+  --color-ink-inverse: oklch(0.976 0.005 168);
+
+  /* ── The two chromatic tokens ──────────────────────────────────────
+     Measured, not chosen: scripts/check-colours.mjs runs both against
+     the surfaces they touch and against each other under all three
+     dichromacies. They are far apart in hue AND in lightness, which is
+     what keeps them apart for a protanope. */
+  --color-short: oklch(0.502 0.186 32);
+  --color-inbound: oklch(0.478 0.104 248);
+
+  --color-short-wash: color-mix(in oklab, var(--color-short) 11%, var(--color-sheet));
+  --color-inbound-wash: color-mix(in oklab, var(--color-inbound) 11%, var(--color-sheet));
+
+  /* ── Motion ────────────────────────────────────────────────────────
+     Two durations. `quick` is a state you asked for — a row selecting,
+     a branch opening. `settle` is a value catching up with a change you
+     made somewhere else, which wants to be slow enough to follow with
+     your eye across the width of the page. */
+  --dur-quick: 140ms;
+  --dur-settle: 420ms;
+  --ease-out: cubic-bezier(0.22, 0.75, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ── Type scale ────────────────────────────────────────────────────
+     One fluid step for the page title and one for the numbers that are
+     the answer to a page's question. Everything else is fixed, because
+     a table that resizes with the viewport is harder to scan, not
+     easier. */
+  --text-display: clamp(2rem, 1.1rem + 3.4vw, 3.75rem);
+  /* Capped at 2.25rem rather than 2.75. The answer figures sit six
+     across on a part's page, and the widest of them is a money value of
+     nine or ten monospaced glyphs — which at 44px is 226px inside a
+     212px column. Nothing reported it: the cell's bounding rect is the
+     COLUMN's width whatever the text does, so the overflow is invisible
+     to the obvious measurement and only a Range around the text node
+     finds it. */
+  --text-answer: clamp(1.5rem, 1rem + 1.6vw, 2.25rem);
+  --text-title: 1.375rem;
+
+  /* The photographic treatment. §6: consistency is a property of the
+     code, not of sourcing luck. A workshop photographed on four
+     different days is four different white balances; this is what makes
+     them one set. Graded rather than crushed — steel, ash timber and
+     powder coat are three materials the page names by colour, and a
+     duotone would delete the difference. */
+  --photo-filter: saturate(0.58) sepia(0.14) contrast(1.05) brightness(1.01);
+}
+
+/* The tree's indent step, and the width of the connector elbow drawn
+   inside it. Declared with @property so `--indent` interpolates: a
+   branch opening animates its children from zero indent out to full,
+   which reads as the subtree unfolding from its parent rather than
+   appearing beneath it. A plain custom property would jump. */
+@property --indent {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* The fill of a buildable bar, 0–1. Animatable for the same reason:
+   changing the horizon date on the board moves every bar at once, and
+   an instant jump makes it impossible to see WHICH ones moved. */
+@property --fill {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@layer base {
+  html {
+    background: var(--color-ground);
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-variation-settings: "MONO" 0, "CASL" 0;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+    font-weight: 560;
+    letter-spacing: -0.011em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-line-strong);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Figures. The MONO axis at 1 gives tabular, equal-width digits from
+     the same outlines as the prose — so a column of numbers lines up
+     without introducing a second typeface with its own colour and its
+     own idea of what a 7 looks like. This one rule is the entire
+     variable-font argument in this template. */
+  .fig {
+    font-variation-settings: "MONO" 1;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: -0.02em;
+  }
+
+  .display {
+    font-size: var(--text-display);
+    line-height: 0.98;
+    font-weight: 620;
+    letter-spacing: -0.028em;
+  }
+
+  .answer {
+    font-size: var(--text-answer);
+    line-height: 1;
+    font-weight: 620;
+    font-variation-settings: "MONO" 1;
+    letter-spacing: -0.03em;
+  }
+
+  .text-title {
+    font-size: var(--text-title);
+    line-height: 1.2;
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-line-strong);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* ── The tree ────────────────────────────────────────────────────
+     A row is a grid: the name column indents by depth, the figure
+     columns are fixed and right-aligned so they form real columns down
+     the page whatever the depth of the row above.
+
+     The elbow is drawn with a pseudo-element rather than a border on
+     the row, because a border would run the full height of every row
+     including the last child of a branch — which draws a line down
+     into empty space and makes the tree look like it continues. */
+  .node-name {
+    padding-inline-start: var(--indent);
+    transition: --indent var(--dur-quick) var(--ease-out);
+  }
+
+  .elbow {
+    position: absolute;
+    inset-block: 0;
+    inline-size: 1px;
+    background: var(--color-line);
+  }
+
+  /* An assembly containing a short part is marked as blocked WITHOUT
+     any code walking the tree: the selector does the propagation. This
+     is the one thing in this stylesheet that could not have been a
+     media query or a class computed in JavaScript, and it is why the
+     tree can be rendered as a flat list of rows and still show the
+     constraint at the root. */
+  /* SHORT propagates up; INBOUND does not — and that asymmetry is the
+     design rather than an oversight. Sixteen orders are in flight at any
+     time, so "something under here is on its way" is true of nearly
+     every assembly in the tree; tinting all of them costs the colour its
+     meaning (§7b: a treatment on every row is not a warning). Short is
+     the thing that stops you, so it is worth carrying to the root.
+
+     The flag's resting state lives HERE rather than as a Tailwind
+     `opacity-0` on the element, because Tailwind's utilities layer is
+     declared after this one and layer order beats specificity — a
+     four-class selector in `components` loses to a one-class utility,
+     which is not how CSS behaves outside layers and is exactly the kind
+     of thing that looks like it should work. */
+  .rollup-flag {
+    opacity: 0;
+    transition: opacity var(--dur-quick) var(--ease-out);
+  }
+
+  .node-row.is-inbound {
+    background: var(--color-inbound-wash);
+  }
+
+  .branch:has(.is-short) > .node-row {
+    background: var(--color-short-wash);
+  }
+
+  .branch:has(.is-short) > .node-row .rollup-flag {
+    opacity: 1;
+  }
+
+  /* The buildable bar. The track is cut into the sheet; the fill is a
+     hard stop rather than a gradient so the edge is readable at the
+     3px height these run at inside a table row. */
+  .gauge {
+    --fill: 0;
+    position: relative;
+    block-size: 4px;
+    background: var(--color-sunk);
+    border-radius: 2px;
+    overflow: hidden;
+    transition: --fill var(--dur-settle) var(--ease-inout);
+  }
+
+  .gauge::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: calc(var(--fill) * 100%);
+    background: currentColor;
+  }
+
+  /* Photographs. One rule, one component, every image. */
+  .plate {
+    filter: var(--photo-filter);
+  }
+
+  /* A hairline rule that means "these two things are the same kind of
+     thing", used between figure groups. Decoration, so it is held to
+     the just-noticeable difference rather than to 3:1 — §4b. */
+  .hair {
+    border-color: var(--color-line);
+  }
+}
+
+/* ── Container queries ──────────────────────────────────────────────
+   The tree pane's width is not the viewport's: the sticky gutter takes
+   240px from it on wide screens and nothing on narrow ones, and the
+   parts table is rendered inside both a full-width page and a narrow
+   card on a part's own page. So the columns have to answer to their
+   CONTAINER. A media query would be wrong in both directions — it would
+   drop columns on a wide viewport whose pane happens to be narrow, and
+   keep them on a narrow viewport whose pane is the whole width. */
+@container tree (max-width: 60rem) {
+  .col-lead,
+  .col-slack {
+    display: none;
+  }
+}
+
+@container tree (max-width: 42rem) {
+  .col-unit {
+    display: none;
+  }
+}
+
+/* A branch opening and closing.
+   `grid-template-rows: 1fr → 0fr` is the only way to animate to a
+   content-determined height without measuring it in JavaScript — and
+   measuring is exactly what we must not do here, because the children
+   have to stay in the DOM whether the branch is open or shut. A
+   collapsed branch that unmounted its children would stop matching
+   `:has(.is-short)` above, so folding a branch would clear the warning
+   that says what is inside it. */
+.children {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows var(--dur-quick) var(--ease-out);
+}
+
+.children[data-open="false"] {
+  grid-template-rows: 0fr;
+}
+
+.children-inner {
+  min-block-size: 0;
+  overflow: hidden;
+}
+
+/* The gutter arriving. `@starting-style` gives an element an entry
+   animation without a library and without a mount hook — the panel is
+   the only thing on the page that appears rather than changing, so it
+   is the only thing that gets one. */
+@starting-style {
+  .gutter-panel {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+
+.gutter-panel {
+  transition:
+    opacity var(--dur-settle) var(--ease-out),
+    translate var(--dur-settle) var(--ease-out);
+}
+
+/* View transitions carry a part's NAME from its row in a list to the
+   heading of its own page, so the thing you clicked is demonstrably the
+   thing you are now looking at. That matters here more than it usually
+   does: this site has a hundred rows that differ from each other by one
+   word, and several that differ by one digit. React Router drives these
+   through `document.startViewTransition`; the name is applied only
+   while a transition to that particular part is in flight, because two
+   elements sharing a view-transition-name at once cancels it. */
+::view-transition-old(part-name),
+::view-transition-new(part-name) {
+  animation-duration: var(--dur-quick);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Degrade to the FINAL state, never a half-applied one: no
+     interpolation on the custom properties, no unfolding, no view
+     transition — but every value still lands where it was going, and
+     every branch still opens. */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

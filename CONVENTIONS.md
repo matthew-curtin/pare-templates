@@ -291,6 +291,27 @@ the failure message, and put it back. Prefer breaking the DATA over
 breaking the assertion — an assertion you edited to fail proves the
 assertion runs, while data you edited to be wrong proves it measures.
 
+### A guard can be satisfied by a LEFTOVER
+
+`spoke` ran the exercise and found the same class of hole a second time,
+by a different route. Its `:has()` propagation — the one thing in that
+stylesheet doing work no other technique could — was guarded by
+`/\.branch:has\(\.is-short\)/.test(css)`. Deleting the propagation rule
+passed 74 of 74, because a *second* rule reveals a marker on the same
+ancestors and mentions the same selector, and the regex matched that
+one instead.
+
+The rule that falls out: **assert the DECLARATION, not the selector.**
+Match the property and value the rule exists to apply, not the fact that
+its name occurs somewhere in the file. And when the thing being guarded
+appears more than once, breaking any one occurrence has to fail — which
+is only discoverable by breaking each of them in turn.
+
+The pattern generalises past CSS. A check that searches for a *string*
+rather than for the *effect* will pass on a comment describing the rule,
+on a second unrelated use, or on a disabled copy — all three have now
+happened in this repo.
+
 ---
 
 ## 4c. Design with a position, not a default
@@ -898,6 +919,28 @@ does not exist and introduce one that does.
 The reverse also happens: a click can look like it did nothing because
 React had not committed yet. Read state in a *separate* call from the one
 that triggered it, or await a tick first.
+
+**A block element's rect is its CONTAINER's width, not its text's.** So
+the obvious way to ask "does this text fit" answers a different question
+and always says yes. In `spoke` a screenshot showed two figures touching
+in a six-column row; `getBoundingClientRect` on both cells reported a
+tidy 24px gap and a clean zero overflow, because a `<div>` is as wide as
+its column whatever the glyphs inside it do. The text was 226px in a
+212px cell the whole time. A `Range` around the node's contents measures
+the glyphs:
+
+```js
+const r = document.createRange();
+r.selectNodeContents(el);
+r.getBoundingClientRect().width > el.getBoundingClientRect().width;
+```
+
+Worth sweeping every route with, once, at the end — it is three lines
+and it catches the class of defect that survives `scrollWidth ===
+clientWidth` (which only sees overflow that reaches the document) and
+survives every build. Note which way round this one went: the screenshot
+was right and the first measurement was wrong. The rule above is not
+"trust the DOM", it is *ask the DOM the question you actually have*.
 
 ### Check the measuring context before believing the measurement
 
