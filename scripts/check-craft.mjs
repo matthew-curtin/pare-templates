@@ -19,6 +19,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { auditDebtList } from "./fleet.mjs";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 
@@ -257,6 +258,38 @@ if (missing.length > 0) {
     name: "README.md",
     problems: [`register names templates that do not exist: ${missing.join(", ")}`],
   });
+}
+
+// The debt lists are CLOSED. Both of these are historical — they exist
+// because rewriting the first ten at once was the wrong use of a week —
+// and a new template quietly joining one is how the cliff §6 describes
+// happened in the first place. `scripts/fleet.mjs` holds the reasoning
+// and the frozen list; `NO_IMAGERY` is deliberately not audited here,
+// because it is an open carve-out that costs a written reason.
+const names = results.map((r) => r.name);
+const debtProblems = [
+  ...auditDebtList("LEGACY", LEGACY, names),
+  ...auditDebtList("IMAGERY_DEBT", IMAGERY_DEBT, names),
+];
+if (debtProblems.length > 0) {
+  failures.push({ name: "check-craft.mjs", problems: debtProblems });
+}
+
+// The open carve-out earns its place by being argued for. A one-word
+// reason is not an argument, and an empty one is the list being used as
+// a mute button.
+for (const [name, reason] of NO_IMAGERY) {
+  if (!names.includes(name)) {
+    failures.push({
+      name: "check-craft.mjs",
+      problems: [`NO_IMAGERY names "${name}", which is not a template in this repo`],
+    });
+  } else if (reason.length < 60) {
+    failures.push({
+      name: "check-craft.mjs",
+      problems: [`NO_IMAGERY's reason for "${name}" is too short to be a reason`],
+    });
+  }
 }
 
 console.log("\n  Craft audit — CONVENTIONS §4c\n");

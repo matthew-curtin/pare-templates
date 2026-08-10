@@ -500,6 +500,26 @@ That was the first design and it was exactly backwards — the sources are
 *supposed* to disagree, and a checker measuring them would fail a
 template precisely because its method works. Measure the mechanism.
 
+**The debt lists are closed.** Both checkers carry lists of templates
+excused something — §4c grandfathering, owed imagery, owed treatments —
+and all of them are historical, because rewriting eleven templates at
+once was a worse use of a week than making the next ten good.
+`scripts/fleet.mjs` freezes the fleet as it stood when these rules
+landed, and both checkers refuse any debt entry naming a template that
+is not on it. The lists can only shrink.
+
+That guard exists because of how the cliff happened the first time: six
+locally reasonable omissions in a row, none of them decided. A new
+template skipping photography, getting a plausible note in
+`IMAGERY_DEBT`, and passing every check is the same failure with a
+paper trail. New templates meet the bar; they do not join the debt.
+
+The one carve-out that stays **open** is `NO_IMAGERY` — a future
+template really might have nothing to photograph, the way `docs-site`
+does. It costs a written reason, which is printed on every run and has a
+length floor, because a one-word reason is a mute button rather than an
+argument. Same for the `ACCEPTED` findings in `check-imagery.mjs`.
+
 ### Sourcing
 
 - Source from [Pexels](https://www.pexels.com/license/) — free to use

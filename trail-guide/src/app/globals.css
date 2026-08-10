@@ -1,0 +1,470 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: a long walk is not a distance. It is a short list of places
+   you are allowed to sleep, and the ground between them. So this site
+   quotes hours and feet of climb first, terrain second, and miles last
+   — and every leg of the route is fixed at both ends by a hut, because
+   that is where you actually stop whether you meant to or not.
+
+   The device: a drawn terrain rail. The whole 142 miles is a single
+   elevation profile turned on its side and run down the full height of
+   every page, coloured by what the ground is made of. On a page that
+   reads in route order it carries a marker that descends as you scroll;
+   on any other page it lights the section you are looking at. The rail
+   is the site's spine and its position indicator at once.
+
+   Not done: a map. Every trail site opens with one, and a map is the
+   single thing that cannot answer the only question that matters —
+   whether tomorrow is possible. The profile can. Also not done: big
+   type. conference-schedule takes the other position and sets its
+   headline at 9.5rem; here the headings are small and the FIGURES are
+   the display type, because on this site the numbers are the argument.
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-sans: var(--font-recursive), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     Cold near-black. The hue is 250 rather than 0 chroma because a
+     neutral grey behind a bone-coloured profile line reads as newsprint
+     grey; a trace of blue in the ground makes the same line read as
+     lit. Three depths only: the page, a panel, and the well the rail
+     sits in. */
+  --color-canvas: oklch(0.168 0.016 250);
+  --color-surface: oklch(0.219 0.018 250);
+  /* The well is the recess the rail sits in, and it has to read as a
+     recess rather than as the page continuing. At 0.132 the checker
+     measured it at ΔE 2.13 against the canvas — under the
+     just-noticeable difference, so the rail's edge was doing all the
+     work on its own. 0.108 came back at 2.99, which is a pass one
+     rounding would turn into a failure; this is the value with
+     headroom. */
+  --color-well: oklch(0.094 0.014 250);
+  --color-ink-inverse: oklch(0.168 0.016 250);
+
+  /* ── Ink ───────────────────────────────────────────────────────────
+     Slightly blue-white rather than paper-white, for the same reason as
+     the ground. The two quieter inks are lighter than a dark theme
+     usually wants because `surface` is the brightest thing text lands
+     on and it sets the bar — the checker measures against that, not
+     against the canvas, where everything passes easily. */
+  --color-ink: oklch(0.962 0.008 250);
+  --color-ink-muted: oklch(0.788 0.014 250);
+  --color-ink-subtle: oklch(0.672 0.014 250);
+
+  /* ── Lines ─────────────────────────────────────────────────────────
+     Two greys, two jobs, per §4b. Hairlines between rows are
+     decoration and owe visibility (ΔE 3); a control's own boundary IS
+     the control and owes 3:1. */
+  --color-line: oklch(0.318 0.016 250);
+  --color-line-strong: oklch(0.560 0.016 250);
+
+  /* ── The ground ────────────────────────────────────────────────────
+     Four terrain classes, and the ONLY four colours in the design that
+     are not ink, water or a warning. They carry meaning with no words
+     beside them in the rail, so each owes 3:1 against the canvas — on
+     a ground this dark that puts a floor of about L 0.49 under all
+     four, which is why none of them is a deep earth colour however
+     much a bog wants to be one.
+
+     Ordered by lightness ON PURPOSE, and the order is the information:
+     the easier the ground, the lighter the band. A profile with dark
+     patches in it is a profile with slow days in it, readable before
+     you have understood anything else on the page.
+
+     Hue assignment is the checker's, not taste's. Rust and olive are
+     the pair that collapses under protanopia, so they take the two
+     ENDS of the ladder and the two that survive dichromacy sit between
+     them — the same finding conference-schedule made about red and
+     ochre, arrived at again from the other direction.
+
+     Blue is deliberately absent here. It belongs to water, which is
+     what decides where the legs break, and a blue that also meant
+     "scree" would spend the one colour this site cannot afford to
+     blur. */
+  --color-ground-trail: oklch(0.880 0.024 92); /* graded path — fastest */
+  /* Greener than it wants to be, and the checker decided that: at hue
+     104 this olive measured ΔE 9.78 from the warning amber, which sits
+     at almost the same lightness and can appear in the same leg card.
+     Moving it toward 120 costs nothing and clears the bar. */
+  --color-ground-rough: oklch(0.760 0.086 122); /* rough path, roots, blowdown */
+  --color-ground-talus: oklch(0.640 0.040 300); /* boulder and scree */
+  --color-ground-bog: oklch(0.520 0.112 32); /* peat and muskeg — slowest */
+
+  --color-ground-trail-soft: color-mix(in oklch, var(--color-ground-trail) 16%, var(--color-canvas));
+  --color-ground-rough-soft: color-mix(in oklch, var(--color-ground-rough) 18%, var(--color-canvas));
+  --color-ground-talus-soft: color-mix(in oklch, var(--color-ground-talus) 22%, var(--color-canvas));
+  --color-ground-bog-soft: color-mix(in oklch, var(--color-ground-bog) 26%, var(--color-canvas));
+
+  /* ── Water ─────────────────────────────────────────────────────────
+     One blue, and it means exactly one thing on this site: you can
+     drink here. It is also the primary action colour, because every
+     action on a trail guide is ultimately "commit to stopping
+     somewhere", and where you stop is decided by this. */
+  --color-water: oklch(0.812 0.126 218);
+  --color-water-deep: oklch(0.640 0.118 218);
+  --color-on-water: oklch(0.168 0.016 250);
+
+  /* Warning: a day that is too long, a source that dries, a section
+     that is still under snow. Amber against blue is the pair that
+     survives every dichromacy, which is why the two signals on this
+     site are those two and not red and green. */
+  --color-warn: oklch(0.800 0.150 76);
+  --color-warn-soft: color-mix(in oklch, var(--color-warn) 16%, var(--color-canvas));
+
+  /* ── Type scale ────────────────────────────────────────────────────
+     The position, per §4c: headings stay small and the FIGURES are the
+     display type. A guide whose argument is "look at the hours, not
+     the miles" should not set the word Stages at 9rem and the hours at
+     14px. */
+  --text-figure: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --text-display: clamp(1.375rem, 1.2rem + 0.85vw, 2rem);
+  --text-title: clamp(1.125rem, 1.05rem + 0.35vw, 1.375rem);
+  --text-lede: clamp(1rem, 0.96rem + 0.22vw, 1.125rem);
+
+  /* ── Photography ───────────────────────────────────────────────────
+     One treatment, applied to every photograph, and it is the whole
+     mechanism behind the set reading as a set — §6. The sources are
+     from different ranges in different weather and they are SUPPOSED to
+     disagree; a stock library is not a shoot, and no amount of
+     searching turns it into one.
+
+     Cold duotone rather than plain greyscale. `sepia()` is the only
+     cheap way to tint a monochrome image in CSS and it only goes warm,
+     so the trick is to sepia it and then rotate the hue the long way
+     round to the blue this template is built on. Darkened, because a
+     bright photograph on a canvas this dark is a hole punched in the
+     page — the opposite adjustment to the one conference-schedule
+     needed on bone. */
+  --photo-filter: grayscale(1) sepia(0.55) hue-rotate(163deg) saturate(1.45)
+    contrast(1.06) brightness(0.82);
+
+  /* ── Motion ────────────────────────────────────────────────────────
+     Tokens, so a duration is a decision rather than whatever Tailwind
+     defaults to. Slower than conference-schedule's on purpose: that
+     template is a wallchart you scan, this one is a profile you travel
+     along, and the itinerary re-splitting wants to be followable. */
+  --dur-fast: 120ms;
+  --dur-base: 260ms;
+  --dur-slow: 520ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-snap: cubic-bezier(0.2, 0.9, 0.24, 1);
+
+  /* ── Geometry ──────────────────────────────────────────────────────
+     One number sets the width of the spine on every page. */
+  --rail-width: clamp(2.5rem, 6vw, 5.5rem);
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ───────────────────────────────────────────────────────
+   One family, two modes. Recursive carries a real `MONO` axis, and this
+   template uses it instead of a second typeface: prose is set
+   proportional at MONO 0, and every figure on the site — hours, feet,
+   miles, grid references — is set at MONO 1, which is the same face
+   walking on monospaced feet.
+
+   That is a better answer than `tabular-nums` for this particular site,
+   because the numbers here are not only being aligned in columns, they
+   are the thing being read. A monospaced figure reads as an
+   instrument's output; a proportional one reads as prose. The axis says
+   which kind of number you are looking at.
+
+   `CASL` is pinned at 0 everywhere — the casual end of the axis softens
+   the letterforms toward handwriting, which is charming and wrong for a
+   document about whether you will make it before dark. */
+.figure {
+  font-variation-settings: "MONO" 1, "CASL" 0;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.datum {
+  font-variation-settings: "MONO" 1, "CASL" 0;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.prose-block {
+  /* `pretty` rather than `balance`: balance re-flows a whole paragraph
+     to even every line, which is worse than the orphan it fixes.
+     `pretty` only takes the last line's widow. */
+  text-wrap: pretty;
+  max-width: 64ch;
+}
+
+.head {
+  text-wrap: balance;
+  letter-spacing: -0.018em;
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+/* ── Photographs ──────────────────────────────────────────────────────
+   Every photograph on the site goes through this and nothing else does.
+   The treatment lives here rather than being baked into the files on
+   three counts, all of them the same argument §5 makes for drawing
+   interfaces instead of shipping screenshots: the images on disk stay
+   the originals so the decision is reversible; a replacement inherits
+   the treatment automatically so the set cannot drift when somebody
+   swaps one in a hurry; and it is a declaration you can click and
+   change in Pare, which a flattened JPEG is not. */
+.plate {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-well);
+}
+
+.plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--photo-filter);
+}
+
+/* A hairline drawn ON the photograph rather than a border around the
+   box, so a plate is bounded the same way every other edge on this site
+   is — by a line sitting on the thing it bounds. */
+.plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px var(--color-line-strong);
+  pointer-events: none;
+}
+
+.plate figcaption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.5rem 0.75rem;
+  background: color-mix(in oklch, var(--color-well) 88%, transparent);
+  backdrop-filter: blur(6px);
+  color: var(--color-ink-muted);
+}
+
+/* ── Focus ────────────────────────────────────────────────────────────
+   Water blue, which is the action colour, and never the warning amber —
+   a focus ring in the warning colour puts a false alarm on whatever you
+   tabbed to. */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-water);
+  outline-offset: 2px;
+}
+
+/* ── The terrain rail ─────────────────────────────────────────────────
+   The spine. Sticky, full viewport height, and present on every route —
+   what changes between pages is only which part of it is lit.
+
+   The SVG inside is drawn in a 100 × 1000 viewBox with
+   preserveAspectRatio="none", so the profile stretches to whatever
+   height the viewport is. That is deliberate and it is why the rail can
+   be a fixed-height element carrying a variable-length route: vertical
+   position is distance travelled as a FRACTION, never as a number of
+   pixels per mile. A rail that scaled pixels-per-mile would be four
+   screens long and could not be sticky at all. */
+.rail {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  width: var(--rail-width);
+  flex: none;
+  background: var(--color-well);
+  border-right: 1px solid var(--color-line);
+  overflow: hidden;
+}
+
+/* Sections of the profile outside the part this page is about. Dimmed
+   rather than hidden, so the shape of the whole route is always
+   readable and the lit part is read as a position within it. */
+.rail-dim {
+  opacity: 0.28;
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────
+   Three animations in the whole template, each attached to something
+   changing meaning. There are no entrance animations on sections.
+
+   1. The rail marker descends as you scroll a route-ordered page, so
+      the profile doubles as a position indicator. Scroll-driven, so
+      there is no listener and no rAF and it cannot jank.
+   2. Re-splitting the itinerary is a View Transition, because the
+      point of dragging 9 days to 7 is watching WHICH days merge, and
+      that is exactly the information an instant swap destroys.
+   3. A warning that appears on a day animates in from nothing, because
+      a row that changes while you are looking at a different part of
+      the page is a change you miss. */
+
+/* A registered custom property, so the marker's position interpolates
+   as a length instead of jumping between keyframes as a string. */
+@property --rail-pos {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* The wrapper is the full height of the rail and the line sits at its
+   top edge, so translating the wrapper by a PERCENTAGE — which resolves
+   against the element's own box — moves the line from the top of the
+   rail to the bottom exactly. Sizing the wrapper 3px short of the rail
+   is what stops the line disappearing under the bottom edge at 100%. */
+.rail-marker {
+  position: absolute;
+  inset: 0 0 3px 0;
+  translate: 0 var(--rail-pos);
+  animation: rail-descend linear both;
+  animation-timeline: scroll(root block);
+  pointer-events: none;
+}
+
+@keyframes rail-descend {
+  from {
+    --rail-pos: 0%;
+  }
+  to {
+    --rail-pos: 100%;
+  }
+}
+
+/* `scroll(root block)`, never `nearest`. The rail is sticky inside a
+   flex row, and `nearest` binds to whichever ancestor happens to be a
+   scroll container — on a page where that is not the document, the
+   animation sits forever on its first keyframe and the marker parks at
+   the top. It looks exactly like the feature never having been built,
+   and nothing anywhere reports an error. conference-schedule lost an
+   afternoon to the same line. */
+
+.day-warning {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-snap);
+}
+
+@starting-style {
+  .day-warning {
+    opacity: 0;
+    transform: translateY(-0.375rem);
+  }
+}
+
+::view-transition-old(itinerary),
+::view-transition-new(itinerary) {
+  animation-duration: var(--dur-slow);
+  animation-timing-function: var(--ease-out);
+}
+
+/* ── :has() ───────────────────────────────────────────────────────────
+   Two states that are genuinely properties of a subtree rather than of
+   an element, which is the case :has() exists for and which no amount
+   of prop-threading expresses well.
+
+   1. A day containing a leg with no water marks its own heading. The
+      dry flag lives inside a leg card, which is a separate component
+      rendered by the planner as a child — so styling the heading from
+      it in React would mean lifting that state up through two
+      components to reach a sibling. In CSS it is one selector.
+   2. A leg card raises its border when the link inside it takes focus.
+      There is no `:focus-visible-within`, and `:focus-within` is the
+      wrong thing: it fires on a mouse click too, which would put a
+      keyboard affordance on the card of whoever last clicked it. This
+      is the case with no non-CSS equivalent at all.
+
+   Two rules, both earning it. A third would be collecting features. */
+.day:has([data-dry="true"]) .day-heading {
+  color: var(--color-warn);
+}
+
+.day:has([data-dry="true"]) .day-rule {
+  background: var(--color-warn);
+}
+
+.leg-card:has(a:focus-visible) {
+  border-color: var(--color-water);
+}
+
+/* ── Container queries ────────────────────────────────────────────────
+   A leg card appears in three places at three widths — three across on
+   the stages index, full width inside a day on the planner, and beside
+   the rail on a phone. How much of the terrain breakdown fits is a
+   question about the CARD's width, not the window's: dropping the
+   planner to seven days makes every card in it narrower at an unchanged
+   viewport width. So the card asks its own box. */
+.leg-card {
+  container-type: inline-size;
+  container-name: leg;
+}
+
+.leg-terrain-full,
+.leg-note {
+  display: none;
+}
+
+@container leg (min-width: 20rem) {
+  .leg-note {
+    display: block;
+  }
+}
+
+@container leg (min-width: 27rem) {
+  .leg-terrain-full {
+    display: block;
+  }
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────
+   Degrades to the FINAL state, never a half-applied one — so a warning
+   shows at rest rather than mid-slide. §4c.
+
+   The rail marker is the one exception and it is hidden outright, which
+   is worth arguing rather than smuggling: it has no final state that is
+   not a lie. Parked at the bottom it claims you are at the far end of
+   the route, and parked at the top it claims you are at the start; both
+   are worse than no marker, and the rest of the rail still does its
+   job. When the honest degradation of an indicator is to remove it,
+   remove it. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .rail-marker {
+    animation: none;
+    display: none;
+  }
+
+  .day-warning {
+    opacity: 1;
+    transform: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

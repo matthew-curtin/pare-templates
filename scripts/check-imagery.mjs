@@ -25,6 +25,7 @@
 import { readdirSync, readFileSync, statSync, existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+import { auditDebtList } from "./fleet.mjs";
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const IMAGE_RE = /\.(jpe?g|png|webp|avif|gif)$/i;
@@ -238,6 +239,33 @@ for (const name of templates()) {
     owesTreatment: images.length > 0 && TREATMENT_DEBT.has(name),
   });
   if (real.length > 0) failures.push({ name, problems: real });
+}
+
+// TREATMENT_DEBT is closed for the same reason check-craft's lists are:
+// it records five templates that were art-directed by sourcing alone
+// before the treatment rule existed, and a new template joining it
+// would be the rule quietly not applying to anything new. The frozen
+// fleet and the argument are in scripts/fleet.mjs.
+const names = rows.map((r) => r.name);
+const debtProblems = [
+  ...auditDebtList("TREATMENT_DEBT", TREATMENT_DEBT, names),
+  ...auditDebtList("ACCEPTED", ACCEPTED.keys(), names),
+];
+if (debtProblems.length > 0) {
+  failures.push({ name: "check-imagery.mjs", problems: debtProblems });
+}
+
+// An accepted finding is a decision somebody made and can be argued
+// with. A short reason is not one.
+for (const [name, entries] of ACCEPTED) {
+  for (const [fragment, why] of entries) {
+    if (why.length < 60) {
+      failures.push({
+        name: "check-imagery.mjs",
+        problems: [`ACCEPTED reason for "${name}" / "${fragment}" is too short to be a reason`],
+      });
+    }
+  }
 }
 
 console.log("\n  Imagery audit — CONVENTIONS §6\n");

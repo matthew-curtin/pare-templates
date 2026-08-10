@@ -9,7 +9,12 @@
       "category": "Marketing",
       "description": "A complete marketing site for a software product — features, pricing, changelog, blog and about.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -21,7 +26,13 @@
         "/about",
         "/contact"
       ],
-      "tags": ["marketing", "saas", "blog", "pricing", "forms"],
+      "tags": [
+        "marketing",
+        "saas",
+        "blog",
+        "pricing",
+        "forms"
+      ],
       "thumbnail": null
     },
     {
@@ -31,7 +42,12 @@
       "category": "Marketing",
       "description": "A marketing site for a mobile app — features, pricing, downloads, a searchable help centre, a press kit and legal pages.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "dark",
       "routes": [
         "/",
@@ -43,7 +59,14 @@
         "/press",
         "/legal/[doc]"
       ],
-      "tags": ["marketing", "mobile", "app", "pricing", "support", "legal"],
+      "tags": [
+        "marketing",
+        "mobile",
+        "app",
+        "pricing",
+        "support",
+        "legal"
+      ],
       "thumbnail": null
     },
     {
@@ -53,7 +76,12 @@
       "category": "Publishing",
       "description": "A quarterly magazine — long-form stories with real body copy, departments, a filterable archive, contributors and subscriptions.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -80,7 +108,12 @@
       "category": "Commerce",
       "description": "A shop with a working basket — products with size and grind variants, filtering, a delivery threshold, subscriptions and an interactive brew timer.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -109,7 +142,12 @@
       "category": "Application",
       "description": "A product-analytics app — KPI tiles, a time series with comparison, a retention heatmap, a funnel, and a sortable event catalogue. Every chart is hand-drawn SVG with a table view.",
       "framework": "vite",
-      "stack": ["Vite 8", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Vite 8",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -136,7 +174,12 @@
       "category": "Application",
       "description": "A kanban board with draggable cards, a sortable backlog, issue pages with checklists, a quarterly roadmap and a team workload view. Fully keyboard-operable.",
       "framework": "vite",
-      "stack": ["Vite 8", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Vite 8",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "dark",
       "routes": [
         "/",
@@ -164,7 +207,12 @@
       "category": "Booking",
       "description": "A wood-fired restaurant with a working reservation flow — live availability, party size, two sittings, validation and a confirmation. Menus, private dining and an enquiry form.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "dark",
       "routes": [
         "/",
@@ -191,9 +239,21 @@
       "category": "Documentation",
       "description": "Developer documentation for an API — eleven pages written in markdown, an HTTP reference, client libraries and a changelog. Sidebar, contents list and ⌘K search all derive from the files.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
-      "routes": ["/", "/docs", "/docs/[...slug]", "/reference", "/sdks", "/changelog"],
+      "routes": [
+        "/",
+        "/docs",
+        "/docs/[...slug]",
+        "/reference",
+        "/sdks",
+        "/changelog"
+      ],
       "tags": [
         "documentation",
         "docs",
@@ -212,7 +272,12 @@
       "category": "Application",
       "description": "A shared helpdesk — a conversation list beside the thread, with replies, internal notes, saved replies, assigning, snoozing and bulk actions. Each plan carries a promised reply time, and exactly one conversation is late.",
       "framework": "vite",
-      "stack": ["Vite 8", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Vite 8",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -240,7 +305,12 @@
       "category": "Listings",
       "description": "A hand-checked jobs board — link-based filters, search and sorting, employer pages, an alert builder that shows what it would have caught, and a posting composer with a live preview. Every job states what it actually pays, prorated hours included.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -269,7 +339,12 @@
       "category": "Events",
       "description": "A three-day conference wallchart drawn to scale — four rooms, live sessions against a pinned clock, link-based filters, a personal plan that calls out double-bookings, and a session page that says what going to it costs you.",
       "framework": "next",
-      "stack": ["Next.js 16", "React 19", "TypeScript", "Tailwind 4"],
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
       "theme": "light",
       "routes": [
         "/",
@@ -289,6 +364,39 @@
         "agenda",
         "filters",
         "forms"
+      ],
+      "thumbnail": null
+    },
+    {
+      "id": "trail-guide",
+      "path": "trail-guide",
+      "name": "Trail guide",
+      "category": "Guide",
+      "description": "A long-distance trail guide built around an elevation rail — eleven legs quoted in hours rather than miles, with an itinerary planner that shows what each day actually costs.",
+      "framework": "next",
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
+      "theme": "dark",
+      "routes": [
+        "/",
+        "/stages",
+        "/stages/[slug]",
+        "/plan",
+        "/shelters",
+        "/conditions",
+        "/getting-there"
+      ],
+      "tags": [
+        "guide",
+        "outdoors",
+        "travel",
+        "data",
+        "planner",
+        "charts"
       ],
       "thumbnail": null
     }
