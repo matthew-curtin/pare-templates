@@ -474,6 +474,53 @@ bone and a neutral photograph on a warm ground reads as a hole in the
 page. Pick the treatment against the palette; a dark template may want
 the opposite.
 
+### Treatment STRENGTH is set by how much the photograph's own colour is doing
+
+The rule above says pick the treatment against the palette. That is only
+half of it, and `exposure` is the case that shows the other half.
+
+Two of these templates crush their photographs to a duotone —
+`conference-schedule` and `trail-guide` — and they are right to. The
+subject is a building, or weather. Hue is carrying nothing, so removing
+it costs nothing and buys a set. `exposure` is about **daylight**, and
+there the hue *is* the evidence: a warm raking beam and a flat cold north
+light are two different claims, and greyscale would delete the exact
+difference the page is arguing about. Its treatment is a partial
+desaturation — `saturate(0.44) sepia(0.17) contrast(1.07)` — enough to
+pull a teal industrial cast and a golden domestic one towards each other,
+not enough to stop warm light reading as warm.
+
+So the dial runs from "crush it" to "grade it lightly", and the question
+that sets it is: **is the colour in this photograph part of what it is
+being asked to prove?** If not, take it out. If it is, grade rather than
+crush — and accept the consequence, which is the real content of this
+rule: **a lighter treatment means the SOURCING has to do more work**,
+because less of the disagreement between five stock images is being
+ironed out afterwards. That is what the one-sentence direction is for,
+and it is why `exposure`'s ends with a clause that reads like a
+technicality — *no lamps lit* — and rejected three otherwise strong
+candidates.
+
+What does not move: there is always a declared `--photo-filter`, always
+exactly one component applying it, and it is never nothing. A treatment
+of "none" is sourcing luck with extra steps.
+
+### Tie the caption to the model, wherever there IS a model
+
+`exposure` prints the hour every photograph was taken, because that is
+its whole argument — a listing photograph is taken in the one hour that
+flatters a room. A caption like that is a claim about the content, and a
+template that computes anything can check it: each shot carries a `lit`
+flag, and `check-sun.mjs` puts the stated date and time through the same
+arithmetic the site uses and fails if the answer disagrees.
+
+That is worth generalising past this one template. §6 already says to
+write the words against the picture rather than the other way round, and
+that catches the error at authoring time. Asserting it catches the error
+somebody introduces LATER, by nudging a number the caption depended on —
+which is silent, and which the picture cannot correct because the picture
+does not change.
+
 Three properties make this the right place for it, and they are the same
 argument §5 makes for drawing interfaces rather than shipping
 screenshots: the files on disk stay the originals, so the decision is

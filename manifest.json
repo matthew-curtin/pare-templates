@@ -399,6 +399,40 @@
         "charts"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "exposure",
+      "path": "exposure",
+      "name": "Property listings",
+      "category": "Property",
+      "description": "A brokerage that publishes the light — every room quoted in hours of direct sun on three days of the year, with a clickable floor plan pinned beside the page and a viewing form that recommends the hour the house has nothing to show you.",
+      "framework": "next",
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/homes",
+        "/homes/[slug]",
+        "/compare",
+        "/light",
+        "/viewings",
+        "/about"
+      ],
+      "tags": [
+        "property",
+        "real-estate",
+        "listings",
+        "data",
+        "charts",
+        "forms",
+        "plans"
+      ],
+      "thumbnail": null
     }
   ]
 }

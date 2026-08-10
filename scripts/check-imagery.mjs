@@ -90,6 +90,23 @@ function templates() {
     .sort();
 }
 
+/**
+ * Source with its comments removed.
+ *
+ * The import checks below match a string, and a comment EXPLAINING the
+ * rule contains that string — which is how `exposure` first failed this
+ * run for a doc comment describing why it does not import the module.
+ * A checker that counts imports should count imports. Same lesson as
+ * stripping comments before asserting on a config file, arriving from
+ * the other direction: there, a comment created a false pass; here, a
+ * false failure.
+ */
+function code(file) {
+  return readFileSync(file, "utf8")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
 function walk(dir, onFile) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
@@ -182,7 +199,7 @@ for (const name of templates()) {
     //    and the first version of this check flagged a hand-drawn SVG
     //    mockup for being properly marked decorative.
     const emptyAlt = sources.filter((s) => {
-      const text = readFileSync(s.full, "utf8");
+      const text = code(s.full);
       return /from\s+["']next\/image["']/.test(text) && /alt=(""|\{""\}|'')/.test(text);
     });
     if (emptyAlt.length > 0) {
@@ -206,7 +223,7 @@ for (const name of templates()) {
       );
     } else if (declaresTreatment) {
       const renderers = sources.filter((s) =>
-        /from\s+["']next\/image["']/.test(readFileSync(s.full, "utf8")),
+        /from\s+["']next\/image["']/.test(code(s.full)),
       );
       if (renderers.length > 1) {
         problems.push(

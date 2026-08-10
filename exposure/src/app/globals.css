@@ -1,0 +1,389 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: "good light" is not a property of a house. It is a property
+   of a house AND a date. Every listing sells you an aspect and none of
+   them tells you when — so this one publishes the hours instead, room by
+   room, on the longest day, an ordinary one, and the shortest. The
+   argument is settled by the model rather than asserted: a due-south
+   room here takes MORE direct sun on 21 December than on 21 June,
+   because in June the sun rises and sets behind it, and a north room
+   takes nearly seven hours in June and none at all in December. Ask
+   about aspect without asking about the month and you have asked
+   nothing.
+
+   The device: a split. A drawing stays and a document moves. Every page
+   on this site is a pinned half — the floor plan, the compass, the sun's
+   arc for the day — beside a scrolling half you read, and on a home the
+   drawing is also the navigation: click a room in the plan and the plan
+   is what selected it. Under every room is a day strip drawn 04:00 to
+   22:00 on the same scale everywhere, so June and December are the same
+   ruler and the difference between them is a length rather than a claim.
+
+   Not done: the golden-hour hero. Every property site in the world opens
+   with the exterior shot taken at 8pm in July, which is the single least
+   informative photograph it is possible to take of a house. This one
+   opens with a plan and a number, and every photograph on it is captioned
+   with the hour it was taken so you can check the picture against the
+   room. Also not done, quietly: an alarm colour. Nothing here is red. A
+   bedroom with no winter sun is a fact and not a defect, and the site's
+   whole position is that it prints hours and lets you decide.
+
+   Typography takes a position by SUBTRACTION: there is no bold on this
+   site. Weights are 400 and 500, hierarchy is carried by size, colour and
+   space, and the display face changes its optical size at every step of
+   the scale — which is what an `opsz` axis is for and what almost nobody
+   wires up. `scripts/check-colours.mjs` asserts the no-bold rule, because
+   a restraint nobody can measure is a preference.
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     A north-light studio: cool, high-key, and never quite white. The
+     page is paper and the cards are the sheets pinned to it, which is
+     the only place actual white appears. */
+  --color-canvas: oklch(0.972 0.006 250);
+  --color-surface: oklch(0.997 0.002 250);
+  --color-well: oklch(0.923 0.009 250);
+  --color-line: oklch(0.878 0.009 252);
+  --color-line-strong: oklch(0.600 0.013 252);
+
+  --color-ink: oklch(0.243 0.019 255);
+  --color-ink-muted: oklch(0.463 0.017 255);
+  --color-ink-subtle: oklch(0.480 0.015 255);
+
+  /* ── The four states of light ──────────────────────────────────────
+     These are the only colours on this site that mean anything, and
+     they are a genuine ordered ramp rather than nominal categories —
+     direct beam, sky only, blocked by something, and gone — so a value
+     ramp is the right instrument here (§4b) and it runs light to dark
+     in that order. Every one of them appears as a bar with no words
+     against it, so every one owes 3:1 against BOTH the canvas and the
+     card it can sit on, and ten ΔE from its neighbours under all three
+     dichromacies. `scripts/check-colours.mjs` holds them to it, and it
+     moved every one of these four: the first set failed twelve checks,
+     including a sky that was a hair LIGHTER than the sun it is supposed
+     to rank below. Ordered ramps are the easy thing to get wrong by eye,
+     because nothing looks broken when two adjacent steps swap. */
+  --color-sun: oklch(0.628 0.168 58);
+  --color-sky: oklch(0.590 0.160 233);
+  --color-shade: oklch(0.532 0.072 305);
+  --color-night: oklch(0.372 0.032 262);
+
+  /* Washes of the same four, for large fills behind text. Derived with
+     color-mix so a retuned state colour carries its own tint with it —
+     two hand-picked values are two things to keep in step. */
+  --wash-sun: color-mix(in oklch, var(--color-sun) 20%, var(--color-surface));
+  --wash-sky: color-mix(in oklch, var(--color-sky) 16%, var(--color-surface));
+  --wash-night: color-mix(in oklch, var(--color-night) 12%, var(--color-surface));
+
+
+  /* ── Type ──────────────────────────────────────────────────────────
+     Large, fluid, and set on a short measure so the page reads like a
+     survey rather than a brochure. */
+  --text-display: clamp(2.5rem, 1.55rem + 3.7vw, 4.5rem);
+  --text-title: clamp(1.5rem, 1.24rem + 1.05vw, 2.125rem);
+  --text-sub: clamp(1.125rem, 1.05rem + 0.3vw, 1.3125rem);
+  --text-lede: clamp(1.0625rem, 1.01rem + 0.24vw, 1.1875rem);
+
+  /* ── Motion ────────────────────────────────────────────────────────
+     One duration for a state that changes under your hand, one for a
+     season crossing the whole page. */
+  --dur-fast: 120ms;
+  --dur: 260ms;
+  --dur-season: 480ms;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ── The pinned half ───────────────────────────────────────────────*/
+  --pane-width: 27rem;
+
+  /* ── The photographic treatment ─────────────────────────────────────
+   §6 asks how a set of photographs taken in five different places under
+   five different white balances is made into one set, and answers: with
+   one line of CSS rather than with sourcing luck.
+
+   This template sets that dial DIFFERENTLY from its neighbours, and the
+   reason is the subject. trail-guide and conference-schedule crush their
+   photographs to a duotone because the colour in them is carrying
+   nothing — the subject is weather, or a building, and hue is noise. On
+   a site about daylight the hue IS the evidence: a warm raking beam and
+   a flat cold north light are two different claims, and greyscale would
+   delete the difference the page is arguing about.
+
+   So this is a partial desaturation rather than a crush. Enough to pull
+   a teal industrial cast and a golden domestic one towards each other;
+   not so much that warm light stops reading as warm. The slight sepia
+   gives the set one shared temperature, and the contrast lift keeps the
+   edge of a beam crisp, which is the one thing every frame here is
+   being asked to show.
+
+   Set by looking at the five together, not by picking numbers. */
+  --photo-filter: saturate(0.44) sepia(0.17) contrast(1.07) brightness(1.02);
+}
+
+.plate-img {
+  filter: var(--photo-filter);
+}
+
+/* The compass dial draws the sun's arc as a conic-gradient, and a
+   gradient cannot interpolate a custom property the browser has not been
+   told the type of — an unregistered `--arc-from` is a string, so the
+   June-to-December transition would jump. Registering them is what makes
+   the arc sweep. */
+@property --arc-from {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --arc-to {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --wedge-from {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+html {
+  background: var(--color-canvas);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── The display face, cut for its size ───────────────────────────────
+   `opsz` is the axis that exists so a face can be drawn differently at
+   14px and at 72px — tighter spacing and thinner joins as it grows. It
+   is set here in step with the scale rather than left at its default,
+   which is the whole reason for choosing a variable face. `wdth` is the
+   second job: the labels inside the drawing sit in columns a few
+   characters wide, and a narrower cut is how they fit without shrinking
+   to unreadable. */
+.head {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  font-variation-settings: "opsz" 36, "wdth" 100;
+}
+
+.head-display {
+  font-variation-settings: "opsz" 84, "wdth" 100;
+  letter-spacing: -0.028em;
+  line-height: 1.02;
+}
+
+.head-small {
+  font-variation-settings: "opsz" 16, "wdth" 100;
+  letter-spacing: -0.005em;
+}
+
+/* The measurement layer: room names on the plan, hours, compass points,
+   axis ticks. Narrow, small, and set in the display face so the drawing
+   and its labels are the same voice. */
+.datum {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: "opsz" 12, "wdth" 82;
+  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.figure {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-variation-settings: "opsz" 40, "wdth" 92;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.prose-block {
+  max-width: 34rem;
+  text-wrap: pretty;
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+/* ── The split ────────────────────────────────────────────────────────
+   The architecture, and the only layout rule that matters. Below the
+   breakpoint the drawing sits on top and stops being pinned, because a
+   pinned drawing on a phone is a drawing and no document. */
+.split {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.split-pinned > * {
+  position: static;
+}
+
+@media (min-width: 1024px) {
+  .split {
+    grid-template-columns: var(--pane-width) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .split-pinned > * {
+    position: sticky;
+    top: 0;
+    max-height: 100dvh;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+}
+
+/* ── The plan ─────────────────────────────────────────────────────────
+   Hovering a room dims every other room, which needs no state, no
+   handler and no re-render: the parent is styled by what is happening
+   inside it. There is no way to write this without `:has()` short of
+   putting a pointer event on every room and a class on the container. */
+.plan:has(.plan-room:hover) .plan-room:not(:hover) {
+  opacity: 0.4;
+}
+
+.plan-room {
+  transition: opacity var(--dur-fast) var(--ease),
+    fill var(--dur) var(--ease);
+  cursor: pointer;
+}
+
+.plan-room[data-selected="true"] {
+  opacity: 1;
+}
+
+/* ── The day strip ────────────────────────────────────────────────────
+   Same 04:00–22:00 window on every strip on the site, so two months are
+   two lengths on one ruler instead of two charts. */
+.strip {
+  position: relative;
+  height: 1.5rem;
+  background: var(--color-well);
+  overflow: hidden;
+}
+
+.strip-band {
+  position: absolute;
+  inset-block: 0;
+  transition: left var(--dur-season) var(--ease),
+    right var(--dur-season) var(--ease);
+}
+
+/* ── The compass dial ─────────────────────────────────────────────────
+   The sun's path across the sky that day, drawn as an arc of the
+   compass, with the 180° a window can see laid over it. A north window
+   and a June arc overlap at both ends and not in the middle, which is
+   the site's least believable claim and the easiest one to just look at.
+
+   Conic-gradient, so that the registered angles above can interpolate:
+   an unregistered custom property is a string to the browser, and the
+   June-to-December change would jump instead of sweeping. */
+.dial-arc {
+  background: conic-gradient(
+    from var(--arc-from),
+    var(--color-sun) 0deg,
+    var(--color-sun) calc(var(--arc-to) - var(--arc-from)),
+    transparent calc(var(--arc-to) - var(--arc-from))
+  );
+  mask: radial-gradient(closest-side, transparent 71%, #000 71.5%);
+  -webkit-mask: radial-gradient(closest-side, transparent 71%, #000 71.5%);
+  transition:
+    --arc-from var(--dur-season) var(--ease),
+    --arc-to var(--dur-season) var(--ease);
+}
+
+.dial-wedge {
+  background: conic-gradient(
+    from var(--wedge-from),
+    var(--wash-sky) 0deg,
+    var(--wash-sky) 180deg,
+    transparent 180deg
+  );
+  transition: --wedge-from var(--dur) var(--ease);
+}
+
+/* ── The room cards ───────────────────────────────────────────────────
+   These live in the scrolling half, which is a little over half the
+   window on a desktop and the whole of it on a phone. The layout has to
+   answer to the COLUMN and not to the viewport — a media query here
+   would go two-up at exactly the width the column is narrowest, because
+   that is the width at which the pinned half appears. */
+.room-list {
+  container-type: inline-size;
+  container-name: rooms;
+}
+
+@container rooms (min-width: 34rem) {
+  .room-card {
+    grid-template-columns: 1fr 12rem;
+  }
+  .room-card-figures {
+    text-align: right;
+  }
+}
+
+/* ── Motion ───────────────────────────────────────────────────────────
+   One piece of directed motion, and it teaches the site's whole point:
+   changing the season morphs the strips and sweeps the arc rather than
+   redrawing them, so what you see is the CHANGE — which rooms lost their
+   sun and which gained it — instead of two unrelated pictures. */
+::view-transition-old(season),
+::view-transition-new(season) {
+  animation-duration: var(--dur-season);
+  animation-timing-function: var(--ease);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.375rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Used in exactly one place: a viewing request that has just been
+   accepted. A state change the reader caused and needs to notice. */
+.arrives {
+  animation: rise var(--dur) var(--ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  /* Degrades to the FINAL state, never a half-applied one: the strips
+     and the arc simply arrive at the new season. */
+  ::view-transition-old(season),
+  ::view-transition-new(season) {
+    animation: none;
+  }
+}
+
+/* Scroll-driven animation is the one item on the §4c list this template
+   does not spend, and it is a refusal rather than an oversight. The only
+   place it would fit is tying the plan to scroll position — and the plan
+   is CLICKABLE here, so a marker that tracked the scroll would contradict
+   the selection the reader just made. §4c is explicit that the floor
+   exists to force the exploration and not to collect features. */
