@@ -268,6 +268,29 @@ a tool the reader does not have — and run the checker before writing
 the numbers into a comment, not after. It is very easy to write a
 confident "last run" line describing a result you have not got yet.
 
+### Then break the thing on purpose and watch the check fail
+
+A check that has only ever passed is a check nobody has tested. Both of
+`kiln`'s ran green on their first attempt, which is exactly when to
+distrust them: 540 assertions and 44 assertions all passing says either
+the template is right or the checker is inert, and nothing on screen
+distinguishes those.
+
+Falsifying them took two minutes and found a real defect in the checker
+itself. The guard against polar `color-mix` — the rule from §4b above —
+parsed its operands with an unanchored `(.+?)\)`, which stops at the
+FIRST close paren, so `color-mix(in oklch, var(--a) 13%, var(--b))` came
+back as the string `var(--b` and the checker threw instead of failing.
+It could never have caught the bug it was written for. The same exercise
+on the model checker was more reassuring: lowering the gas kiln's
+threshold made a celadon take four days instead of eighteen, and the
+prose claim that it takes "three times as long" failed by name.
+
+So: after writing a check, edit the thing it guards until it fires, read
+the failure message, and put it back. Prefer breaking the DATA over
+breaking the assertion — an assertion you edited to fail proves the
+assertion runs, while data you edited to be wrong proves it measures.
+
 ---
 
 ## 4c. Design with a position, not a default

@@ -1,0 +1,303 @@
+@import "tailwindcss";
+@import "@fontsource-variable/fraunces/full.css";
+@import "@fontsource-variable/public-sans/wght.css";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: a kiln is not a queue, it is a CONTAINER THAT HAS TO BE FULL
+   BEFORE IT IS WORTH LIGHTING. It costs the same empty as packed, so
+   every kiln here has a load below which nobody will light it — and that
+   one rule turns waiting into something other than a line. What your pot
+   is waiting for is not the people in front of it. It is other people's
+   work of the same kind. Measured over this fortnight: any of the six
+   electric glazes gets a bisqued mug back in six days and any of the
+   three reduction glazes takes eighteen, and WHICH glaze you pick inside
+   each group makes no difference at all — the programme is the whole
+   decision. The gas kiln's Sunday is short of its threshold, so it will
+   not light, so four pots wait a fortnight for a firing that already had
+   room for them. Two of them will still have no date after that.
+
+   The device: every page is a container drawn to scale with its LEFTOVER
+   SPACE LEFT VISIBLE. Kilns are elevations with the headroom hatched,
+   shelves are plan views with the gaps between pots drawn as gaps, the
+   queue is rows of tiles sized by real centimetres, and a glaze is as
+   wide as the wait it costs you. Nothing is a uniform card grid and no
+   page has a centred column, because the whole argument is about slack
+   and a layout that closes up its own slack cannot make it.
+
+   Not done: scroll-driven animation, refused here for a reason specific
+   to this template rather than a general one. Every drawing on this site
+   is a fixed object measured in centimetres, and how far down the page
+   the reader has got is not one of its dimensions. Hanging a kiln's
+   elevation on a scrollport would make the one thing that must stay
+   measurable a function of the viewport instead of the tape measure.
+   Also not done: a colour per reason. There are eight answers to "why is
+   this still here" and giving each a hue would put a treatment on every
+   row, which is §7b arriving from the palette side — the reasons are
+   words, and words are what they are.
+
+   Colour takes a position by scarcity: two chromatic tokens, and they
+   are the studio's only real distinction. `fire` means the kiln is lit
+   or about to be — loading, firing, the part of a gauge that is spoken
+   for. `cold` means nothing is happening: a firing short of its
+   threshold, a piece with no date, the part of a gauge that is air.
+   Fire and cold never swap jobs and nothing else is coloured at all.
+   Both mixes go through `in oklab` rather than `in oklch`, because a
+   polar mix between a warm accent and a cool surface takes the long way
+   round the wheel and arrives at violet (§4b).
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-display: "Fraunces Variable", ui-serif, Georgia, serif;
+  --font-sans: "Public Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     Unfired clay in daylight. Everything is a shade of the same warm
+     bone, and the only structural move is that `sunk` is BELOW the
+     page rather than on it — a kiln interior is a hole, and the
+     drawings read as holes because the token says so. */
+  --color-ground: oklch(0.945 0.01 80);
+  --color-paper: oklch(0.985 0.006 80);
+  --color-sunk: oklch(0.889 0.014 80);
+  --color-line: oklch(0.858 0.013 80);
+  --color-line-strong: oklch(0.580 0.017 80);
+
+  --color-ink: oklch(0.268 0.014 70);
+  --color-ink-muted: oklch(0.452 0.015 70);
+  --color-ink-subtle: oklch(0.486 0.015 70);
+
+  --color-fire: oklch(0.528 0.158 42);
+  --color-cold: oklch(0.492 0.058 245);
+
+  /* Mixed in OKLAB. See the note above — `in oklch` interpolates hue. */
+  --color-wash-fire: color-mix(in oklab, var(--color-fire) 13%, var(--color-paper));
+  --color-wash-cold: color-mix(in oklab, var(--color-cold) 11%, var(--color-paper));
+  --color-wash-slack: color-mix(in oklab, var(--color-ink) 7%, var(--color-sunk));
+
+  /* ── Type ─────────────────────────────────────────────────────────
+     Fraunces for anything that is a claim, Public Sans for anything
+     that is a measurement. The display sizes are genuinely large and
+     fluid rather than four breakpoints of `text-4xl` (§4c). */
+  --text-display: clamp(2.6rem, 1.2rem + 5.4vw, 5.5rem);
+  --text-title: clamp(1.4rem, 1.15rem + 1vw, 2rem);
+  --text-lede: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+
+  /* ── Motion ───────────────────────────────────────────────────────
+     Three durations and two curves, because a duration is a design
+     decision like a colour and Tailwind's default 150ms is not one. */
+  --dur-quick: 140ms;
+  --dur-settle: 420ms;
+  --dur-fill: 900ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.25, 1);
+  --ease-firm: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* ── Photographs ──────────────────────────────────────────────────
+     A GRADE, not a crush, and the dial is set by §6's question: is the
+     colour in the frame part of what it is being asked to prove? Here
+     it is, once — the flame coming back out of Bramble's burner port
+     IS reduction, and a duotone would delete the evidence. So the
+     treatment only has to pull four different strip lights towards
+     each other, and it leans warm because a neutral photograph on a
+     bone ground reads as a hole cut in the page. */
+  --photo-filter: saturate(0.52) sepia(0.2) contrast(1.06) brightness(0.99);
+}
+
+/* The gauge's fill is an animatable custom property rather than a width,
+   so the bar grows without laying anything out. `inherits: false` on
+   purpose: every gauge on a page sets its own, and an inherited one
+   would have every child of a firing row quietly carrying its load. */
+@property --load {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-synthesis-weight: none;
+  }
+
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    /* Fraunces has an optical-size axis and this is what it is for: at
+       display sizes the letterforms want tighter joins and finer hairs
+       than the same face set at 18px. WONK swaps in the alternate `g`
+       and `y`, which is a decision rather than a default. */
+    font-variation-settings: "opsz" 96, "SOFT" 22, "WONK" 1;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  ::selection {
+    background: var(--color-wash-fire);
+  }
+}
+
+@layer components {
+  /* A claim, set large. */
+  .display {
+    font-family: var(--font-display);
+    font-size: var(--text-display);
+    font-variation-settings: "opsz" 144, "SOFT" 30, "WONK" 1;
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+  }
+
+  /* A measurement. Tabular so a column of centimetres is a column. */
+  .figure {
+    font-family: var(--font-sans);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "ss01";
+  }
+
+  /* The one treatment, applied in the one place (§6). It lives here
+     rather than as an inline style on the component, because "there is
+     exactly one declaration of this" is the property being claimed —
+     and `scripts/check-imagery.mjs` looks for it in the stylesheet,
+     which is the right place to look. */
+  .plate {
+    filter: var(--photo-filter);
+  }
+
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-fire);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* ── The slack hatch ──────────────────────────────────────────────
+     Empty space in a container, drawn rather than closed up. It is the
+     one decorative texture on the site and it is carrying the whole
+     argument, which is the only reason it is allowed to exist. */
+  .slack {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      var(--color-wash-slack) 0 3px,
+      transparent 3px 7px
+    );
+  }
+
+  /* ── Gauges ───────────────────────────────────────────────────────
+     One bar, two marks: how much of the kiln is spoken for, and the
+     line the studio will not light below. The fill animates from zero
+     so a postponed firing is watched failing to reach its threshold,
+     which is a state change that carries information (§4c). */
+  .gauge {
+    --load: 0%;
+    --gauge-ink: var(--color-fire);
+    position: relative;
+    background: linear-gradient(
+      to right,
+      var(--gauge-ink) 0 var(--load),
+      var(--color-sunk) var(--load)
+    );
+    animation: gauge-fill var(--dur-fill) var(--ease-out);
+  }
+
+  /* The fill is a gradient stop rather than a child box, and that is
+     what makes `@property --load` load-bearing rather than decorative:
+     an UNREGISTERED custom property has no type, so the browser cannot
+     interpolate it and the gradient would jump from 0 to its value in
+     one frame. Registering it as a <percentage> is the whole reason
+     this animates at all. */
+  @keyframes gauge-fill {
+    from {
+      --load: 0%;
+    }
+  }
+
+  .gauge[data-short="true"] {
+    --gauge-ink: var(--color-cold);
+  }
+
+  .gauge-mark {
+    position: absolute;
+    inset-block: -2px;
+    width: 2px;
+    background: var(--color-ink);
+  }
+}
+
+.kiln-card {
+  container: kiln / inline-size;
+}
+
+/* A kiln card carries its own container so the elevation can sit beside
+   the numbers when there is room and under them when there is not. This
+   is a genuine container query: the same card appears in a full-width
+   row on the front page and in a third-width cell on the firings list,
+   at the same viewport. A media query cannot tell those apart. */
+@container kiln (min-width: 34rem) {
+  .kiln-body {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* :has() doing a job nothing else can: the whole card goes cold when the
+   thing INSIDE it did not light. The state lives on the gauge, which is
+   two levels down and rendered by a different component, and without
+   :has() the card would have to be told separately — which is exactly
+   how a card and its contents end up disagreeing. */
+.kiln-card:has([data-status="postponed"]) {
+  border-color: var(--color-cold);
+  background: var(--color-wash-cold);
+}
+
+.kiln-card:has([data-status="loading"]) {
+  border-color: var(--color-fire);
+}
+
+/* Tiles whose maker has to do something before the studio can. */
+.tile:has([data-owed="you"]) {
+  border-style: dashed;
+}
+
+/* ── View transitions ───────────────────────────────────────────────
+   A tile opening into its own page: the thing you clicked is the thing
+   that arrives, which is the one piece of motion on this site that
+   teaches something rather than decorating. */
+::view-transition-old(piece),
+::view-transition-new(piece) {
+  animation-duration: var(--dur-settle);
+  animation-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Degrade to the FINAL state, never a half-applied one (§4c). The
+     gauge still shows its load; it simply arrives there. */
+  .gauge::before {
+    transition: none;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

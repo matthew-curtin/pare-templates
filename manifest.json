@@ -7,7 +7,7 @@
       "path": "saas-product-site",
       "name": "SaaS product site",
       "category": "Marketing",
-      "description": "A complete marketing site for a software product \u2014 features, pricing, changelog, blog and about.",
+      "description": "A complete marketing site for a software product — features, pricing, changelog, blog and about.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -40,7 +40,7 @@
       "path": "mobile-app-landing",
       "name": "Mobile app landing",
       "category": "Marketing",
-      "description": "A marketing site for a mobile app \u2014 features, pricing, downloads, a searchable help centre, a press kit and legal pages.",
+      "description": "A marketing site for a mobile app — features, pricing, downloads, a searchable help centre, a press kit and legal pages.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -74,7 +74,7 @@
       "path": "editorial-magazine",
       "name": "Editorial magazine",
       "category": "Publishing",
-      "description": "A quarterly magazine \u2014 long-form stories with real body copy, departments, a filterable archive, contributors and subscriptions.",
+      "description": "A quarterly magazine — long-form stories with real body copy, departments, a filterable archive, contributors and subscriptions.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -106,7 +106,7 @@
       "path": "coffee-storefront",
       "name": "Coffee storefront",
       "category": "Commerce",
-      "description": "A shop with a working basket \u2014 products with size and grind variants, filtering, a delivery threshold, subscriptions and an interactive brew timer.",
+      "description": "A shop with a working basket — products with size and grind variants, filtering, a delivery threshold, subscriptions and an interactive brew timer.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -140,7 +140,7 @@
       "path": "analytics-dashboard",
       "name": "Analytics dashboard",
       "category": "Application",
-      "description": "A product-analytics app \u2014 KPI tiles, a time series with comparison, a retention heatmap, a funnel, and a sortable event catalogue. Every chart is hand-drawn SVG with a table view.",
+      "description": "A product-analytics app — KPI tiles, a time series with comparison, a retention heatmap, a funnel, and a sortable event catalogue. Every chart is hand-drawn SVG with a table view.",
       "framework": "vite",
       "stack": [
         "Vite 8",
@@ -205,7 +205,7 @@
       "path": "restaurant-booking",
       "name": "Restaurant with booking",
       "category": "Booking",
-      "description": "A wood-fired restaurant with a working reservation flow \u2014 live availability, party size, two sittings, validation and a confirmation. Menus, private dining and an enquiry form.",
+      "description": "A wood-fired restaurant with a working reservation flow — live availability, party size, two sittings, validation and a confirmation. Menus, private dining and an enquiry form.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -237,7 +237,7 @@
       "path": "docs-site",
       "name": "Documentation site",
       "category": "Documentation",
-      "description": "Developer documentation for an API \u2014 eleven pages written in markdown, an HTTP reference, client libraries and a changelog. Sidebar, contents list and \u2318K search all derive from the files.",
+      "description": "Developer documentation for an API — eleven pages written in markdown, an HTTP reference, client libraries and a changelog. Sidebar, contents list and ⌘K search all derive from the files.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -270,7 +270,7 @@
       "path": "support-inbox",
       "name": "Customer support inbox",
       "category": "Application",
-      "description": "A shared helpdesk \u2014 a conversation list beside the thread, with replies, internal notes, saved replies, assigning, snoozing and bulk actions. Each plan carries a promised reply time, and exactly one conversation is late.",
+      "description": "A shared helpdesk — a conversation list beside the thread, with replies, internal notes, saved replies, assigning, snoozing and bulk actions. Each plan carries a promised reply time, and exactly one conversation is late.",
       "framework": "vite",
       "stack": [
         "Vite 8",
@@ -303,7 +303,7 @@
       "path": "almanac",
       "name": "Public sector jobs board",
       "category": "Listings",
-      "description": "A hand-checked jobs board \u2014 link-based filters, search and sorting, employer pages, an alert builder that shows what it would have caught, and a posting composer with a live preview. Every job states what it actually pays, prorated hours included.",
+      "description": "A hand-checked jobs board — link-based filters, search and sorting, employer pages, an alert builder that shows what it would have caught, and a posting composer with a live preview. Every job states what it actually pays, prorated hours included.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -337,7 +337,7 @@
       "path": "conference-schedule",
       "name": "Conference schedule",
       "category": "Events",
-      "description": "A three-day conference wallchart drawn to scale \u2014 four rooms, live sessions against a pinned clock, link-based filters, a personal plan that calls out double-bookings, and a session page that says what going to it costs you.",
+      "description": "A three-day conference wallchart drawn to scale — four rooms, live sessions against a pinned clock, link-based filters, a personal plan that calls out double-bookings, and a session page that says what going to it costs you.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -372,7 +372,7 @@
       "path": "trail-guide",
       "name": "Trail guide",
       "category": "Guide",
-      "description": "A long-distance trail guide built around an elevation rail \u2014 eleven legs quoted in hours rather than miles, with an itinerary planner that shows what each day actually costs.",
+      "description": "A long-distance trail guide built around an elevation rail — eleven legs quoted in hours rather than miles, with an itinerary planner that shows what each day actually costs.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -405,7 +405,7 @@
       "path": "exposure",
       "name": "Property listings",
       "category": "Property",
-      "description": "A brokerage that publishes the light \u2014 every room quoted in hours of direct sun on three days of the year, with a clickable floor plan pinned beside the page and a viewing form that recommends the hour the house has nothing to show you.",
+      "description": "A brokerage that publishes the light — every room quoted in hours of direct sun on three days of the year, with a clickable floor plan pinned beside the page and a viewing form that recommends the hour the house has nothing to show you.",
       "framework": "next",
       "stack": [
         "Next.js 16",
@@ -439,7 +439,7 @@
       "path": "playout",
       "name": "Radio playout console",
       "category": "Broadcast",
-      "description": "The playout console for a community radio station \u2014 a whole broadcast day generated from each show's clock, a docked transport bar carrying the playhead and the count to the junction, and every number counted off the log rather than typed in.",
+      "description": "The playout console for a community radio station — a whole broadcast day generated from each show's clock, a docked transport bar carrying the playhead and the count to the junction, and every number counted off the log rather than typed in.",
       "framework": "vite",
       "stack": [
         "Vite 8",
@@ -465,6 +465,41 @@
         "console",
         "data",
         "admin"
+      ],
+      "thumbnail": null
+    },
+    {
+      "id": "kiln",
+      "path": "kiln",
+      "name": "Ceramics studio",
+      "category": "Studio",
+      "description": "A members' ceramics studio where every page is a container drawn to scale with its empty space left visible — kiln elevations, shelves packed from above, and a board that says why your pot is not in the next firing rather than just when it comes out.",
+      "framework": "next",
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/queue",
+        "/firings",
+        "/firings/[id]",
+        "/pieces/[id]",
+        "/glazes",
+        "/studio",
+        "/join"
+      ],
+      "tags": [
+        "studio",
+        "craft",
+        "booking",
+        "scheduling",
+        "data",
+        "charts",
+        "forms"
       ],
       "thumbnail": null
     }
