@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
+import { Plate } from "@/components/plate";
 import { access, spaces, travel, venue } from "@/content/venue";
 import { rooms } from "@/content/site";
+import ironhouseFloor from "@/photos/ironhouse-floor.jpg";
+import craneRail from "@/photos/crane-rail.jpg";
+import gearTrain from "@/photos/gear-train.jpg";
+import yardTables from "@/photos/yard-tables.jpg";
 
 export const metadata: Metadata = {
   title: "Venue",
@@ -39,6 +44,21 @@ export default function VenuePage() {
         </address>
       </header>
 
+      {/* The photograph the page has been describing. It goes directly
+          under the paragraph claiming every intervention is visible and
+          datable, because that is a claim a picture can settle and prose
+          cannot — new floor, new services overhead, old posts and one old
+          machine left exactly where they were. */}
+      <Plate
+        className="mt-12"
+        src={ironhouseFloor}
+        aspect="16 / 9"
+        priority
+        sizes="(min-width: 1280px) 1200px, 100vw"
+        alt="A mill floor after conversion: a new levelled concrete slab and new services run overhead, with the original heavy timber posts still standing and one old machine left in place on its brick plinth, rails still set into the floor in front of it."
+        caption="Nothing is hidden behind a lining. The floor is from 2000, the posts are original, and the machine was left where it stood."
+      />
+
       <section className="mt-16">
         <h2 className="sign text-title">The four rooms</h2>
         <ul className="mt-8 grid gap-px bg-line sm:grid-cols-2 lg:grid-cols-4">
@@ -65,6 +85,36 @@ export default function VenuePage() {
             );
           })}
         </ul>
+      </section>
+
+      {/* Three rooms, in the order the day uses them. Each caption says
+          something the room list above does not — the imagery is doing
+          its own work rather than illustrating the text beside it. */}
+      <section className="mt-16">
+        <h2 className="sign text-title">What is still in the building</h2>
+        <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <Plate
+            src={craneRail}
+            aspect="4 / 3"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            alt="A very large empty hall photographed from floor level, rows of columns receding to a distant doorway, with an overhead travelling crane spanning the width of the roof."
+            caption="The Foundry. The crane rail is still live; the seating goes underneath it."
+          />
+          <Plate
+            src={gearTrain}
+            aspect="4 / 3"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            alt="The gear train of an old machine in close-up: four cast toothed wheels of different sizes driven off a hand crank and a stepped pulley, the teeth worn bright where they mesh."
+            caption="One of four machines left in the building, all of them still turning over."
+          />
+          <Plate
+            src={yardTables}
+            aspect="4 / 3"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            alt="Trestle tables with bench seats set out in rows on a bare concrete floor inside a raw industrial space, with a roller shutter at the far end and nobody at them yet."
+            caption="The Yard, laid for lunch. It is heated, which people never believe until they are in it."
+          />
+        </div>
       </section>
 
       <section className="mt-16 grid gap-10 lg:grid-cols-[1fr_1fr] lg:gap-16">

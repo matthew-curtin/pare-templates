@@ -47,6 +47,47 @@ const LEGACY = new Set([
   "almanac",
 ]);
 
+/**
+ * §6: imagery is the default and omitting it needs an argument.
+ *
+ * Five of the first seven templates carry photography and the six after
+ * them carry none — a cliff nobody decided, produced by six locally
+ * reasonable omissions in a row. So a template with no images fails
+ * unless it is named here WITH a reason, which makes the decision
+ * deliberate and visible instead of accumulating.
+ *
+ * This list is meant to be annoying to add to. If you are reaching for
+ * it, check §6 first — the genuine carve-out is about not putting a real
+ * person's face behind an invented quote, and it does not extend to
+ * their building, their tools or the thing they make.
+ */
+const NO_IMAGERY = new Map([
+  [
+    "docs-site",
+    "API documentation. Genuinely nothing to photograph — the images in developer docs are diagrams and code, and both are drawn.",
+  ],
+]);
+
+/**
+ * Owes imagery, predates the rule. Not the same thing as exempt, and
+ * kept in a separate list precisely so the two cannot be confused.
+ *
+ * These four are real debt: an inbox has contacts and attachments, a
+ * board has avatars and empty states, a jobs board has workplaces. Each
+ * has somewhere a photograph belongs and none of them has one. They are
+ * printed as owed rather than failing the run, because a check that is
+ * permanently red on main is a check people stop reading — the point is
+ * that the list is visible and shrinking, same as LEGACY above.
+ */
+const IMAGERY_DEBT = new Set([
+  "analytics-dashboard",
+  "project-tracker",
+  "support-inbox",
+  "almanac",
+]);
+
+const IMAGE_RE = /\.(jpe?g|png|webp|avif|gif)$/i;
+
 /** Each entry: a name, and a test against the template's whole source. */
 const MODERN = [
   ["fluid type (clamp)", (css) => /clamp\(/.test(css)],
@@ -87,6 +128,23 @@ function readSource(dir) {
   };
   walk(path.join(dir, "src"));
   return { css: css.join("\n"), src: src.join("\n") };
+}
+
+/** Committed raster images, anywhere in the template. Counted from disk
+ *  rather than from markup, because an image referenced but never
+ *  committed is the hotlinking §6 rules out. */
+function countImages(dir) {
+  let n = 0;
+  const walk = (p) => {
+    for (const entry of readdirSync(p, { withFileTypes: true })) {
+      if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+      const full = path.join(p, entry.name);
+      if (entry.isDirectory()) walk(full);
+      else if (IMAGE_RE.test(entry.name)) n += 1;
+    }
+  };
+  walk(dir);
+  return n;
 }
 
 /** The register in README.md — one architecture per template, claimed once. */
@@ -145,10 +203,33 @@ for (const name of templates()) {
   if (!hasArtDirection) problems.push("no ART DIRECTION statement in the stylesheet");
   if (!architecture) problems.push("no row in the README architecture register");
 
-  results.push({ name, legacy, used, problems, architecture });
-  if (!legacy && problems.length > 0) {
-    failures.push({ name, problems });
-  }
+  // §6 is tracked SEPARATELY from the §4c problems above, because it is
+  // deliberately not grandfathered. The legacy list excuses templates
+  // built before the craft directive existed — and five of those seven
+  // carry photography already. The imagery cliff is the NEWER ones, so
+  // running §6 through the same gate would exempt precisely the
+  // templates it exists to catch and check nothing at all.
+  const images = countImages(dir);
+  const exempt = NO_IMAGERY.get(name);
+  const owed = IMAGERY_DEBT.has(name);
+  const imageProblem =
+    images === 0 && !exempt && !owed
+      ? "no committed imagery, and no reason recorded in NO_IMAGERY (§6)"
+      : null;
+
+  results.push({
+    name,
+    legacy,
+    used,
+    problems,
+    architecture,
+    images,
+    exempt,
+    owed,
+    imageProblem,
+  });
+  const failing = [...(legacy ? [] : problems), ...(imageProblem ? [imageProblem] : [])];
+  if (failing.length > 0) failures.push({ name, problems: failing });
 }
 
 // An architecture claimed twice by two non-legacy templates is the rule
@@ -180,21 +261,32 @@ if (missing.length > 0) {
 
 console.log("\n  Craft audit — CONVENTIONS §4c\n");
 for (const r of results) {
-  const mark = r.legacy ? "·" : r.problems.length === 0 ? "✓" : "✗";
+  const craftOk = r.legacy || r.problems.length === 0;
+  const mark = r.imageProblem ? "✗" : r.legacy ? "·" : craftOk ? "✓" : "✗";
+  const imagery = r.exempt
+    ? "  — nothing to photograph"
+    : r.owed && r.images === 0
+      ? "   0 images, OWED"
+      : `${String(r.images).padStart(4)} images`;
   console.log(
-    `  ${mark} ${r.name.padEnd(22)} ${String(r.used.length).padStart(2)}/${MODERN.length} modern${r.legacy ? "   (grandfathered)" : ""}`,
+    `  ${mark} ${r.name.padEnd(22)} ${String(r.used.length).padStart(2)}/${MODERN.length} modern   ${imagery}${r.legacy ? "   (§4c grandfathered)" : ""}`,
   );
   if (r.used.length > 0) console.log(`      ${r.used.join(", ")}`);
   if (r.problems.length > 0 && !r.legacy) {
     for (const p of r.problems) console.log(`      ✗ ${p}`);
   }
+  if (r.imageProblem) console.log(`      ✗ ${r.imageProblem}`);
 }
 
 console.log("");
 if (failures.length === 0) {
   const held = results.filter((r) => r.legacy).length;
+  const owing = results.filter((r) => r.owed && r.images === 0).length;
   console.log(
-    `  ✓ ${results.length - held} template(s) meet §4c; ${held} grandfathered and still owed.\n`,
+    `  ✓ ${results.length - held} template(s) meet §4c; ${held} grandfathered and still owed.`,
+  );
+  console.log(
+    `    ${owing} template(s) owe imagery under §6 — see IMAGERY_DEBT.\n`,
   );
   process.exit(0);
 }

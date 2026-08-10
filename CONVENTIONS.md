@@ -399,6 +399,109 @@ two of them in adjacent tabs. Worth backfilling.
 
 ## 6. Images
 
+### Imagery is the default; leaving it out is what needs an argument
+
+Measured across the fleet: five of the first seven templates carry
+photography, and the six built after them carry **none at all**. That is
+a cliff, not a slope, and nobody ever decided it. Each omission was
+locally reasonable — a dashboard has nothing to photograph, thirty
+invented speakers would be thirty real faces standing behind quotes
+nobody said — and six reasonable omissions in a row produced a fleet
+that mostly cannot do the one thing a photograph does.
+
+So the burden is the other way round. **Every template ships imagery
+unless CREDITS.md states why not, and "the subject is invented" is not a
+reason** — every template's subject is invented, and five of them
+photograph it anyway. `restaurant-booking` invents a restaurant and
+shows the room and the food; `conference-schedule` invented a converted
+rolling mill, wrote two paragraphs about how legible its history is, and
+showed nothing.
+
+### The carve-out is about faces, and it stays that narrow
+
+The one real objection is unchanged: **an invented individual does not
+get a real person's face.** A stock portrait attached to a quote nobody
+said is a small lie on the page, and initials are the honest answer.
+
+That rule is about a *person*. It does not extend to their building,
+their workshop, their city, their tools, their product, or the thing
+they make — and letting it spread is precisely how the last six
+templates ended up with nothing. When you find yourself declining a
+photograph, check that you are declining a face.
+
+### Application templates are not exempt, they photograph other things
+
+A kanban board has no cover image, which is not the same as having no
+imagery. The places it earns its place in an app: empty states (the most
+neglected screen in every product), onboarding, a profile or workspace
+header, an attachment inside a message thread, a product row, a
+thumbnail on a record. An app with a beautifully drawn empty state and a
+photograph in it is a better template than one with neither.
+
+### Art-direct the set, and write the direction down
+
+Imagery gets the same treatment §4c gives the design: **one sentence
+naming the direction, in `CREDITS.md`, before the file list.** Overlap's
+is *"available light, nobody in frame, structure visible"* — which is
+enough to accept or reject any candidate in about two seconds, and that
+is the whole job of it.
+
+Then **every photograph does narrative work.** The test is whether you
+could say what it is for. Overlap's venue page claims every intervention
+in the building is visible and datable; the photograph under that
+paragraph shows a new floor, new services, original posts and one old
+machine left standing, which settles a claim prose can only assert. An
+image you could swap for a different image of the same subject without
+anybody noticing is decoration, and decoration is what makes a template
+look like a template.
+
+### Consistency comes from a TREATMENT, not from sourcing luck
+
+This is the part that is easy to get wrong by trying harder. Overlap's
+five photographs were taken in five different buildings under five
+different white balances — one rust-warm, one cool grey, one with a
+green machine in it. No amount of searching turns a stock library into a
+coherent set, because the library is not a shoot.
+
+One line of CSS does:
+
+```css
+--photo-filter: grayscale(1) sepia(0.22) contrast(1.06) brightness(1.02);
+```
+
+Warm monochrome rather than flat grey, because that template's ground is
+bone and a neutral photograph on a warm ground reads as a hole in the
+page. Pick the treatment against the palette; a dark template may want
+the opposite.
+
+Three properties make this the right place for it, and they are the same
+argument §5 makes for drawing interfaces rather than shipping
+screenshots: the files on disk stay the originals, so the decision is
+reversible; a replacement image inherits the treatment automatically, so
+the set cannot drift when somebody swaps one in a hurry; and it is a
+declaration you can click and change in Pare, which a flattened JPEG is
+not.
+
+**Route every photograph through one component.** Overlap has
+`components/plate.tsx` and nothing else may import `next/image`. That
+is what makes "consistent" a property of the code rather than a promise
+about everyone's future diligence.
+
+### Enforcement
+
+`scripts/check-craft.mjs` fails a template with no imagery unless it is
+named, with a reason, in its opt-out list. `scripts/check-imagery.mjs`
+checks the rest: a stated direction, every file credited by name, the
+weight budget, no un-resized originals, alt text on photographs, a
+declared treatment, and exactly one component rendering images.
+
+It deliberately does **not** measure the colour of the source files.
+That was the first design and it was exactly backwards — the sources are
+*supposed* to disagree, and a checker measuring them would fail a
+template precisely because its method works. Measure the mechanism.
+
+### Sourcing
+
 - Source from [Pexels](https://www.pexels.com/license/) — free to use
   and modify, no attribution required.
 - **Commit them.** Don't hotlink; templates must work offline.
@@ -438,7 +541,15 @@ in a search result:
 - **Legible signage.** A photo of a covered terrace was rejected from
   `restaurant-booking` for a large `PLECIDER MILL` sign across the back
   of it. §7 forbids real company names; a photograph is the easiest way
-  for one to get in.
+  for one to get in. Check small banners and roll-ups by cropping and
+  enlarging them rather than by squinting — `yard-tables.jpg` in
+  `conference-schedule` was cleared that way.
+- **Recognisable buildings, which is the same rule one level up.** A
+  handsome interior was rejected from `conference-schedule` because it
+  was Grand Central Terminal. Passing a landmark half the readers can
+  name off as an invented venue in Pittsburgh is exactly the problem a
+  legible company sign causes, and it is easier to miss because there is
+  no text in the frame to catch your eye.
 - **Whether it contradicts the surrounding claim.** `editorial-magazine`
   once illustrated a story arguing a joint needs no screws with a
   close-up of a metal screw.

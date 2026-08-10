@@ -118,6 +118,25 @@
   --text-title: clamp(1.5rem, 1.2rem + 1.4vw, 2.25rem);
   --text-lede: clamp(1.0625rem, 0.98rem + 0.5vw, 1.375rem);
 
+  /* ── Photography ───────────────────────────────────────────────────
+     One treatment, applied to every photograph, and it is what makes
+     five images from five different shoots read as one set.
+
+     Sourcing alone cannot do this. The five here were taken in
+     different buildings under different light with different white
+     balance — one is rust-warm, one is cool grey, one has a green
+     machine in it — and no amount of searching produces a coherent set
+     out of a stock library. A single filter does, in one line, for
+     free, and it keeps working when somebody swaps an image.
+
+     Warm monochrome rather than flat greyscale: the ground is bone, and
+     a neutral grey photograph on a warm ground reads as a hole in the
+     page. The sepia step puts the images in the same family as the
+     paper they sit on. Crucially it also stops photographs competing
+     with the four room hues, which are the only colours on this site
+     that are allowed to mean something. */
+  --photo-filter: grayscale(1) sepia(0.22) contrast(1.06) brightness(1.02);
+
   /* ── Motion ────────────────────────────────────────────────────────
      Tokens, so a duration is a decision rather than whatever Tailwind
      defaults to. Fast and hard-edged, matching the drawn-line look —
@@ -192,6 +211,49 @@ body {
 
 .tabular {
   font-variant-numeric: tabular-nums;
+}
+
+/* ── Photographs ──────────────────────────────────────────────────────
+   Every photograph on the site goes through this and nothing else does.
+   Applying the treatment in CSS rather than baking it into the files is
+   deliberate on three counts: the images on disk stay the originals, so
+   the decision is reversible and honest; it applies to a replacement
+   image automatically, so the set cannot drift when somebody swaps one;
+   and it is a declaration you can click and change in Pare, which a
+   flattened JPEG is not — the same reason §5 draws interfaces rather
+   than shipping screenshots. */
+.plate {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-sunk);
+}
+
+.plate img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--photo-filter);
+}
+
+/* A hairline over the image rather than a border on the box, so the
+   rule sits ON the photograph the way every other edge on this site
+   sits on the thing it bounds. */
+.plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 0 1px var(--color-ink);
+  pointer-events: none;
+}
+
+.plate figcaption {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-ink);
+  color: var(--color-ink-inverse);
 }
 
 /* ── Focus ────────────────────────────────────────────────────────────

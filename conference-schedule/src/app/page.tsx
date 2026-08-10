@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Monogram } from "@/components/wordmark";
 import { PlanToggle } from "@/components/plan-toggle";
+import { Plate } from "@/components/plate";
+import lathe from "@/photos/lathe.jpg";
 import { days, now, rooms, site, ZONE } from "@/content/site";
 import { sessions } from "@/content/sessions";
 import { speakers } from "@/content/speakers";
@@ -60,6 +62,30 @@ export default function FrontPage() {
           </Link>
         </div>
       </section>
+
+      {/* The subject, not the schedule — a machine somebody is still
+          using, under a headline that says everything needs keeping.
+          Deliberately the ONLY photograph on the front page: the hero is
+          a poster, and a second image would compete with type set at
+          9.5rem.
+
+          The aspect is 16/7 rather than a thinner band because the
+          source is landscape and a gentle crop keeps most of the frame.
+          The first version cropped a PORTRAIT photograph into 21/8 and
+          threw away two-thirds of it, which is reason enough — match
+          the crop to the frame you have rather than the other way
+          round. (A mid-load `naturalWidth` reading also made it look
+          like the browser was fetching a tiny variant. It was not:
+          `currentSrc` showed the largest one. Read currentSrc, not
+          naturalWidth, before believing an image is under-served.) */}
+      <Plate
+        src={lathe}
+        aspect="16 / 7"
+        priority
+        sizes="100vw"
+        alt="A lathe at rest in an old workshop, its task lamp still angled over the bed, swarf and cutting tools scattered across the slide and an oil can standing on the headstock."
+        caption="Something in this photograph has been kept running for about a century. That is the subject."
+      />
 
       {/* Happening now. Only exists because the clock is pinned into the
           middle of day two — see the note in site.ts. */}
