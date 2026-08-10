@@ -236,6 +236,28 @@ Time merely running is the normal state of most of an inbox, so it is
 plain muted text; only past the deadline is red. A treatment on every
 row is not a warning — §7b again, arriving from the palette side.
 
+### Mix colours in a rectangular space, or check the arc
+
+`color-mix(in oklch, …)` interpolates HUE, which means a mix between two
+colours takes an *arc* around the wheel — and the arc between a warm
+accent and a cold surface passes through violet. `playout` shipped this
+twice in one file: its on-air note came out lavender and the console's
+on-air edge came out magenta, at hue 336°. Neither failed anything.
+Nothing looked broken, because a lavender note is a perfectly legible
+note; it is simply not the colour anybody chose.
+
+Use `in oklab` — rectangular, no hue to travel along — whenever both
+operands have a hue. Mixing with a near-neutral surface or with
+`transparent` is fine in either space.
+
+It is worth asserting structurally rather than colour by colour, because
+the next mix somebody adds will have the same problem: fail any
+`color-mix(in oklch, …)` whose two operands both resolve to a chroma
+above about 0.02. And note which half of this the screenshot found: none
+of it. A rendered page showed a thin orange line; `getComputedStyle`
+showed hue 336. Same rule as §8 — measure, do not read it off the
+picture.
+
 ### Commit the validator, do not just describe it
 
 A palette nobody can re-measure is a claim rather than a property.
@@ -542,6 +564,16 @@ checks the rest: a stated direction, every file credited by name, the
 weight budget, no un-resized originals, alt text on photographs, a
 declared treatment, and exactly one component rendering images.
 
+**The one-renderer rule is about the ELEMENT, not the import**, and that
+took a second stack to notice. It originally looked for `next/image`
+imports, so a Vite template with photographs satisfied it by having zero
+renderers — a check that cannot fail rather than a check that passes.
+The import cannot be the test on a bundler stack either, because every
+page that hands a photograph to the shared component imports the asset
+to get its URL. `<img>` is the test. Both checkers also skip `dist`,
+`build` and `out` now: a template that has been built once otherwise
+reports twice the images and twice the bytes it ships.
+
 It deliberately does **not** measure the colour of the source files.
 That was the first design and it was exactly backwards — the sources are
 *supposed* to disagree, and a checker measuring them would fail a
@@ -611,6 +643,17 @@ in a search result:
   for one to get in. Check small banners and roll-ups by cropping and
   enlarging them rather than by squinting — `yard-tables.jpg` in
   `conference-schedule` was cleared that way.
+- **Some subjects are made of other people's trademarks, and the rule
+  kills the whole subject rather than one frame.** `playout` wanted a
+  record shelf: "twelve records" is an abstraction until you have seen
+  one. Every honest candidate carried a legible Frank Sinatra spine, a
+  Fleetwood Mac sleeve, or a hand-lettered divider card reading Queen —
+  because album art is what a record library IS. Three rejections in a
+  row is the signal to stop looking and change which claim the picture is
+  asked to prove: it shipped a stylus in a groove instead, which makes
+  the neighbouring point (a record has a fixed length) with nothing
+  legible in it. That is the "change the copy when no photograph matches"
+  corollary arriving one level up — change the subject.
 - **Recognisable buildings, which is the same rule one level up.** A
   handsome interior was rejected from `conference-schedule` because it
   was Grand Central Terminal. Passing a landmark half the readers can

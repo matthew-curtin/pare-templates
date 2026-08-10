@@ -1,0 +1,423 @@
+@import "tailwindcss";
+@import "@fontsource-variable/archivo/wdth.css";
+@import "@fontsource-variable/martian-mono/wdth.css";
+
+/* ─────────────────────────────────────────────────────────────────────
+   ART DIRECTION                                        CONVENTIONS §4c
+
+   The idea: a radio hour is a container of a fixed size. Everything
+   about scheduling that sounds like taste — what follows what, how often
+   a record comes round, how long you talk — is arithmetic underneath,
+   and this station publishes the arithmetic instead of describing it.
+   Two of the results are ones nobody guesses right, and both are
+   computed from the log rather than asserted here. An hour lands by
+   ABSORBING whatever is left over, so the question is what it has to
+   absorb it with: a hosted hour has a person in it and a person is
+   infinitely adjustable, while an automated hour has nothing but records
+   and a record is as long as it is. Measured over one Thursday, the
+   hosted hours average seven seconds off the junction and the automated
+   ones average two minutes forty-seven — the hours with the most clutter
+   in them are the accurate ones. And the station's own local-music show
+   asks its wheel for fourteen records an hour when the wheel holds
+   twelve, so two of them come round twice inside the hour, every week,
+   and no scheduler can order its way out of it.
+
+   The device: a console docked to the bottom edge of every route. It is
+   not a header that happens to sit at the bottom — it is the instrument,
+   it carries the playhead and the count to the junction, and it is the
+   reason you can be three pages away reading the underwriting report and
+   still know the hour is a minute and fifty-four seconds long. Above it
+   the log runs full-bleed against a time gutter, so no page here has a
+   centred column at all.
+
+   Not done: scroll-driven animation, and this is the one template in the
+   fleet with a specific reason rather than a general one. The only thing
+   here worth hanging on a scrollport is TIME — and time on a console is
+   driven by the clock, never by the reader. An hour that appeared to
+   advance because somebody scrolled would be the most misleading thing
+   we could build, so the scroll moves the paper and the clock moves the
+   hour. Also not done: a red/green pair for over and under. The sign of
+   a drift is carried by which side of the centre line its bar is on,
+   because over-and-under in red-and-green is the textbook thing about
+   one man in twelve cannot read (§4b).
+
+   Colour takes a position by scarcity: there are two chromatic tokens on
+   this console. `live` is the on-air colour, and in a studio that colour
+   means exactly one thing — you are being heard — so everything that
+   will be heard WRONG gets it and nothing else does. `signal` is for
+   measurement: meters, drift bars, the playhead's track. Alarm and
+   arithmetic are different jobs and they do not share a hue.
+   ───────────────────────────────────────────────────────────────── */
+
+@theme {
+  --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Martian Mono Variable", ui-monospace, SFMono-Regular, monospace;
+
+  /* ── Surfaces ──────────────────────────────────────────────────────
+     A control room at night: everything is a shade of the same cold
+     grey, lit from one side. `well` is recessed — the log's gutter and
+     the meter tracks are cut INTO the panel rather than sitting on it,
+     which is what makes a console read as hardware. */
+  --color-canvas: oklch(0.183 0.011 254);
+  --color-panel: oklch(0.234 0.012 254);
+  --color-raised: oklch(0.281 0.013 254);
+  --color-well: oklch(0.147 0.010 254);
+  --color-line: oklch(0.316 0.012 254);
+  --color-line-strong: oklch(0.524 0.015 254);
+
+  /* Ink runs slightly warm against the cold surfaces, the way a lit
+     scale on a piece of broadcast equipment does. */
+  --color-ink: oklch(0.949 0.006 95);
+  --color-ink-muted: oklch(0.762 0.008 254);
+  --color-ink-subtle: oklch(0.664 0.010 254);
+  --color-ink-inverse: oklch(0.170 0.012 254);
+
+  /* ── The two chromatic tokens ──────────────────────────────────────
+     Validated rather than chosen: `scripts/check-colours.mjs` holds
+     both to 3:1 against every surface they sit on (WCAG 1.4.11 — each
+     appears as a bar or a dot with no words beside it) and to ten ΔE
+     from each other under all three dichromacies. They are also an
+     ordered pair on the drift meter — signal while an hour is inside
+     what it can trim, live once it is past that — so their separation
+     is the difference between "fine" and "somebody will hear this". */
+  --color-live: oklch(0.702 0.187 43);
+  --color-signal: oklch(0.789 0.132 197);
+
+  /* Washes, derived rather than picked, so retuning a token carries its
+     own tint with it instead of leaving a second value to keep in step.
+     `in oklab` rather than `in oklch`, and it is not a detail: OKLCH
+     interpolates HUE, so mixing an orange (43°) into a cold panel (254°)
+     takes the long way round the wheel and passes through violet. The
+     first build of this file did exactly that and the on-air note read
+     lavender. Rectangular OKLab has no hue to travel along. */
+  --wash-live: color-mix(in oklab, var(--color-live) 18%, var(--color-panel));
+  --wash-signal: color-mix(in oklab, var(--color-signal) 14%, var(--color-panel));
+  --wash-raised: color-mix(in oklab, var(--color-ink) 9%, var(--color-panel));
+
+  /* ── Type ──────────────────────────────────────────────────────────
+     Two variable faces, both used for their width axis rather than
+     their weight. A console is a fitting problem: a nine-word record
+     title and a two-word one have to sit in the same column, and the
+     hour readout has to be enormous without being wide. */
+  --text-clock: clamp(2rem, 1.35rem + 2.6vw, 3.25rem);
+  --text-display: clamp(1.75rem, 1.3rem + 1.8vw, 2.75rem);
+  --text-title: clamp(1.125rem, 1rem + 0.5vw, 1.375rem);
+
+  /* ── Motion ────────────────────────────────────────────────────────
+     A duration is a design decision, so it gets a token. `quick` is a
+     control acknowledging a press; `base` is a panel changing what it
+     is showing; `slow` is the only thing on this console that is
+     genuinely continuous — the playhead. */
+  --dur-quick: 120ms;
+  --dur-base: 240ms;
+  --dur-slow: 900ms;
+  --ease-out: cubic-bezier(0.22, 0.8, 0.3, 1);
+  --ease-inout: cubic-bezier(0.6, 0, 0.3, 1);
+
+  --radius-console: 0.375rem;
+
+  /* ── Photography ───────────────────────────────────────────────────
+     One treatment, applied in exactly one place (§6). Four photographs
+     shot in four rooms under four different lights; the grade is what
+     makes them a set. CRUSHED rather than graded, which is the right end
+     of §6's dial here: nothing in these frames is arguing with its own
+     colour — the subject is working equipment, and the hue in the
+     sources is whatever tube happened to be overhead. Cool, so they sit
+     on the same side of neutral as the console does. */
+  --photo-filter: grayscale(1) sepia(1) hue-rotate(158deg) saturate(1.45)
+    contrast(1.12) brightness(0.82);
+}
+
+/* The playhead's fill is a registered percentage so it can be animated
+   and interpolated rather than jumped. `inherits: false` is deliberate
+   and is also a trap worth naming: a registered property declared this
+   way does NOT reach descendants, so it has to be set on the element
+   that actually draws with it, not on a convenient parent. */
+@property --playhead {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    /* Archivo's default width is a touch narrow for a dark UI at small
+       sizes; opening it slightly is what makes the log legible at
+       12–13px without reaching for a larger size. */
+    font-variation-settings: "wdth" 104;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: none;
+  }
+}
+
+@layer components {
+  /* ── The console ───────────────────────────────────────────────────
+     Docked to the bottom edge of every route. The grid is named because
+     the same three regions have to hold at 375px and at 1600px, and the
+     difference between the two is which rows exist rather than which
+     elements do. */
+  .console {
+    background: linear-gradient(
+      to bottom,
+      color-mix(in oklab, var(--color-panel) 92%, var(--color-ink)),
+      var(--color-panel)
+    );
+    border-top: 1px solid var(--color-line-strong);
+    box-shadow: 0 -18px 40px -24px oklch(0 0 0 / 0.9);
+  }
+
+  /* The whole console picks up the on-air tint only while the station is
+     actually live — which is a `:has()` job rather than a prop, because
+     the state belongs to the badge inside it and this way exactly one
+     element decides. */
+  .console:has([data-on-air="true"]) {
+    border-top-color: color-mix(in oklab, var(--color-live) 55%, var(--color-line-strong));
+  }
+
+  .clock {
+    font-family: var(--font-mono);
+    font-size: var(--text-clock);
+    line-height: 1;
+    /* Martian Mono runs wide by default. Pulling the width in is what
+       lets a six-figure timecode sit in a phone-width console without
+       dropping the size that makes it readable across a room. */
+    font-variation-settings: "wdth" 87;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .tnum {
+    font-family: var(--font-mono);
+    font-variation-settings: "wdth" 90;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ── The playhead ──────────────────────────────────────────────────
+     A track cut into the panel with a fill in it. The fill's width is
+     the registered percentage above, so the transition between two
+     values interpolates instead of snapping — which matters because the
+     value changes when you switch what is playing, not only as time
+     passes. */
+  .playhead-track {
+    background: var(--color-well);
+    box-shadow: inset 0 1px 2px oklch(0 0 0 / 0.5);
+  }
+
+  .playhead-fill {
+    width: var(--playhead);
+    background: var(--color-signal);
+    transition: --playhead var(--dur-slow) linear;
+  }
+
+  .playhead-fill[data-over="true"] {
+    background: var(--color-live);
+  }
+
+  /* ── The log ───────────────────────────────────────────────────────
+     Rows sit against a recessed time gutter. The left rule is where an
+     hour's state lives, and it is set by `:has()` so a row does not have
+     to be told what its children are. */
+  .log-row {
+    border-left: 2px solid transparent;
+    transition:
+      background-color var(--dur-quick) var(--ease-out),
+      border-color var(--dur-quick) var(--ease-out);
+  }
+
+  .log-row:hover {
+    background: var(--wash-raised);
+  }
+
+  .log-row[data-playing="true"] {
+    background: var(--wash-live);
+    border-left-color: var(--color-live);
+  }
+
+  .log-row[data-past="true"] {
+    color: var(--color-ink-subtle);
+  }
+
+  /* An hour that contains a flagged element is marked at the hour, not
+     only at the element — otherwise you have to open every hour to find
+     out whether it needs you.
+     This started as `.hour-head:has(+ .hour-body [data-flagged])` and was
+     wrong twice over, which is worth recording. It lost to Tailwind's
+     `border-l-transparent` utility, because a rule in @layer components
+     cannot beat one in @layer utilities however specific it looks. And
+     even winning it would have been useless: the rows only exist while
+     the hour is OPEN, so the mark that tells you which hours to open
+     would only have appeared on the ones already opened. `:has()` can
+     only see what is rendered, and the fix is to mark the hour from data
+     the page holds regardless. */
+  .hour-head {
+    border-left: 2px solid transparent;
+    transition: border-color var(--dur-quick) var(--ease-out);
+  }
+
+  .hour-head[data-flagged="true"] {
+    border-left-color: var(--color-live);
+  }
+
+  /* The log is measured against ITS OWN width, not the viewport's, and
+     that is a real distinction here rather than a fashionable one: the
+     same component runs at 22rem beside the analysis column on the front
+     page and at full width on the day view, on the same screen. A media
+     query would dress both the same and get one of them wrong. */
+  .log {
+    container-type: inline-size;
+    container-name: log;
+  }
+
+  @container log (max-width: 30rem) {
+    /* Narrow: the artist goes under the title and the intro ramp — which
+       is only useful to somebody about to talk over it — goes away. */
+    .log-row-by {
+      display: block;
+      width: 100%;
+    }
+
+    .log-row-ramp {
+      display: none;
+    }
+  }
+
+  /* ── The drift meter ───────────────────────────────────────────────
+     A bar either side of a centre line. Over and under are told apart
+     by SIDE, never by hue — see the art direction above. */
+  .drift-track {
+    background: var(--color-well);
+  }
+
+  .drift-bar {
+    background: var(--color-signal);
+    transition: width var(--dur-base) var(--ease-out);
+  }
+
+  .drift-bar[data-beyond-trim="true"] {
+    background: var(--color-live);
+  }
+
+  /* ── Controls ──────────────────────────────────────────────────────*/
+  .focus-ring:focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  .pill {
+    font-family: var(--font-mono);
+    font-variation-settings: "wdth" 85;
+    font-size: 0.625rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border: 1px solid var(--color-line-strong);
+    color: var(--color-ink-muted);
+  }
+
+  .pill[data-tone="live"] {
+    border-color: color-mix(in oklch, var(--color-live) 60%, transparent);
+    background: var(--wash-live);
+    color: var(--color-live);
+  }
+
+  .pill[data-tone="signal"] {
+    border-color: color-mix(in oklch, var(--color-signal) 50%, transparent);
+    background: var(--wash-signal);
+    color: var(--color-signal);
+  }
+
+  /* The single treated surface. Nothing else in the app renders a
+     photograph, which is what makes "consistent" a property of the code
+     rather than a promise about future diligence. */
+  .plate-img {
+    filter: var(--photo-filter);
+  }
+
+  .plate {
+    background: var(--color-well);
+  }
+}
+
+/* ── View transitions ────────────────────────────────────────────────
+   The one navigation on this console that carries information is moving
+   between hours: the log stays and its contents change, so the change
+   should read as the same panel showing a different hour rather than as
+   a new page. Everything else navigates instantly on purpose. */
+::view-transition-old(hour) {
+  animation: hour-out var(--dur-base) var(--ease-inout) both;
+}
+
+::view-transition-new(hour) {
+  animation: hour-in var(--dur-base) var(--ease-inout) both;
+}
+
+@keyframes hour-out {
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes hour-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* The on-air badge is the one thing that pulses, and it pulses because
+   a studio light does. Nothing else on this console moves on its own. */
+@keyframes on-air {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.on-air-dot {
+  animation: on-air 2.4s var(--ease-inout) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Degrade to the FINAL state, never a half-applied one: the playhead
+     sits where it should sit, the badge is simply lit, and a change of
+     hour is a change of hour. */
+  .on-air-dot {
+    animation: none;
+    opacity: 1;
+  }
+
+  .playhead-fill,
+  .drift-bar,
+  .log-row {
+    transition: none;
+  }
+
+  ::view-transition-old(hour),
+  ::view-transition-new(hour) {
+    animation: none;
+  }
+}

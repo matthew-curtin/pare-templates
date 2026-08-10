@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Wren 91.5">
+  <rect width="32" height="32" rx="7" fill="#0e1116" />
+  <!-- The mast, drawn as the thing it is: a stem, two guy legs, and the
+       radiating pair. Nothing here is a glyph, so it stays legible at
+       16px where a letterform would not. -->
+  <path
+    d="M16 12v13M16 25l-4.5 3M16 25l4.5 3"
+    stroke="#e8e4dc"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="none"
+  />
+  <path
+    d="M9.5 12.5a8 8 0 0 1 13 0M12.5 9.5a4.5 4.5 0 0 1 7 0"
+    stroke="#f08a2e"
+    stroke-width="2"
+    stroke-linecap="round"
+    fill="none"
+  />
+</svg>

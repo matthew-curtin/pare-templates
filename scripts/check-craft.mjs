@@ -89,6 +89,10 @@ const IMAGERY_DEBT = new Set([
 
 const IMAGE_RE = /\.(jpe?g|png|webp|avif|gif)$/i;
 
+/** Build output, not template content. A template that has been built
+ *  once otherwise reports twice as many images as it ships. */
+const BUILD_OUTPUT = new Set(["dist", "build", "out", ".next"]);
+
 /** Each entry: a name, and a test against the template's whole source. */
 const MODERN = [
   ["fluid type (clamp)", (css) => /clamp\(/.test(css)],
@@ -139,6 +143,7 @@ function countImages(dir) {
   const walk = (p) => {
     for (const entry of readdirSync(p, { withFileTypes: true })) {
       if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+      if (entry.isDirectory() && BUILD_OUTPUT.has(entry.name)) continue;
       const full = path.join(p, entry.name);
       if (entry.isDirectory()) walk(full);
       else if (IMAGE_RE.test(entry.name)) n += 1;

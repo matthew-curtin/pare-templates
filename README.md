@@ -38,6 +38,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [conference-schedule](conference-schedule) | Events | Next.js | Light | ✅ Ready |
 | [trail-guide](trail-guide) | Guide | Next.js | Dark | ✅ Ready |
 | [exposure](exposure) | Property | Next.js | Light | ✅ Ready |
+| [playout](playout) | Broadcast | Vite | Dark | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
@@ -67,6 +68,7 @@ The first six were all the same thing, which is what prompted the rule.
 | conference-schedule | Full-bleed time grid, sticky axes, no page column |
 | trail-guide | Vertical terrain rail — the route drawn full-height beside the content |
 | exposure | Split view — a pinned drawing beside a scrolling document |
+| playout | Docked console — a persistent transport bar under a full-bleed log |
 
 ⚠️ marks the six that predate the rule and share one architecture
 between them. They are grandfathered, not endorsed.

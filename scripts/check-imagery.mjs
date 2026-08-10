@@ -91,6 +91,27 @@ function templates() {
 }
 
 /**
+ * Does this file RENDER a photograph?
+ *
+ * Two stacks, two answers, and the difference is worth stating because
+ * the first version of this check only knew one of them. In Next, an
+ * image goes through `next/image`, so importing that module IS
+ * rendering. In Vite there is no such module: the page imports the asset
+ * to get a URL and something renders an `<img>` with it — and importing
+ * the URL cannot be the test, because every page that passes a
+ * photograph to the shared component imports one. So the test is the
+ * element, which is the thing §6 actually means by "route every
+ * photograph through one component".
+ *
+ * Until this was fixed, a Vite template with images passed the
+ * one-renderer rule by having zero renderers, which is a check that
+ * cannot fail rather than a check that passes.
+ */
+function rendersPhotographs(text) {
+  return /from\s+["']next\/image["']/.test(text) || /<img[\s/>]/.test(text);
+}
+
+/**
  * Source with its comments removed.
  *
  * The import checks below match a string, and a comment EXPLAINING the
@@ -107,9 +128,15 @@ function code(file) {
     .replace(/(^|[^:])\/\/.*$/gm, "$1");
 }
 
+/** Directories that are build output rather than template content.
+ *  Counting them doubles every image and every byte — the same file
+ *  appears in `src/photos` and again, hashed, in `dist/assets`. */
+const BUILD_OUTPUT = new Set(["dist", "build", "out", ".next"]);
+
 function walk(dir, onFile) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === "node_modules" || entry.name.startsWith(".")) continue;
+    if (entry.isDirectory() && BUILD_OUTPUT.has(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) walk(full, onFile);
     else onFile(full, entry.name);
@@ -200,7 +227,7 @@ for (const name of templates()) {
     //    mockup for being properly marked decorative.
     const emptyAlt = sources.filter((s) => {
       const text = code(s.full);
-      return /from\s+["']next\/image["']/.test(text) && /alt=(""|\{""\}|'')/.test(text);
+      return rendersPhotographs(text) && /alt=(""|\{""\}|'')/.test(text);
     });
     if (emptyAlt.length > 0) {
       problems.push(`empty alt on a photograph in ${emptyAlt.map((s) => s.base).join(", ")}`);
@@ -222,12 +249,15 @@ for (const name of templates()) {
         "no --photo-filter treatment declared; §6 asks how consistency is achieved",
       );
     } else if (declaresTreatment) {
-      const renderers = sources.filter((s) =>
-        /from\s+["']next\/image["']/.test(code(s.full)),
-      );
+      const renderers = sources.filter((s) => rendersPhotographs(code(s.full)));
       if (renderers.length > 1) {
         problems.push(
-          `${renderers.length} files import next/image (${renderers.map((r) => r.base).join(", ")}) — a treated template needs exactly one`,
+          `${renderers.length} files render photographs (${renderers.map((r) => r.base).join(", ")}) — a treated template needs exactly one`,
+        );
+      }
+      if (renderers.length === 0) {
+        problems.push(
+          "images are committed but nothing renders them through a treated component",
         );
       }
       const appliesFilter = css.some((c) =>
