@@ -1,0 +1,529 @@
+@import "tailwindcss";
+@import "@fontsource-variable/anybody/wdth.css";
+@import "@fontsource-variable/chivo/wght.css";
+@import "@fontsource-variable/chivo/wght-italic.css";
+@import "@fontsource-variable/jetbrains-mono/wght.css";
+
+/* ═══════════════════════════════════════════════════════════════════
+   ART DIRECTION — Nightwork
+
+   THE ONE IDEA. A firework display is not a bag of fireworks, it is a
+   document — and it is TWO documents that do not look alike. The
+   audience sees a list of moments; the crew works from a list of
+   different moments, because a shell has to climb before it can do
+   anything and a twelve-inch shell climbs for 6.3 seconds. Three
+   shells that break together on Bracken Fell are fired 4.2 seconds
+   apart. So the site publishes both documents and lets you flip
+   between them, and the flip IS the argument.
+
+   THE STRUCTURAL DEVICE. The altitude field. A show page is a
+   full-bleed two-axis plot — time across, real height up — with the
+   annotations anchored IN the sky at the moment and the altitude they
+   are about, so reading the page means moving through the show. The
+   trajectories are one inline SVG in a non-uniformly scaled viewBox;
+   the bursts are DOM, sized by their true burst diameter, and they
+   composite with `plus-lighter` because light adds. Two overlapping
+   bursts are genuinely brighter than one. Nothing here is a canvas —
+   every shell in the sky is an element you can click and edit.
+
+   The second half of the device is the colour, and it is the reason
+   this template exists. Fireworks are EMISSION, not reflection, so the
+   palette is not chosen: each colour is a metal salt's published
+   emission wavelength put through the CIE 1931 colour matching
+   functions into OKLCH, and each LIGHTNESS is that emitter's real
+   relative luminous output. Sodium is twelve times the output of
+   copper, so amber renders bright and blue renders dim — the site's
+   argument is legible in its own swatches before you read a word.
+   Every page is then printed on a coloured STOCK: the paper is the
+   hue of whatever the page is about. `src/lib/emission.ts` is the
+   whole system and `scripts/check-colours.mjs` validates it.
+
+   THE ONE THING DELIBERATELY NOT DONE. There is no photograph of a
+   firework at the top of the front page, and no black hero. Every
+   pyrotechnics website on earth is a dark page with a long-exposure
+   burst on it, and the whole point here is that the interesting
+   document is the one on paper in the daylight, not the one in the
+   sky. The night only appears where a night is being drawn.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --font-display: "Anybody Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Chivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+
+  /* The eight emitters, mirroring `src/lib/emission.ts`, which is the
+     source of truth and computes them from spectra. They are declared
+     here so a Tailwind class can name one, and `check-colours.mjs`
+     recomputes all eight from the module and fails until this block
+     agrees — a stylesheet and a module can disagree for months while
+     every page still renders perfectly. */
+  --color-em-red: oklch(0.438 0.176 22);
+  --color-em-orange: oklch(0.488 0.137 46);
+  --color-em-amber: oklch(0.729 0.169 61);
+  --color-em-green: oklch(0.52 0.114 162);
+  --color-em-blue: oklch(0.266 0.15 290);
+  --color-em-purple: oklch(0.324 0.164 310);
+  --color-em-gold: oklch(0.55 0.143 51);
+  --color-em-silver: oklch(0.698 0.025 62);
+
+  /* The stock. Overridden per page by `<StockStyle>`, which computes
+     the values from whichever emitter that page is ABOUT. The defaults
+     here are the house stock — charcoal gold, because that is what this
+     company mostly fires and pretending otherwise would be the exact
+     dishonesty the site is written against. */
+  --color-paper: oklch(0.905 0.072 51);
+  --color-ink: oklch(0.225 0.031 51);
+  --color-field: oklch(0.145 0.028 51);
+
+  --dur-bloom: 620ms;
+  --dur-flip: 900ms;
+  --dur-quick: 160ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bloom: cubic-bezier(0.05, 0.7, 0.1, 1);
+}
+
+/* `--x` selects which document a burst is drawn in: its BREAK time or
+   its FIRING time. It has to be registered or the substitution inside
+   `calc()` is not interpolatable, and the flip between the two
+   documents would be a cut instead of the movement that makes the
+   point. This is the one piece of CSS in the template that the whole
+   idea depends on. */
+@property --x {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
+@property --veil {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 1;
+}
+
+@view-transition {
+  navigation: auto;
+}
+
+:root {
+  --stock-paper: var(--color-paper);
+  --stock-ink: var(--color-ink);
+  --stock-field: var(--color-field);
+  color-scheme: light;
+}
+
+body {
+  background: var(--stock-paper);
+  color: var(--stock-ink);
+  font-family: var(--font-sans);
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Type ──────────────────────────────────────────────────────────── */
+
+/* Anybody carries a real width axis, 50 to 150, and it is driven rather
+   than decorative: the wordmark and the page headings run wide because
+   a poster is wide, and the field's own labels run NARROW so a time
+   stamp fits in a column that a normal grotesque would overflow.
+   `check-colours.mjs` asserts the axis is genuinely varied — a variable
+   font nobody varies is a static font with extra bytes. */
+.wordmark {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 132, "wght" 800;
+  font-size: clamp(2.75rem, 11vw, 8.5rem);
+  line-height: 0.84;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 118, "wght" 700;
+  font-size: clamp(1.75rem, 4.6vw, 3.9rem);
+  line-height: 0.98;
+  text-wrap: balance;
+  letter-spacing: -0.015em;
+}
+
+.display-sm {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 112, "wght" 650;
+  font-size: clamp(1.25rem, 2.4vw, 1.85rem);
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.eyebrow {
+  font-family: var(--font-display);
+  font-variation-settings: "wdth" 78, "wght" 600;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.prose-lead {
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
+.prose-body {
+  line-height: 1.62;
+  text-wrap: pretty;
+}
+
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "zero" 1;
+}
+
+/* ── The field ─────────────────────────────────────────────────────── */
+
+.field {
+  position: relative;
+  background: var(--stock-field);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* A show is drawn to fit its own width, so each field has its own
+   horizontal scale and the scale is printed on the axis. Fitting is the
+   right call for a wallchart: the shape of a whole display — where it
+   is thin, where it is dense — is the thing worth seeing at a glance,
+   and the finale reading as a solid band at the right-hand edge is
+   information rather than a defect. Below 900px the panel scrolls
+   instead of compressing into nonsense. */
+.field-scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 0;
+}
+
+/* NO `container-type` here, and that is load-bearing.
+   A burst has to be sized by the panel's HEIGHT — its diameter is a
+   number of metres and metres are the vertical axis — and `cqh` was the
+   obvious unit for it. It also silently broke the entire template:
+   `container-type` applies STYLE CONTAINMENT, and style containment
+   stops `:has()` invalidation on an ancestor from reaching inside the
+   contained subtree. So `.field:has(.by-fire:checked) .burst` matched
+   in `element.matches()`, appeared correctly in the served stylesheet,
+   and never applied — every burst sat still and the trajectories never
+   faded, with no error anywhere. The tell was that a `:has()` rule on
+   the toggle's own parent label worked perfectly at the same moment.
+   A percentage HEIGHT resolves against the parent's height, which is
+   the axis we actually wanted, and `aspect-ratio` keeps it circular. */
+.field-inner {
+  position: relative;
+  min-width: var(--field-min, 900px);
+  height: var(--field-h, 62vh);
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+}
+
+/* Trajectories. One SVG, viewBox in (tenths × metres), stretched
+   non-uniformly to the panel — which is exactly what a plot is. Stroke
+   width is held at 1px through the stretch, or a 14-minute show would
+   draw hairlines and a 4-minute one would draw ropes. */
+.traces {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.traces line {
+  vector-effect: non-scaling-stroke;
+  stroke-width: 1;
+  opacity: 0.32;
+}
+
+/* A burst. Sized by its real diameter, positioned by its real height,
+   and composited additively because light adds — two bursts that
+   overlap here are genuinely brighter than one, the same way they are
+   in the sky. The core is near-white because the middle of a burst IS
+   near-white; that is also what keeps a copper blue visible at 1.2:1
+   against the night, which no amount of tuning would have managed. */
+.burst {
+  position: absolute;
+  /* The default document is the one the AUDIENCE sees, so `--x` starts
+     at the break time. This has to be declared HERE rather than inline
+     on the element: an inline custom property beats a stylesheet rule,
+     so setting it in the JSX made the `:has()` override below lose
+     silently — the radio checked, the class matched, and every burst
+     stayed exactly where it was. It looks perfect in a screenshot. */
+  --x: var(--tb);
+  left: calc(var(--x) * 100%);
+  bottom: calc(var(--a) * 100%);
+  height: calc(var(--d) * 100%);
+  aspect-ratio: 1;
+  translate: -50% 50%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--em) 18%, white) 0%,
+    color-mix(in oklab, var(--em) 82%, white) 14%,
+    var(--em) 32%,
+    color-mix(in oklab, var(--em) 46%, transparent) 58%,
+    transparent 76%
+  );
+  mix-blend-mode: plus-lighter;
+  pointer-events: none;
+}
+
+/* THE FLIP IS A CUT, EVERYWHERE, and that took measuring to establish.
+   Sliding every burst from its break time to its firing time is the
+   obvious way to dramatise the difference between the two documents.
+   Measured in Chromium today, ANY property that both carries a
+   `transition` and is driven by this `:has()` state change latches at
+   its old computed value and never arrives:
+
+     transition: left       — `--x` updates, `left` does not re-resolve.
+     transition: --x        — the registered property itself stops.
+     transition: opacity    — same, on the trajectories' fade.
+     no transition anywhere — correct. Everything re-places instantly.
+
+   All of them look identical in a screenshot, which is why this cost a
+   long afternoon: the selector matched, the rules were in the served
+   stylesheet, and an injected `--probe: 42` on the same element through
+   the same selector arrived perfectly. Only driving the control and
+   reading the computed value in BOTH states told them apart. (A stale
+   `next start` serving a previous build wasted a further round on top
+   — kill the server before believing a rebuild.)
+
+   `--x` stays registered because the registration is still doing work:
+   it types the property, so a malformed value falls back to 0 instead
+   of making `left` invalid at computed-value time and dropping every
+   burst into the corner. The motion budget is spent on the playback
+   below, which is the thing worth watching anyway. */
+
+/* Flipping the two documents. In the cue-sheet view every mark slides
+   left by its own lift time — a big shell a long way, a small one
+   barely at all — and the trajectories go, because in that document
+   there are no trajectories, only moments a crew has to hit. */
+/* In the crew's document there is no burst — there is a moment a match
+   is touched. So the mark changes FORM as well as position: a uniform
+   little ring instead of a ball of light sized by its true diameter.
+   That is not decoration. Measured on a fourteen-minute show, a
+   twelve-inch shell moves six pixels in the flip and a two-inch moves
+   two, because a 6.3-second lift is 0.8% of the width — the asymmetry
+   is real and correct and almost invisible. The change of form is what
+   makes the two documents read as two documents. */
+.field:has(.by-fire:checked) .burst {
+  --x: var(--tf);
+  height: 9px;
+  background: none;
+  border: 1px solid color-mix(in oklab, var(--em) 70%, white);
+  opacity: 0.85;
+}
+
+.field:has(.by-fire:checked) .traces {
+  opacity: 0;
+}
+
+/* No transition here either — see the note above `.field:has(...)`.
+   Anything transitioned whose value is driven by the `:has()` state
+   change latches at its old computed value, and a plain `opacity`
+   behaves exactly like the registered custom property did. */
+
+/* The two-document switch. The half that is not active dims; the half
+   that is reads at full strength, so the control states which document
+   you are looking at rather than which one you could ask for. */
+.segmented {
+  border: 1px solid color-mix(in oklab, white 22%, transparent);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.segmented-a,
+.segmented-b {
+  transition: color var(--dur-quick) var(--ease-out),
+    background-color var(--dur-quick) var(--ease-out);
+  color: color-mix(in oklab, white 45%, transparent);
+}
+
+.segmented:has(.by-fire:not(:checked)) .segmented-a,
+.segmented:has(.by-fire:checked) .segmented-b {
+  color: white;
+  background: color-mix(in oklab, white 14%, transparent);
+}
+
+.axis-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1px solid color-mix(in oklab, white 12%, transparent);
+}
+
+.axis-tick {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-left: 1px solid color-mix(in oklab, white 8%, transparent);
+}
+
+/* ── Playback ──────────────────────────────────────────────────────── */
+
+/* The static field is the durable document and is what you get by
+   default. Pressing play REPLAYS it: every burst is delayed by its own
+   break time, so watching it is watching the shells arrive in order —
+   and in the cue view, watching them leave. Nothing here is scripted;
+   each element carries its own delay as a custom property. */
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: color-mix(in oklab, white 55%, transparent);
+  opacity: 0;
+  left: 0;
+}
+
+.field:has(.play:checked) .playhead {
+  opacity: 1;
+  animation: sweep var(--show-dur) linear both;
+}
+
+.field:has(.play:checked) .burst {
+  animation: bloom var(--dur-bloom) var(--ease-bloom) var(--delay) both;
+}
+
+.field:has(.play:checked) .traces line {
+  animation: fuse 300ms linear var(--fuse-delay) both;
+}
+
+@keyframes sweep {
+  from {
+    left: 0;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes bloom {
+  0% {
+    scale: 0.12;
+    opacity: 0;
+  }
+  22% {
+    scale: 1.06;
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
+}
+
+@keyframes fuse {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.32;
+  }
+}
+
+/* ── Surfaces ──────────────────────────────────────────────────────── */
+
+.rule {
+  border-top: 1px solid color-mix(in oklab, var(--stock-ink) 22%, transparent);
+}
+
+.card {
+  border: 1px solid color-mix(in oklab, var(--stock-ink) 18%, transparent);
+  background: color-mix(in oklab, white 42%, var(--stock-paper));
+}
+
+.chip {
+  border: 1px solid color-mix(in oklab, var(--stock-ink) 26%, transparent);
+  border-radius: 999px;
+}
+
+/* A show card restyles itself from its OWN width rather than the
+   viewport's, because the same card appears in a three-up grid on the
+   index and full-bleed on the front page, and those want different
+   things from the same markup. */
+.show-card {
+  container-type: inline-size;
+}
+
+@container (min-width: 30rem) {
+  .show-card-body {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 1.5rem;
+  }
+
+  .show-card-figures {
+    text-align: right;
+  }
+}
+
+/* The commission form's own error state, rather than the browser's.
+   `:has()` on the fieldset so the whole group reacts, which a sibling
+   selector cannot do. */
+.field-group:has(:invalid:not(:placeholder-shown)) .field-hint {
+  color: var(--color-em-red);
+}
+
+.picker:has(input:checked) .picker-empty {
+  display: none;
+}
+
+/* ── Photographs ───────────────────────────────────────────────────── */
+
+/* One declaration, one component (`src/components/plate.tsx`). See
+   CREDITS.md for why the grade is this light: the colour in these
+   photographs is the evidence the site argues from, so it is pulled
+   together rather than removed. */
+:root {
+  --photo-filter: saturate(0.82) contrast(1.1) brightness(0.96) sepia(0.06);
+}
+
+/* Applied HERE rather than as an inline style on the element, so the
+   treatment is one declaration in one stylesheet that the fleet's
+   `scripts/check-imagery.mjs` can find and hold us to. `.plate` is set
+   by the single component allowed to render an image. */
+.plate img {
+  filter: var(--photo-filter);
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────── */
+
+/* Degrades to the FINAL state, never a half-applied one: the whole show
+   visible, no sweep, no flight, and the document flip becomes a cut.
+   The flip still works — it is information, not decoration — it simply
+   stops moving. */
+@media (prefers-reduced-motion: reduce) {
+  .field:has(.play:checked) .playhead,
+  .field:has(.play:checked) .burst,
+  .field:has(.play:checked) .traces line {
+    animation: none;
+  }
+
+  .field:has(.play:checked) .playhead {
+    opacity: 0;
+  }
+
+  .burst,
+  .traces {
+    transition: none;
+  }
+
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

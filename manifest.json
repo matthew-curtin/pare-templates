@@ -571,6 +571,40 @@
         "filters"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "nightwork",
+      "path": "nightwork",
+      "name": "Fireworks display company",
+      "category": "Craft",
+      "description": "A pyrotechnics firm that publishes both of its documents — the sky an audience sees and the cue sheet a crew fires, which are not the same list of moments. Every colour is computed from a metal salt's emission wavelength.",
+      "framework": "next",
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
+      "theme": "light",
+      "routes": [
+        "/",
+        "/shows",
+        "/shows/[slug]",
+        "/shells",
+        "/shells/[slug]",
+        "/colour",
+        "/sites",
+        "/commission"
+      ],
+      "tags": [
+        "craft",
+        "pyrotechnics",
+        "data",
+        "charts",
+        "photography",
+        "forms"
+      ],
+      "thumbnail": null
     }
   ]
 }
