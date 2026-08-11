@@ -33,7 +33,7 @@
         "pricing",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/saas-product-site.jpg"
     },
     {
       "id": "mobile-app-landing",
@@ -67,7 +67,7 @@
         "support",
         "legal"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/mobile-app-landing.jpg"
     },
     {
       "id": "editorial-magazine",
@@ -99,7 +99,7 @@
         "articles",
         "typography"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/editorial-magazine.jpg"
     },
     {
       "id": "coffee-storefront",
@@ -133,7 +133,7 @@
         "products",
         "subscriptions"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/coffee-storefront.jpg"
     },
     {
       "id": "analytics-dashboard",
@@ -165,7 +165,7 @@
         "tables",
         "admin"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/analytics-dashboard.jpg"
     },
     {
       "id": "project-tracker",
@@ -198,7 +198,7 @@
         "drag-and-drop",
         "admin"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/project-tracker.jpg"
     },
     {
       "id": "restaurant-booking",
@@ -230,7 +230,7 @@
         "hospitality",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/restaurant-booking.jpg"
     },
     {
       "id": "docs-site",
@@ -263,7 +263,7 @@
         "developer",
         "search"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/docs-site.jpg"
     },
     {
       "id": "support-inbox",
@@ -296,7 +296,7 @@
         "messaging",
         "admin"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/support-inbox.jpg"
     },
     {
       "id": "almanac",
@@ -330,7 +330,7 @@
         "search",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/almanac.jpg"
     },
     {
       "id": "conference-schedule",
@@ -365,7 +365,7 @@
         "filters",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/conference-schedule.jpg"
     },
     {
       "id": "trail-guide",
@@ -398,7 +398,7 @@
         "planner",
         "charts"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/trail-guide.jpg"
     },
     {
       "id": "exposure",
@@ -432,7 +432,7 @@
         "forms",
         "plans"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/exposure.jpg"
     },
     {
       "id": "playout",
@@ -466,7 +466,7 @@
         "data",
         "admin"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/playout.jpg"
     },
     {
       "id": "kiln",
@@ -501,7 +501,7 @@
         "charts",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/kiln.jpg"
     },
     {
       "id": "spoke",
@@ -536,7 +536,7 @@
         "tables",
         "admin"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/spoke.jpg"
     },
     {
       "id": "understory",
@@ -570,7 +570,7 @@
         "charts",
         "filters"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/understory.jpg"
     },
     {
       "id": "nightwork",
@@ -604,7 +604,7 @@
         "photography",
         "forms"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/nightwork.jpg"
     },
     {
       "id": "tally",
@@ -638,7 +638,7 @@
         "data",
         "photography"
       ],
-      "thumbnail": null
+      "thumbnail": "thumbnails/tally.jpg"
     }
   ]
 }

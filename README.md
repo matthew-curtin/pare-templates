@@ -113,6 +113,29 @@ conventions and the editing experience are the same either way.
 
 Details and rationale are in [CONVENTIONS.md](CONVENTIONS.md).
 
+## Thumbnails
+
+Every template has a screenshot at `thumbnails/<id>.jpg`, and its manifest
+entry points at it. Pare's template picker shows these; a template without
+one falls back to a route sketch, silently and by design, which is why the
+consistency is checked rather than trusted.
+
+```
+node scripts/shoot-fleet.mjs            # re-shoot everything
+node scripts/shoot-fleet.mjs understory # or just one
+node scripts/check-thumbnails.mjs       # manifest and images agree
+```
+
+Shooting boots each template's own dev server and photographs the homepage
+at 1280×800, so the templates need to be installed first. It drives the
+Chrome already on this machine via Playwright — installed under
+`scripts/`, deliberately not at the repo root, so it can never end up on a
+template's module resolution path.
+
+**Look at the images before committing them.** A template that boots to an
+error page screenshots the error page, and no script can tell the
+difference.
+
 ## Licence
 
 The template code is yours to use for anything, with no attribution

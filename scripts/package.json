@@ -1,0 +1,8 @@
+{
+  "name": "pare-templates-scripts",
+  "private": true,
+  "description": "Tooling for the fleet. Deliberately NOT at the repo root: a root node_modules sits on the resolution path of every template's dev server, so a template importing something it never declared would resolve it from up here, work perfectly on this machine, and fail for the user who downloaded that folder alone. That is exactly the class of bug Pare's slice 115 shipped for seventy slices. Keeping the dependency down here puts it out of every template's reach.",
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}
