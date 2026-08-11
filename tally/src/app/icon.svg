@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The tally: five days, one of them short. Drawn rather than shipped
+       as a raster so it stays sharp and stays editable (§5). -->
+  <rect width="32" height="32" rx="7" fill="#2b3038" />
+  <g fill="#5f6874">
+    <rect x="6" y="8" width="3.4" height="16" rx="1.2" />
+    <rect x="11.3" y="8" width="3.4" height="16" rx="1.2" />
+    <rect x="21.9" y="8" width="3.4" height="16" rx="1.2" />
+  </g>
+  <rect x="16.6" y="17.5" width="3.4" height="6.5" rx="1.2" fill="#f57c33" />
+</svg>

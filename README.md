@@ -43,6 +43,7 @@ Each template is self-contained — its own dependencies, its own README.
 | [spoke](spoke) | Manufacturing | Vite | Light | ✅ Ready |
 | [understory](understory) | Culture | Next.js | Seasonal | ✅ Ready |
 | [nightwork](nightwork) | Craft | Next.js | Light | ✅ Ready |
+| [tally](tally) | Infrastructure | Next.js | Dark | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.
@@ -77,6 +78,7 @@ The first six were all the same thing, which is what prompted the rule.
 | spoke | Indented tree — depth is the layout, with a sticky rollup gutter for the branch under the pointer |
 | understory | Mosaic wall — a full-bleed dense grid with no page column, where a tile's area is its rank that week |
 | nightwork | Altitude field — a full-bleed two-axis plot of time against real height, with the annotations anchored in the sky at the moment they describe |
+| tally | Uptime strip — stacked full-width service rows, each an identity / ninety-day tally / budget triptych, and that triptych repeated as the unit of every other page |
 
 ⚠️ marks the six that predate the rule and share one architecture
 between them. They are grandfathered, not endorsed.

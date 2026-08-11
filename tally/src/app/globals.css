@@ -1,0 +1,575 @@
+@import "tailwindcss";
+
+/* =====================================================================
+   ART DIRECTION
+
+   The one idea — an uptime percentage is a SCORE, and a score only tells
+   you what already happened. The number underneath it is a BUDGET: a
+   target of 99.95% is a permission slip for sixty-six minutes of failure a
+   quarter, and the useful question is how much is left. This page leads on
+   the service spending it too fast, not on a row of green ticks.
+
+   The structural device — stacked full-width service rows, each an
+   identity / ninety-day tally / budget triptych, and that same triptych is
+   the unit every other page is built out of. The tally is the spine.
+
+   Deliberately not done — operational days are not green. The only
+   coloured marks anywhere on the site are the bad ones, so a glance at any
+   strip counts problems rather than parsing a wall of colour. It halves
+   the colour-vision problem before it starts (see the ramp below) and it
+   is also just true: a status page where the good days shout is backwards.
+
+   Register — restrained on purpose. The last few templates in this repo
+   were expressive; this one is a document read by somebody worried, so the
+   type is small, the grid is tight, the motion is 120ms, and the largest
+   thing on any page is a number.
+   ===================================================================== */
+
+@theme {
+  /* -- Ground ------------------------------------------------------- */
+  /* Near-black with a deliberate cool cast. Every neutral shares hue 254
+     so that the greys agree with each other rather than drifting warm and
+     cool across surfaces. */
+  --color-ground: oklch(0.168 0.012 254);
+  --color-surface: oklch(0.213 0.013 254);
+  --color-raised: oklch(0.262 0.014 254);
+  --color-line: oklch(0.515 0.014 254);
+  --color-line-soft: oklch(0.256 0.012 254);
+
+  --color-ink: oklch(0.949 0.005 254);
+  --color-ink-dim: oklch(0.762 0.011 254);
+  --color-ink-faint: oklch(0.618 0.013 254);
+
+  /* The only non-status hue. Links, focus rings, the current selection.
+     Held well clear of the ramp below so an accent can never be mistaken
+     for a severity. */
+  --color-accent: oklch(0.812 0.113 199);
+  --color-accent-dim: oklch(0.640 0.086 199);
+
+  /* -- The severity ramp -------------------------------------------- */
+  /* THREE ORDERED SEVERITIES AND A NEUTRAL, WHICH IS THE WHOLE TRICK.
+     `ok` is a quiet slate rather than a green, so the ramp is not six
+     competing hues but one value scale read against a neutral.
+
+     Lightness descends monotonically with severity — 0.845 → 0.715 →
+     0.595 — and that ordering, not the hue, is what survives dichromacy.
+     Under deuteranopia the three collapse towards each other in hue and
+     remain a legible light-to-dark ladder, which is the correct encoding
+     for an ordinal scale anyway. `scripts/check-colours.mjs` asserts the
+     monotonicity under all three dichromacies rather than trusting it.
+
+     Height is a redundant second channel: a day mark is drawn shorter the
+     worse the day was. §4b warns against double-encoding, but that warning
+     is about NOMINAL categories — here the scale is ordinal and the
+     redundancy is the accessibility fix. Maintenance sits off the ramp
+     entirely: its own hue, full height, and a hatched fill, because it is
+     not an outage and spends no budget. */
+  --color-ok: oklch(0.515 0.022 254);
+  --color-degraded: oklch(0.845 0.145 85);
+  --color-partial: oklch(0.715 0.170 48);
+  --color-major: oklch(0.595 0.205 26);
+  --color-maint: oklch(0.665 0.115 255);
+  --color-void: oklch(0.238 0.008 254);
+
+  /* -- Type ---------------------------------------------------------- */
+  /* Archivo carries a real `wdth` axis (62–125) and it is used for a job
+     rather than a flourish: row labels and date ticks CONDENSE instead of
+     wrapping when their container gets narrow. Roboto Mono carries every
+     figure on the site, because a page whose entire content is numbers in
+     columns wants them to line up. */
+  --font-sans: "Archivo Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Roboto Mono Variable", ui-monospace, "SF Mono", monospace;
+
+  /* Deliberately small. The display type on this site is the figures. */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1.45;
+
+  /* The one large thing on a page, and it is always a number. */
+  --text-figure: clamp(2.5rem, 1.5rem + 3.6vw, 4.25rem);
+  --text-figure--line-height: 0.95;
+  --text-figure--letter-spacing: -0.02em;
+
+  --text-lede: clamp(1.0625rem, 1rem + 0.3vw, 1.1875rem);
+  --text-lede--line-height: 1.55;
+
+  /* -- Motion -------------------------------------------------------- */
+  /* Tokens rather than Tailwind's defaults, so a duration is a decision. */
+  --dur-fast: 120ms;
+  --dur-base: 220ms;
+  --dur-slow: 420ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  --radius-mark: 1.5px;
+}
+
+/* =====================================================================
+   REGISTERED PROPERTIES
+
+   Two custom properties are typed so they can be ANIMATED. An unregistered
+   custom property is a string as far as the animation engine is concerned
+   and jumps between values; registered as a <percentage> it interpolates,
+   which is what lets a budget bar grow into its projection rather than
+   snapping there.
+   ===================================================================== */
+
+@property --fill {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 0%;
+}
+
+@property --mark-h {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: color-mix(in oklab, var(--color-accent) 35%, transparent);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Every figure on the site. Tabular so columns of numbers line up, and
+   slightly tightened because Roboto Mono is generous by default. */
+.num {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* Small labels. No letterspaced uppercase anywhere — see §4c. */
+.eyebrow {
+  font-size: var(--text-micro);
+  font-weight: 600;
+  color: var(--color-ink-faint);
+}
+
+.prose-body {
+  text-wrap: pretty;
+}
+
+h1, h2, h3 {
+  text-wrap: balance;
+  font-weight: 600;
+}
+
+.rule {
+  border-bottom: 1px solid var(--color-line-soft);
+}
+
+/* =====================================================================
+   THE PAGE FRAME
+
+   Full-bleed with generous side padding rather than a centred column —
+   the tally wants every pixel of width it can get, and six of them stacked
+   is the page. Prose gets its own measure where prose actually appears.
+   ===================================================================== */
+
+.frame {
+  padding-inline: clamp(1rem, 0.4rem + 2.6vw, 3.5rem);
+  margin-inline: auto;
+  max-width: 108rem;
+}
+
+.measure {
+  max-width: 40rem;
+}
+
+.measure-wide {
+  max-width: 56rem;
+}
+
+/* =====================================================================
+   THE BOARD — the architecture
+
+   `container-type` here is what makes the row responsive to ITS OWN width
+   rather than the viewport's, which matters because the same row renders
+   full-width on the front page and inside a narrower column on a service
+   page.
+
+   IT IS ALSO WHY NO `:has()` RULE REACHES INSIDE THIS ELEMENT.
+   `container-type` applies style containment, and style containment stops
+   `:has()` invalidation on an ancestor from reaching into the contained
+   subtree — so an outer `.page:has(...) .day { … }` silently does nothing
+   here. The incident-to-days linking that needs exactly that lives on the
+   service page, whose strip wrapper is deliberately NOT a container.
+   ===================================================================== */
+
+.board {
+  container-type: inline-size;
+  container-name: board;
+}
+
+.board-row {
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) minmax(0, 1fr) minmax(9rem, 12rem);
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding-block: 0.875rem;
+  border-top: 1px solid var(--color-line-soft);
+  transition: background var(--dur-fast) var(--ease-soft);
+}
+
+.board-row:hover {
+  /* oklab, not oklch: a hue arc between a cool accent and a cool ground
+     passes somewhere nobody chose. §4b. */
+  background: color-mix(in oklab, var(--color-accent) 4%, transparent);
+}
+
+@container board (max-width: 52rem) {
+  .board-row {
+    grid-template-columns: minmax(0, 1fr) minmax(8rem, auto);
+  }
+  .board-row > .row-tally {
+    grid-column: 1 / -1;
+    order: 3;
+  }
+  /* The variable-font axis, doing a job: labels condense rather than
+     wrapping onto a second line and knocking the row heights out. */
+  .row-label {
+    font-stretch: 86%;
+  }
+  .tick {
+    font-stretch: 80%;
+  }
+}
+
+.row-label {
+  font-stretch: 100%;
+  font-weight: 550;
+  transition: font-stretch var(--dur-base) var(--ease-soft);
+}
+
+/* =====================================================================
+   THE TALLY
+
+   One column per day, oldest on the left. Height encodes severity and hue
+   encodes severity — deliberately redundant, see the ramp note above.
+   ===================================================================== */
+
+.tally {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: end;
+  gap: 1.5px;
+  height: var(--tally-h, 2.25rem);
+}
+
+.day {
+  height: var(--mark-h);
+  border-radius: var(--radius-mark);
+  background: var(--mark-c, var(--color-ok));
+  transition:
+    --mark-h var(--dur-base) var(--ease-out),
+    opacity var(--dur-base) var(--ease-out);
+}
+
+.day-ok { --mark-h: 100%; --mark-c: var(--color-ok); }
+.day-degraded { --mark-h: 62%; --mark-c: var(--color-degraded); }
+.day-partial { --mark-h: 40%; --mark-c: var(--color-partial); }
+.day-major { --mark-h: 22%; --mark-c: var(--color-major); }
+
+/* Maintenance is full height because it is not an outage. The hatch is a
+   second channel so the category never rests on hue alone. */
+.day-maintenance {
+  --mark-h: 100%;
+  --mark-c: var(--color-maint);
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--color-maint) 0 2px,
+    color-mix(in oklab, var(--color-maint) 35%, var(--color-ground)) 2px 4px
+  );
+}
+
+/* Before the service existed. Short and nearly the ground, because a day
+   a product did not exist was not a day it was up. */
+.day-none {
+  --mark-h: 20%;
+  --mark-c: var(--color-void);
+}
+
+.day-today {
+  outline: 1px solid color-mix(in oklab, var(--color-ink) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.tick {
+  font-size: var(--text-micro);
+  color: var(--color-ink-faint);
+  font-stretch: 100%;
+  transition: font-stretch var(--dur-base) var(--ease-soft);
+}
+
+/* =====================================================================
+   INCIDENT ↔ DAY LINKING  (service pages only)
+
+   The one piece of motion on the site that teaches something structural:
+   pointing at an incident in the list raises the days it darkened in the
+   strip above it, and drops everything else back. It draws the connection
+   between a document and its marks, which is the entire thesis of the
+   page architecture.
+
+   `.strip-linked` must NOT be a container — see the note on `.board`.
+   ===================================================================== */
+
+/* SCOPED TO `.tally-data`, WHICH IS NOT PEDANTRY. The legend under the
+   strip is built from the same `.day` marks so that its swatches cannot
+   drift from the real ones — which means an unscoped rule here dims the
+   KEY along with the data, and a key that fades when you point at
+   something is worse than no key. Found by measuring: 96 marks responded
+   where 90 should have. */
+.strip-linked:has(.log-entry:hover) .tally-data .day,
+.strip-linked:has(.log-entry:focus-within) .tally-data .day {
+  opacity: 0.28;
+}
+
+/* Each entry lights its own days. Generated per incident in the page. */
+.log-entry {
+  transition: background var(--dur-fast) var(--ease-soft);
+}
+
+.log-entry:hover,
+.log-entry:focus-within {
+  background: color-mix(in oklab, var(--color-accent) 6%, transparent);
+}
+
+/* =====================================================================
+   THE ONE THING THAT IS HAPPENING RIGHT NOW
+
+   The only self-starting animation on the site, on the only marker whose
+   subject is live. A ring that expands out of an open incident's dot and
+   fades says "still running" without a word, and it is the one piece of
+   state a static mark genuinely cannot carry — every other status on this
+   page is a fact about the past and sits still.
+
+   The last keyframe is the RESTING state (a fully transparent ring), so
+   the reduced-motion rule at the foot of this file — which collapses the
+   duration and plays it once — lands on no ring at all rather than
+   freezing a half-drawn one mid-expansion.
+   ===================================================================== */
+
+@keyframes live-ring {
+  from {
+    box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-degraded) 60%, transparent);
+  }
+  to {
+    box-shadow: 0 0 0 7px color-mix(in oklab, var(--color-degraded) 0%, transparent);
+  }
+}
+
+.dot-live {
+  animation: live-ring 2.4s var(--ease-out) infinite;
+}
+
+/* =====================================================================
+   THE BUDGET BAR
+
+   Two marks on one track. The FILL is what has been spent; the TICK is how
+   far through the quarter we are. Spent to the left of the tick is ahead
+   of schedule, to the right is behind, and that comparison is the entire
+   reading — which is why they share a track instead of being two numbers.
+
+   On hover the fill grows to where this burn rate lands at quarter end.
+   That is the directed motion §4c asks for: it answers "and then what",
+   and it cannot be read off the static state.
+   ===================================================================== */
+
+.budget {
+  /* NOT SET INLINE, AND THAT IS LOAD-BEARING. An inline style beats every
+     stylesheet rule short of !important, so writing `--fill` on the element
+     would silently defeat the hover rule below — the bar would render the
+     right width and simply never animate. The component sets `--consumed`
+     and `--projected` inline; only the stylesheet ever touches `--fill`. */
+  --fill: var(--consumed, 0%);
+  position: relative;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-raised);
+  overflow: hidden;
+}
+
+.budget::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(
+    to right,
+    var(--budget-c, var(--color-ok)) var(--fill),
+    transparent var(--fill)
+  );
+  transition: --fill var(--dur-slow) var(--ease-out);
+}
+
+/* The elapsed marker. A hairline the fill is read against. */
+.budget::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  left: var(--elapsed, 0%);
+  width: 1px;
+  background: var(--color-ink-dim);
+}
+
+.budget-host:hover .budget,
+.budget-host:focus-within .budget {
+  --fill: var(--projected, var(--consumed, 0%));
+}
+
+.budget-over { --budget-c: var(--color-major); }
+.budget-warn { --budget-c: var(--color-partial); }
+.budget-fine { --budget-c: var(--color-ok); }
+
+/* =====================================================================
+   FILTERS — link-free, CSS-only, and a real `:has()` job
+
+   The incident log's maintenance toggle. Nothing outside this rule knows
+   the checkbox exists, and no state lives in React for it.
+   ===================================================================== */
+
+.log:has(.filter-maintenance:not(:checked)) .log-entry-maintenance {
+  display: none;
+}
+
+.log:has(.filter-degraded:not(:checked)) .log-entry-degraded {
+  display: none;
+}
+
+/* The whole page chrome acknowledges a live incident. Also `:has()`, also
+   outside every container. */
+.shell:has(.is-live) .masthead {
+  border-bottom-color: color-mix(in oklab, var(--color-degraded) 55%, var(--color-line));
+}
+
+/* =====================================================================
+   SURFACES
+   ===================================================================== */
+
+.panel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line-soft);
+  border-radius: 0.5rem;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-line-soft);
+  background: var(--color-surface);
+  font-size: var(--text-micro);
+  font-weight: 550;
+  color: var(--color-ink-dim);
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  flex: none;
+}
+
+.field {
+  width: 100%;
+  background: var(--color-ground);
+  border: 1px solid var(--color-line);
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.625rem;
+  color: var(--color-ink);
+  transition: border-color var(--dur-fast) var(--ease-soft);
+}
+
+.field:hover { border-color: var(--color-ink-faint); }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.375rem;
+  padding: 0.5rem 0.875rem;
+  font-weight: 600;
+  transition:
+    background var(--dur-fast) var(--ease-soft),
+    color var(--dur-fast) var(--ease-soft);
+}
+
+.btn-primary {
+  background: var(--color-accent);
+  color: var(--color-ground);
+}
+
+.btn-primary:hover {
+  background: color-mix(in oklab, var(--color-accent) 82%, white);
+}
+
+.btn-quiet {
+  border: 1px solid var(--color-line);
+  color: var(--color-ink-dim);
+}
+
+.btn-quiet:hover {
+  border-color: var(--color-ink-faint);
+  color: var(--color-ink);
+}
+
+/* Photographs. Exactly one component applies this, and it is declared here
+   rather than inline so it is a design token like everything else. */
+.plate img {
+  filter: var(--photo-filter);
+}
+
+:root {
+  /* Machine rooms arrive under blue LED, sodium and white LED in the same
+     search. Hue is carrying nothing here — the argument is about structure
+     and redundancy — so it goes, and the cool cast puts what is left on the
+     same ground as the page. §6. */
+  --photo-filter: grayscale(1) sepia(0.34) hue-rotate(176deg) saturate(0.85)
+    contrast(1.09) brightness(0.9);
+}
+
+/* =====================================================================
+   REDUCED MOTION
+
+   Degrades to the FINAL state, never a half-applied one: the budget bar
+   simply IS its projection on hover, the day marks simply are dimmed.
+   ===================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

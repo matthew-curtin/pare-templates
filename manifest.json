@@ -605,6 +605,40 @@
         "forms"
       ],
       "thumbnail": null
+    },
+    {
+      "id": "tally",
+      "path": "tally",
+      "name": "Cloud platform status page",
+      "category": "Infrastructure",
+      "description": "A hosting company's public status page, built around the error budget rather than the uptime percentage — what the promise allows, what has been spent, and what the misses are worth in credits.",
+      "framework": "next",
+      "stack": [
+        "Next.js 16",
+        "React 19",
+        "TypeScript",
+        "Tailwind 4"
+      ],
+      "theme": "dark",
+      "routes": [
+        "/",
+        "/incidents",
+        "/incidents/[slug]",
+        "/services/[slug]",
+        "/sla",
+        "/infrastructure",
+        "/subscribe"
+      ],
+      "tags": [
+        "infrastructure",
+        "status",
+        "uptime",
+        "incidents",
+        "sla",
+        "data",
+        "photography"
+      ],
+      "thumbnail": null
     }
   ]
 }

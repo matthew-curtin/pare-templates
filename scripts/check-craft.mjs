@@ -100,7 +100,18 @@ const MODERN = [
   ["container queries", (css) => /@container/.test(css)],
   [":has()", (css) => /:has\(/.test(css)],
   ["oklch + color-mix", (css) => /oklch\(/.test(css) && /color-mix\(/.test(css)],
-  ["variable-font axis", (css) => /font-variation-settings/.test(css)],
+  // `font-stretch: 87%` IS the wdth axis, and it is the spelling to prefer
+  // for a REGISTERED axis — `font-variation-settings` is the low-level
+  // escape hatch and MDN steers away from it for exactly these four. A
+  // detector naming only the escape hatch misses the correct usage.
+  // `font-weight` is deliberately not counted: every template sets it.
+  [
+    "variable-font axis",
+    (css) =>
+      /font-variation-settings/.test(css) ||
+      /font-stretch:\s*\d/.test(css) ||
+      /font-optical-sizing:\s*auto/.test(css),
+  ],
   ["view transitions", (css, src) => /::view-transition|@view-transition/.test(css) || /startViewTransition/.test(src)],
   ["scroll-driven animation", (css) => /animation-timeline/.test(css)],
   ["@property", (css) => /@property/.test(css)],
@@ -178,12 +189,24 @@ for (const name of templates()) {
 
   const used = MODERN.filter(([, test]) => test(css, src)).map(([label]) => label);
 
+  // A transition on a REGISTERED custom property is designed motion by any
+  // reasonable reading: `@property` is on §4c's own modern-CSS list, an
+  // unregistered custom property cannot be interpolated at all, and this
+  // is not something Tailwind's defaults can produce by accident — which
+  // is the whole reason a bare `transition` does not count here. Both
+  // halves are required, so `transition: background` still does not pass.
+  const registered = [...css.matchAll(/@property\s+(--[a-z0-9-]+)/gi)].map((m) => m[1]);
+  const transitionsRegistered = registered.some((name) =>
+    new RegExp(`transition:[^;}]*${name}\\b`).test(css),
+  );
+
   const hasMotion =
     /@keyframes/.test(css) ||
     /animation-timeline/.test(css) ||
     /@starting-style/.test(css) ||
     /::view-transition/.test(css) ||
-    /startViewTransition/.test(src);
+    /startViewTransition/.test(src) ||
+    transitionsRegistered;
 
   const honoursReducedMotion = /prefers-reduced-motion/.test(css);
   const hasMotionTokens = /--dur-|--ease-/.test(css);
