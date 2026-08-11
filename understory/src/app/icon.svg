@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- The wall, at 32 pixels: four tiles at three sizes, in four of the
+       year's eight anchor colours. Drawn rather than shipped as a PNG,
+       per CONVENTIONS §5 — and it is the only mark this garden has. -->
+  <rect width="32" height="32" rx="6" fill="oklch(0.945 0.03 14)" />
+  <rect x="4" y="4" width="15" height="15" rx="2.5" fill="oklch(0.55 0.194 14)" />
+  <rect x="21" y="4" width="7" height="7" rx="1.5" fill="oklch(0.7 0.142 84)" />
+  <rect x="21" y="13" width="7" height="15" rx="1.5" fill="oklch(0.66 0.166 134)" />
+  <rect x="4" y="21" width="15" height="7" rx="1.5" fill="oklch(0.52 0.176 258)" />
+</svg>

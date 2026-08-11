@@ -1,0 +1,693 @@
+@import "tailwindcss";
+@import "@fontsource-variable/bricolage-grotesque/opsz.css";
+@import "@fontsource-variable/instrument-sans/wght.css";
+@import "@fontsource-variable/instrument-sans/wght-italic.css";
+
+/* ═══════════════════════════════════════════════════════════════════
+   ART DIRECTION — Strathdunan
+
+   THE ONE IDEA. A garden's website shows you one perfect afternoon in
+   July. This garden's best week is the third week of March, its worst
+   is in late September, and for fourteen weeks of the year the honest
+   answer is that there is not much to see. So the site is organised
+   around WHEN rather than WHAT, and it publishes its own visitor curve
+   next to its interest curve — which shows that MORE people come in the
+   ten worst weeks of the year than in the ten best. No garden puts that
+   on its homepage.
+
+   THE STRUCTURAL DEVICE. The mosaic wall. There is no page column
+   anywhere; the whole viewport is a dense grid, and a tile's AREA is
+   what that plant is worth in the week you are looking at. Nothing is
+   promoted by hand — there is no "featured" field in the content — so
+   moving through the year re-packs the wall, and the thin weeks are
+   thin on the screen. The masthead is itself a tile, sitting in the
+   flow rather than above it.
+
+   The second half of the device is colour, and it is the reason this
+   template exists. Sixteen templates in this repo have a page surface
+   between 0.002 and 0.016 chroma — near-neutral, every one of them.
+   Here the ground IS the week: eight anchor colours around the year,
+   interpolated per week in `src/lib/ground.ts`, driving the ground, the
+   sheet, the ink and one saturated flare. March is rose, May is acid
+   green, June is poppy blue, late October is amber, and the last week
+   of November is very nearly nothing.
+
+   THE ONE THING DELIBERATELY NOT DONE. There is no map, and no photo
+   of the garden in summer sunshine at the top of the front page. Both
+   are what a real botanic garden would lead with, and both would be
+   the site arguing against itself.
+   ═══════════════════════════════════════════════════════════════════ */
+
+@theme {
+  --font-display: "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+
+  /* The eight anchors, mirroring `src/lib/ground.ts`, which is the
+     source of truth. They are declared here so a component can name one
+     directly (the year rail's legend does), and `check-colours.mjs`
+     parses this file and fails until the two agree — two hand-kept
+     copies of a palette is the definition of a thing that drifts, and
+     a stylesheet and a module can disagree for months while every page
+     still renders perfectly. */
+  --color-anchor-hoar: oklch(0.72 0.078 248);
+  --color-anchor-sulphur: oklch(0.78 0.142 84);
+  --color-anchor-truss: oklch(0.46 0.194 14);
+  --color-anchor-new-leaf: oklch(0.79 0.166 134);
+  --color-anchor-poppy: oklch(0.47 0.176 258);
+  --color-anchor-canopy: oklch(0.5 0.086 154);
+  --color-anchor-turn: oklch(0.51 0.154 56);
+  --color-anchor-bare: oklch(0.45 0.062 318);
+
+  /* Every one of these resolves to a per-week value set on <body> from
+     `seasonVars()`. The fallbacks are week 33 — the pinned week — so a
+     page that somehow renders without them is merely out of season
+     rather than unreadable. */
+  --color-ground: var(--season-ground, oklch(0.945 0.031 154));
+  --color-sheet: var(--season-sheet, oklch(0.988 0.011 154));
+  --color-sunk: var(--season-sunk, oklch(0.898 0.035 154));
+  --color-line: var(--season-line, oklch(0.858 0.031 154));
+  --color-ink: var(--season-ink, oklch(0.245 0.011 154));
+  --color-ink-muted: var(--season-ink-muted, oklch(0.452 0.012 154));
+  --color-flare: var(--season-flare, oklch(0.55 0.104 154));
+
+  /* The one thing that does NOT move with the season. A quiet week is
+     quiet in March too, and colouring the warning with the week's own
+     colour would make it invisible in exactly the weeks it matters. */
+  --color-thin: oklch(0.47 0.13 42);
+
+  --text-monument: clamp(3.25rem, 12vw, 10rem);
+  --text-display: clamp(1.9rem, 4.4vw, 3.5rem);
+  --text-title: clamp(1.05rem, 1.5vw, 1.4rem);
+  --text-body: clamp(0.9375rem, 1vw, 1.0625rem);
+  --text-small: 0.8125rem;
+
+  /* Motion is a design decision, so it gets tokens rather than whatever
+     Tailwind defaults to. `repack` is the long one on purpose: it is
+     the wall rearranging between two weeks, which is the site's whole
+     argument moving, and it wants to be watchable rather than snappy. */
+  --dur-quick: 140ms;
+  --dur-move: 320ms;
+  --dur-repack: 620ms;
+  --ease-out: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* One line, applied by exactly one component (`components/plate.tsx`),
+     which is what makes the set consistent as a property of the code
+     rather than a promise about sourcing.
+
+     GRADED, NOT CRUSHED — CONVENTIONS §6. Two templates here reduce
+     their photographs to a duotone and are right to: their subject is a
+     building, or weather, and hue is carrying nothing. This one is
+     about a bluebell wood being violet and a katsura being apricot. The
+     colour IS the evidence, so the treatment only pulls sixteen stock
+     frames toward each other — enough that a cool Scandinavian white
+     balance and a warm one stop arguing, nowhere near enough to stop
+     May reading as green. The consequence, which §6 names, is that the
+     sourcing has to do more work. */
+  --photo-filter: saturate(0.9) contrast(1.06) brightness(1.02) sepia(0.05);
+}
+
+/* `--veil` and `--fill` are registered so they can be TRANSITIONED. An
+   unregistered custom property is a string as far as the engine is
+   concerned, so `transition: --veil` does nothing at all and does it
+   silently — the caption scrim would simply snap. */
+@property --veil {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --fill {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+/* Cross-document view transitions. The week links are plain anchors on
+   purpose rather than client-routed: a real navigation is what lets the
+   browser do this, the URLs stay shareable and refreshable, and there
+   is no JavaScript involved in the most elaborate piece of motion on
+   the site. Tiles carry a `view-transition-name` keyed on their slug,
+   so a plant that is in both weeks FLIES from its old size to its new
+   one and the re-pack becomes legible instead of being a cut. */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-group(*) {
+  animation-duration: var(--dur-repack);
+  animation-timing-function: var(--ease-inout);
+}
+
+html {
+  color-scheme: light;
+}
+
+body {
+  background: var(--color-ground);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  font-variation-settings: "wght" 400;
+  /* The ground is the week, so moving between weeks is a colour change
+     across the entire viewport. Slower than the tiles, because it is
+     the background changing and it should be noticed second. */
+  transition: background-color var(--dur-repack) var(--ease-inout);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ────────────────────────────────────────────────────
+   Bricolage Grotesque's `opsz` axis, used for the thing an optical-size
+   axis is actually FOR and which almost nobody does with a variable
+   font: it TRACKS THE SIZE THE TYPE IS SET AT. At the monument sizes
+   the axis is driven to 96, which thins the strokes and tightens the
+   joins so a ten-rem word does not look like a fat one enlarged; at
+   caption sizes it drops to 12, which thickens the stems so they
+   survive at eleven pixels. Three settings, one file, and the letters
+   are genuinely different drawings rather than one drawing scaled.
+
+   The face is chosen against the subject on purpose. A botanic garden's
+   default is an engraved serif and a wreath, and this garden is arguing
+   with its own institution — so the voice is a contemporary grotesque
+   with slightly wrong proportions, and the only nod to convention is
+   that binomials stay italic, because that one is not a style choice. */
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 48, "wght" 500;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+.monument {
+  font-family: var(--font-display);
+  font-size: var(--text-monument);
+  font-variation-settings: "opsz" 96, "wght" 400;
+  line-height: 0.84;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 12, "wght" 600;
+  font-size: var(--text-small);
+}
+
+/* Binomials. Italic is the botanical convention and predates every
+   other decision on this page by about two hundred and seventy years. */
+.binomial {
+  font-style: italic;
+}
+
+/* Type inside a tile is sized in CONTAINER units, not viewport units.
+   This is the second job the container queries are doing and it is not
+   a nicety: a cell is two tracks wide whatever the screen is, so a
+   viewport-derived `clamp()` sized the word "Strathdunan" at 56px in a
+   290px box and cut the last letter off, and "100%" at 160px in the
+   same box lost the sign. `cqw` is a percentage of the TILE, so the
+   same declaration fits at every breakpoint and at every span, and
+   there is no arrangement of the wall that can clip it. */
+.cell .monument {
+  /* Sized against "100%", the widest string this ever holds. */
+  font-size: clamp(1.75rem, 29cqw, 7rem);
+}
+
+.cell .fit-display {
+  font-size: clamp(1.15rem, 10cqw, 2.6rem);
+}
+
+.figure {
+  font-variant-numeric: tabular-nums;
+  font-variation-settings: "wght" 500;
+}
+
+.prose-note {
+  text-wrap: pretty;
+  max-width: 62ch;
+}
+
+/* ── The wall ──────────────────────────────────────────────────────
+   No page column anywhere. The grid runs the full viewport and packs
+   densely, so a small tile drops into the hole a large one left. Track
+   size is fluid rather than stepped, which is what keeps the wall the
+   same shape on a laptop and a phone. */
+.wall {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--unit), 1fr));
+  grid-auto-rows: var(--unit);
+  grid-auto-flow: dense;
+  gap: var(--wall-gap);
+  padding: var(--wall-gap);
+  /* Sized by looking at it. The first attempt was half as big again and
+     the wall stopped being a wall — a three-span tile came out nearly
+     600px across, four tiles filled the viewport, and the whole thing
+     read as a page of large cards. The ranking only means something
+     when enough of the ranking is on screen at once to compare. */
+  --unit: clamp(5rem, 9vw, 8.75rem);
+  --wall-gap: clamp(0.3rem, 0.6vw, 0.6rem);
+}
+
+.cell {
+  grid-column: span min(var(--cols), 2);
+  grid-row: span var(--rows);
+  position: relative;
+  overflow: hidden;
+  border-radius: clamp(0.4rem, 0.7vw, 0.75rem);
+  background: var(--color-sheet);
+  min-width: 0;
+  container-type: inline-size;
+  container-name: cell;
+  /* A hairline inside every tile. Roughly a third of this collection is
+     white-flowered — eucryphia, hoheria, escallonia, the handkerchief
+     tree — and a tile filled with the plant's own near-white colour on
+     a pale ground has no edge at all, so in August the wall came out
+     looking like a grid of holes. Drawn from the tile's OWN colour
+     rather than a fixed grey, so it disappears again on a saturated
+     one where it is not needed. */
+  box-shadow: inset 0 0 0 1px
+    color-mix(in oklab, var(--tile-colour, var(--color-line)) 82%, black 18%);
+}
+
+/* Three-wide tiles only once there is room for them. On a phone the
+   wall is two or three tracks across, and a tile spanning three of
+   them is the whole screen — which stops being a ranking and starts
+   being a slideshow. */
+@media (min-width: 48rem) {
+  .cell {
+    grid-column: span var(--cols);
+  }
+}
+
+/* ── Tiles ─────────────────────────────────────────────────────────
+   A photograph tile and a colour tile are the same component. Roughly
+   a quarter of the collection carries a photograph; the rest render as
+   a flat field of the plant's OWN colour, which is why the wall reads
+   as photographs AND colour rather than photographs and gaps. */
+.tile {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  text-decoration: none;
+  color: inherit;
+  background: var(--tile-colour, var(--color-sheet));
+  transition:
+    --veil var(--dur-move) var(--ease-out),
+    transform var(--dur-move) var(--ease-out);
+}
+
+.tile:hover,
+.tile:focus-visible {
+  --veil: 1;
+}
+
+.tile:focus-visible {
+  outline: 3px solid var(--color-ink);
+  outline-offset: -3px;
+}
+
+.tile-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: var(--photo-filter);
+}
+
+/* The caption plate only exists over a photograph. A colour tile does
+   not need a scrim — its own colour is the background and the ink is
+   already chosen against it — so the rule is written as a `:has()`
+   against the child rather than as a prop the caller has to remember
+   to pass. The element decides, from what is actually inside it. */
+/* Tuned against the magnolia at three spans, which is the worst case in
+   the whole template: white text, three lines of it, over a photograph
+   whose bottom third is bright spring sky. The first version ramped to
+   transparent by 62% and the top line of the note sat on 14% black over
+   pale blue — legible on a colour tile, not legible on that. */
+.tile:has(.tile-photo) .tile-caption {
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, black calc(80% + var(--veil) * 12%), transparent),
+    color-mix(in oklab, black calc(56% + var(--veil) * 14%), transparent) 46%,
+    color-mix(in oklab, black calc(22% + var(--veil) * 12%), transparent) 78%,
+    transparent
+  );
+  padding-top: 2.2rem;
+  color: white;
+}
+
+.tile-caption {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: clamp(0.45rem, 0.9vw, 0.85rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+/* CONTAINER QUERIES, doing a job a media query cannot: the tile does
+   not know its span, only its own width, and the same component is
+   asked to work at 100px and at 560px in the same grid on the same
+   screen. Small tiles carry a name; medium tiles add what kind of
+   interest it is; only a large tile has room for a line of the note.
+   Everything below the tile's size is hidden rather than shrunk. */
+.tile-kind,
+.tile-note {
+  display: none;
+}
+
+/* The smallest tile is about 130px across and some of these names are
+   "Hydrangea aspera Villosa Group". Base size is set for THAT, and the
+   container queries below grow it — rather than the other way round,
+   which is how a caption ends up taller than its tile. */
+.tile-name {
+  font-size: 0.8125rem;
+  line-height: 1.16;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@container cell (min-width: 15rem) {
+  .tile-kind {
+    display: block;
+  }
+  .tile-name {
+    font-size: 1.15rem;
+  }
+}
+
+@container cell (min-width: 24rem) {
+  .tile-note {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .tile-name {
+    font-size: 1.6rem;
+  }
+}
+
+/* ── Prose and figure cells ───────────────────────────────────────── */
+.cell-prose {
+  background: var(--color-sheet);
+  padding: clamp(0.9rem, 1.6vw, 1.6rem);
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  overflow-y: auto;
+}
+
+.cell-bare {
+  background: transparent;
+}
+
+.cell-flare {
+  background: var(--color-flare);
+  /* NOT white. See the note beside `--season-on-flare` in ground.ts:
+     the flare is a pale sulphur in February and a near-black green in
+     July, and hardcoding white failed 4.5:1 in nineteen weeks. */
+  color: var(--season-on-flare, white);
+}
+
+/* ── The year rail ─────────────────────────────────────────────────
+   Fifty-two bars, each drawn in ITS OWN week's colour, so the rail is
+   both the navigation and a picture of the year. Two rails stacked
+   rather than two series on one axis: interest and visitors are
+   different units, and overlaying them would invent a correlation the
+   data does not contain (§4b). Stacked on a shared x, they let the
+   reader find the one that IS there — that the peaks are five months
+   apart. */
+.rail {
+  display: grid;
+  grid-template-columns: repeat(52, 1fr);
+  align-items: end;
+  gap: 1px;
+}
+
+.rail-bar {
+  display: block;
+  position: relative;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  border: 0;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.rail-fill {
+  width: 100%;
+  height: var(--h);
+  background: var(--bar);
+  border-radius: 1px 1px 0 0;
+  transition: height var(--dur-move) var(--ease-out);
+}
+
+.rail-bar:hover .rail-fill,
+.rail-bar:focus-visible .rail-fill {
+  background: var(--color-ink);
+}
+
+.rail-bar[aria-current="true"] .rail-fill {
+  background: var(--color-ink);
+}
+
+.rail-bar[aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  inset: -0.35rem -1px auto -1px;
+  height: 2px;
+  background: var(--color-ink);
+}
+
+/* ── The plan picker ───────────────────────────────────────────────
+   `:has()` earning its place: the result panel is revealed by the form
+   containing a checked box, and each chip is styled by containing its
+   own checked input. No state, no effect, no re-render — and the
+   panel's entry animation runs from @starting-style, so the answer
+   ARRIVES rather than appearing, which is the one piece of motion on
+   this page that carries information. */
+.picker:not(:has(input:checked)) .plan-result {
+  display: none;
+}
+
+.picker:has(input:checked) .plan-empty {
+  display: none;
+}
+
+.chip:has(input:checked) {
+  background: var(--color-ink);
+  color: var(--color-ground);
+  border-color: var(--color-ink);
+}
+
+.chip:has(input:focus-visible) {
+  outline: 2px solid var(--color-flare);
+  outline-offset: 2px;
+}
+
+.plan-result {
+  transition:
+    opacity var(--dur-move) var(--ease-out),
+    translate var(--dur-move) var(--ease-out);
+}
+
+@starting-style {
+  .plan-result {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+}
+
+/* ── The season bar on a plant's own page ──────────────────────────
+   Fifty-two cells; the ones above the bar are filled. `--fill` is a
+   registered property so the growth animates rather than snapping. */
+.season-strip {
+  display: grid;
+  grid-template-columns: repeat(52, 1fr);
+  gap: 1px;
+  height: clamp(2.5rem, 5vw, 4rem);
+}
+
+.season-cell {
+  background: var(--color-sunk);
+  border-radius: 1px;
+  align-self: end;
+  height: var(--fill);
+  min-height: 2px;
+  transition: height var(--dur-move) var(--ease-out);
+}
+
+.season-cell[data-out="true"] {
+  background: var(--bar, var(--color-flare));
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────
+   Everything degrades to the FINAL state, never a half-applied one.
+   The view transition is switched off at source rather than being made
+   fast: a cross-fade of a whole re-packing wall is exactly the kind of
+   large-area movement this preference exists to prevent. */
+@media (prefers-reduced-motion: reduce) {
+  @view-transition {
+    navigation: none;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+
+  .plan-result {
+    opacity: 1;
+    translate: none;
+  }
+}
+
+/* ── The sheet ─────────────────────────────────────────────────────
+   The pages where there is no ranking to express — a single plant, an
+   area, how to get here — do not use the wall, because a mosaic of one
+   thing is not a mosaic. They are still not a centred column: a twelve
+   track grid running the full width, with content placed asymmetrically
+   in it and prose held to a measure by `ch` rather than by a page
+   frame. The distinction matters — a max-width container centres the
+   PAGE, a `max-width: 62ch` on a paragraph sets a LINE LENGTH, and only
+   the second one is typography. */
+.sheet {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: clamp(0.9rem, 2vw, 2rem);
+  padding: clamp(1rem, 2.5vw, 2.5rem) clamp(1rem, 4vw, 4rem) clamp(4rem, 9vw, 8rem);
+  align-content: start;
+}
+
+.sheet > * {
+  min-width: 0;
+}
+
+.span-full {
+  grid-column: 1 / -1;
+}
+
+.span-main {
+  grid-column: 1 / -1;
+}
+
+.span-side {
+  grid-column: 1 / -1;
+}
+
+@media (min-width: 56rem) {
+  .span-main {
+    grid-column: 1 / span 7;
+  }
+  .span-side {
+    grid-column: 9 / span 4;
+  }
+}
+
+.panel {
+  background: var(--color-sheet);
+  border-radius: clamp(0.4rem, 0.7vw, 0.75rem);
+  padding: clamp(0.9rem, 1.8vw, 1.6rem);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.35rem 1.2rem;
+  align-items: baseline;
+}
+
+.facts dt {
+  color: var(--color-ink-muted);
+  font-size: var(--text-small);
+  white-space: nowrap;
+}
+
+.facts dd {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* ── Chips ─────────────────────────────────────────────────────────
+   One shape for a filter link and for a picker label, so the two read
+   as the same control doing the same job in two places. */
+.chip-link,
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  padding: 0.28rem 0.7rem;
+  background: var(--color-ground);
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-quick) var(--ease-out),
+    border-color var(--dur-quick) var(--ease-out),
+    color var(--dur-quick) var(--ease-out);
+}
+
+.chip-link:hover,
+.chip:hover {
+  border-color: var(--color-ink);
+}
+
+.chip-link[data-on="true"] {
+  background: var(--color-ink);
+  color: var(--color-ground);
+  border-color: var(--color-ink);
+}
+
+.chip input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  /* `sr-only` positions absolutely, and with no positioned ancestor it
+     resolves against the PAGE — which lands it hundreds of pixels off
+     to the right inside a horizontally scrolled container and pushes
+     the document sideways on a phone. CONVENTIONS §8 names this as one
+     of the two causes of nearly all the horizontal overflow in this
+     repo. The chip is `relative` for exactly that reason. */
+}
+
+.chip {
+  position: relative;
+}
+
+/* ── Odds and ends ────────────────────────────────────────────────── */
+.link-quiet {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  text-underline-offset: 0.22em;
+  transition: text-decoration-color var(--dur-quick) var(--ease-out);
+}
+
+.link-quiet:hover {
+  text-decoration-color: currentColor;
+}
+
+.rule {
+  height: 1px;
+  background: var(--color-line);
+  border: 0;
+}
+
+::selection {
+  background: var(--color-flare);
+  color: white;
+}

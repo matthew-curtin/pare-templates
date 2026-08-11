@@ -108,7 +108,18 @@ function templates() {
  * cannot fail rather than a check that passes.
  */
 function rendersPhotographs(text) {
-  return /from\s+["']next\/image["']/.test(text) || /<img[\s/>]/.test(text);
+  // A TYPE-only import renders nothing. `understory` keys its committed
+  // files in a `Record<string, StaticImageData>`, which needs the type
+  // and touches no runtime code at all — and was reported as a second
+  // renderer, putting a template in breach of the one-renderer rule for
+  // correctly typing a lookup table.
+  //
+  // Same lesson as the comment below about stripping comments, arriving
+  // from a third direction: this check is looking for the ACT of
+  // rendering, and three different things in a file can contain the
+  // string "next/image" without doing it.
+  const runtime = text.replace(/import\s+type\s[^;]*?;/g, "");
+  return /from\s+["']next\/image["']/.test(runtime) || /<img[\s/>]/.test(runtime);
 }
 
 /**
