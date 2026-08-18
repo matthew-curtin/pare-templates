@@ -1011,4 +1011,50 @@ Vite scaffold sets it already. It does not affect the build.
 ## 9. Registering it
 
 Add an entry to `manifest.json` and a row to the table in `README.md`.
-The manifest is what a future template picker inside Pare will read.
+The manifest is what Pare's template gallery reads.
+
+### The taxonomy is closed, because Pare derives its filters from it
+
+Pare builds its filter rail *from this manifest* — the category
+checkboxes are the distinct `category` values, and the feature
+checkboxes are the tags that appear on enough templates to be worth a
+box. Nothing in Pare hardcodes the vocabulary, deliberately: a
+hardcoded copy would drift from the fleet the first time somebody added
+a template here.
+
+The cost of deriving it is that this file can quietly make the filter
+useless. It already had: nineteen templates carried **sixteen**
+categories, thirteen of them with exactly one member. That renders as a
+column of sixteen checkboxes where ticking almost any one returns a
+single result — technically working, practically pointless, and silent.
+
+So `category` is one of five values:
+
+| Category | What belongs in it |
+| --- | --- |
+| **Marketing site** | Sells or explains a product; the visitor is being persuaded |
+| **Application** | Behind a login; the visitor is working, not reading |
+| **Content & publishing** | Articles, docs, guides; the visitor is reading |
+| **Booking & scheduling** | The visitor is reserving a time or a place |
+| **Commerce & listings** | A catalogue of things; the visitor is browsing to pick one |
+
+Run `node scripts/check-taxonomy.mjs` before committing. It fails on a
+category outside that set, and on a bucket that has fallen below three
+members — because a category of one is the thing this rule exists to
+prevent, and nothing else in the repo would notice.
+
+Adding a sixth category is a real decision, not a typo. Widen
+`CATEGORIES` in that script deliberately, and make sure the new bucket
+can actually reach three members.
+
+### Tags stay free-text, and that is not an oversight
+
+Only `category` is constrained. Tags are what Pare's **search** matches
+against, and search wants more words, not fewer — so all sixteen of the
+old category names survive as tags, which is why typing "broadcast"
+still finds `playout` even though Broadcast is no longer a category.
+
+Two rules only: lowercase, and no duplicates within an entry. A tag
+earns a checkbox by appearing on three or more templates; one that
+merely restates a category word is dropped, so `application` never
+becomes a feature box competing with the Application category.

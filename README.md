@@ -25,25 +25,25 @@ Each template is self-contained — its own dependencies, its own README.
 
 | Template | Type | Stack | Theme | Status |
 | --- | --- | --- | --- | --- |
-| [saas-product-site](saas-product-site) | Marketing | Next.js | Light | ✅ Ready |
-| [mobile-app-landing](mobile-app-landing) | Marketing | Next.js | Dark | ✅ Ready |
-| [editorial-magazine](editorial-magazine) | Publishing | Next.js | Warm | ✅ Ready |
-| [coffee-storefront](coffee-storefront) | Commerce | Next.js | Light | ✅ Ready |
+| [saas-product-site](saas-product-site) | Marketing site | Next.js | Light | ✅ Ready |
+| [mobile-app-landing](mobile-app-landing) | Marketing site | Next.js | Dark | ✅ Ready |
+| [editorial-magazine](editorial-magazine) | Content & publishing | Next.js | Warm | ✅ Ready |
+| [coffee-storefront](coffee-storefront) | Commerce & listings | Next.js | Light | ✅ Ready |
 | [analytics-dashboard](analytics-dashboard) | Application | Vite | Light | ✅ Ready |
 | [project-tracker](project-tracker) | Application | Vite | Dark | ✅ Ready |
-| [restaurant-booking](restaurant-booking) | Booking | Next.js | Dark | ✅ Ready |
-| [docs-site](docs-site) | Documentation | Next.js | Light | ✅ Ready |
+| [restaurant-booking](restaurant-booking) | Booking & scheduling | Next.js | Dark | ✅ Ready |
+| [docs-site](docs-site) | Content & publishing | Next.js | Light | ✅ Ready |
 | [support-inbox](support-inbox) | Application | Vite | Light | ✅ Ready |
-| [almanac](almanac) | Listings | Next.js | Light | ✅ Ready |
-| [conference-schedule](conference-schedule) | Events | Next.js | Light | ✅ Ready |
-| [trail-guide](trail-guide) | Guide | Next.js | Dark | ✅ Ready |
-| [exposure](exposure) | Property | Next.js | Light | ✅ Ready |
-| [playout](playout) | Broadcast | Vite | Dark | ✅ Ready |
-| [kiln](kiln) | Studio | Next.js | Warm | ✅ Ready |
-| [spoke](spoke) | Manufacturing | Vite | Light | ✅ Ready |
-| [understory](understory) | Culture | Next.js | Seasonal | ✅ Ready |
-| [nightwork](nightwork) | Craft | Next.js | Light | ✅ Ready |
-| [tally](tally) | Infrastructure | Next.js | Dark | ✅ Ready |
+| [almanac](almanac) | Commerce & listings | Next.js | Light | ✅ Ready |
+| [conference-schedule](conference-schedule) | Booking & scheduling | Next.js | Light | ✅ Ready |
+| [trail-guide](trail-guide) | Content & publishing | Next.js | Dark | ✅ Ready |
+| [exposure](exposure) | Commerce & listings | Next.js | Light | ✅ Ready |
+| [playout](playout) | Application | Vite | Dark | ✅ Ready |
+| [kiln](kiln) | Booking & scheduling | Next.js | Warm | ✅ Ready |
+| [spoke](spoke) | Application | Vite | Light | ✅ Ready |
+| [understory](understory) | Content & publishing | Next.js | Seasonal | ✅ Ready |
+| [nightwork](nightwork) | Marketing site | Next.js | Light | ✅ Ready |
+| [tally](tally) | Application | Next.js | Dark | ✅ Ready |
 
 More on the way — around twenty in total, spanning marketing sites,
 content and publishing, commerce and booking, and applications.

@@ -6,7 +6,7 @@
       "id": "saas-product-site",
       "path": "saas-product-site",
       "name": "SaaS product site",
-      "category": "Marketing",
+      "category": "Marketing site",
       "description": "A complete marketing site for a software product — features, pricing, changelog, blog and about.",
       "framework": "next",
       "stack": [
@@ -39,7 +39,7 @@
       "id": "mobile-app-landing",
       "path": "mobile-app-landing",
       "name": "Mobile app landing",
-      "category": "Marketing",
+      "category": "Marketing site",
       "description": "A marketing site for a mobile app — features, pricing, downloads, a searchable help centre, a press kit and legal pages.",
       "framework": "next",
       "stack": [
@@ -73,7 +73,7 @@
       "id": "editorial-magazine",
       "path": "editorial-magazine",
       "name": "Editorial magazine",
-      "category": "Publishing",
+      "category": "Content & publishing",
       "description": "A quarterly magazine — long-form stories with real body copy, departments, a filterable archive, contributors and subscriptions.",
       "framework": "next",
       "stack": [
@@ -105,7 +105,7 @@
       "id": "coffee-storefront",
       "path": "coffee-storefront",
       "name": "Coffee storefront",
-      "category": "Commerce",
+      "category": "Commerce & listings",
       "description": "A shop with a working basket — products with size and grind variants, filtering, a delivery threshold, subscriptions and an interactive brew timer.",
       "framework": "next",
       "stack": [
@@ -204,7 +204,7 @@
       "id": "restaurant-booking",
       "path": "restaurant-booking",
       "name": "Restaurant with booking",
-      "category": "Booking",
+      "category": "Booking & scheduling",
       "description": "A wood-fired restaurant with a working reservation flow — live availability, party size, two sittings, validation and a confirmation. Menus, private dining and an enquiry form.",
       "framework": "next",
       "stack": [
@@ -236,7 +236,7 @@
       "id": "docs-site",
       "path": "docs-site",
       "name": "Documentation site",
-      "category": "Documentation",
+      "category": "Content & publishing",
       "description": "Developer documentation for an API — eleven pages written in markdown, an HTTP reference, client libraries and a changelog. Sidebar, contents list and ⌘K search all derive from the files.",
       "framework": "next",
       "stack": [
@@ -302,7 +302,7 @@
       "id": "almanac",
       "path": "almanac",
       "name": "Public sector jobs board",
-      "category": "Listings",
+      "category": "Commerce & listings",
       "description": "A hand-checked jobs board — link-based filters, search and sorting, employer pages, an alert builder that shows what it would have caught, and a posting composer with a live preview. Every job states what it actually pays, prorated hours included.",
       "framework": "next",
       "stack": [
@@ -336,7 +336,7 @@
       "id": "conference-schedule",
       "path": "conference-schedule",
       "name": "Conference schedule",
-      "category": "Events",
+      "category": "Booking & scheduling",
       "description": "A three-day conference wallchart drawn to scale — four rooms, live sessions against a pinned clock, link-based filters, a personal plan that calls out double-bookings, and a session page that says what going to it costs you.",
       "framework": "next",
       "stack": [
@@ -371,7 +371,7 @@
       "id": "trail-guide",
       "path": "trail-guide",
       "name": "Trail guide",
-      "category": "Guide",
+      "category": "Content & publishing",
       "description": "A long-distance trail guide built around an elevation rail — eleven legs quoted in hours rather than miles, with an itinerary planner that shows what each day actually costs.",
       "framework": "next",
       "stack": [
@@ -404,7 +404,7 @@
       "id": "exposure",
       "path": "exposure",
       "name": "Property listings",
-      "category": "Property",
+      "category": "Commerce & listings",
       "description": "A brokerage that publishes the light — every room quoted in hours of direct sun on three days of the year, with a clickable floor plan pinned beside the page and a viewing form that recommends the hour the house has nothing to show you.",
       "framework": "next",
       "stack": [
@@ -438,7 +438,7 @@
       "id": "playout",
       "path": "playout",
       "name": "Radio playout console",
-      "category": "Broadcast",
+      "category": "Application",
       "description": "The playout console for a community radio station — a whole broadcast day generated from each show's clock, a docked transport bar carrying the playhead and the count to the junction, and every number counted off the log rather than typed in.",
       "framework": "vite",
       "stack": [
@@ -472,7 +472,7 @@
       "id": "kiln",
       "path": "kiln",
       "name": "Ceramics studio",
-      "category": "Studio",
+      "category": "Booking & scheduling",
       "description": "A members' ceramics studio where every page is a container drawn to scale with its empty space left visible — kiln elevations, shelves packed from above, and a board that says why your pot is not in the next firing rather than just when it comes out.",
       "framework": "next",
       "stack": [
@@ -507,7 +507,7 @@
       "id": "spoke",
       "path": "spoke",
       "name": "Workshop build console",
-      "category": "Manufacturing",
+      "category": "Application",
       "description": "A bicycle workshop that publishes its whole bill of materials — an indented tree where depth is the layout, a shortage that propagates to the root in CSS alone, and a front page that answers why the thirteenth bicycle is stopped by an eleven-cent part.",
       "framework": "vite",
       "stack": [
@@ -542,7 +542,7 @@
       "id": "understory",
       "path": "understory",
       "name": "Botanic garden",
-      "category": "Culture",
+      "category": "Content & publishing",
       "description": "A botanic garden organised around WHEN to come rather than what is in it — a mosaic wall that re-packs every week, on a page whose own colour is the season.",
       "framework": "next",
       "stack": [
@@ -576,7 +576,7 @@
       "id": "nightwork",
       "path": "nightwork",
       "name": "Fireworks display company",
-      "category": "Craft",
+      "category": "Marketing site",
       "description": "A pyrotechnics firm that publishes both of its documents — the sky an audience sees and the cue sheet a crew fires, which are not the same list of moments. Every colour is computed from a metal salt's emission wavelength.",
       "framework": "next",
       "stack": [
@@ -610,7 +610,7 @@
       "id": "tally",
       "path": "tally",
       "name": "Cloud platform status page",
-      "category": "Infrastructure",
+      "category": "Application",
       "description": "A hosting company's public status page, built around the error budget rather than the uptime percentage — what the promise allows, what has been spent, and what the misses are worth in credits.",
       "framework": "next",
       "stack": [
